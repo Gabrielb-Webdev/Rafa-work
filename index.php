@@ -1,19 +1,19 @@
 <?php
 /**
  * =====================================================
- * MULTIGAMER360 - PÁGINA PRINCIPAL (INDEX)
+ * MEDICAONLINE - PÁGINA PRINCIPAL (INDEX)
  * =====================================================
  * 
- * Descripción: Página de inicio del sitio web MultiGamer360
- * Autor: MultiGamer360 Development Team
- * Fecha: 2025-09-16
+ * Descripción: Página de inicio de MediCareOnline - Tu Farmacia Digital
+ * Autor: MediCareOnline Development Team
+ * Fecha: 2026-01-07
  * 
  * Funcionalidades:
- * - Mostrar productos destacados y novedades
- * - Carrusel de categorías principales
+ * - Mostrar medicamentos destacados y novedades
+ * - Categorías de medicina y suplementos
  * - Sistema de bienvenida para nuevos usuarios
  * - Integración con carrito y wishlist
- * - Diseño responsivo moderno
+ * - Diseño responsivo moderno en tonos cyan
  */
 
 // =====================================================
@@ -69,8 +69,8 @@ include 'includes/header.php';
 <div class="container mt-3">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i>
-        <strong>¡Bienvenido a MultiGamer360!</strong> Tu cuenta ha sido creada exitosamente. Ya puedes empezar a
-        explorar nuestros productos.
+        <strong>¡Bienvenido a MediCareOnline!</strong> Tu cuenta ha sido creada exitosamente. Ya puedes empezar a
+        explorar nuestros productos farmacéuticos.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
@@ -86,390 +86,301 @@ include 'includes/header.php';
 </div>
 <?php endif; ?>
 
-<div class="container-fluid">
-    <div class="row hero-section">
-        <div class="col-md-6">
-            <div id="retroCarousel" class="carousel slide" data-bs-ride="carousel">
-                <?php
-                // Configuración
-                $image_dir = 'assets/images/retro';
-                $files = scandir($_SERVER['DOCUMENT_ROOT'] . '/multigamer360/' . $image_dir);
-                $images = [];
-
-                // Función para verificar si es una imagen válida
-                function is_valid_image($file) {
-                    $allowed_types = [
-                        'jpg', 'jpeg', 'png', 'gif', 'webp', 
-                        'bmp', 'svg', 'avif', 'heic', 'tiff', 
-                        'jfif', 'pjpeg', 'pjp'
-                    ];
-                    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                    return in_array($ext, $allowed_types);
-                }
-
-                // Filtrar solo archivos de imagen
-                foreach ($files as $file) {
-                    if ($file !== '.' && $file !== '..' && is_valid_image($file)) {
-                        $images[] = $file;
-                    }
-                }
-
-                // Si hay imágenes, crear los indicadores
-                if (!empty($images)) {
-                    echo '<div class="carousel-indicators">';
-                    foreach ($images as $index => $image) {
-                        $active = $index === 0 ? 'active' : '';
-                        echo "<button type='button' 
-                              data-bs-target='#retroCarousel' 
-                              data-bs-slide-to='{$index}' 
-                              class='{$active}'></button>";
-                    }
-                    echo '</div>';
-                }
-                ?>
-
-                <!-- Slides -->
-                <div class="carousel-inner rounded-4"><?php
-                    if (!empty($images)) {
-                        foreach ($images as $index => $image) {
-                            $active = $index === 0 ? 'active' : '';
-                            echo "<div class='carousel-item {$active}'>";
-                            echo "<img src='{$image_dir}/{$image}' class='d-block w-100' alt='Imagen retro'>";
-                            echo "</div>";
-                        }
-                    } else {
-                        echo "<div class='carousel-item active'>";
-                        echo "<div class='no-images-placeholder'>";
-                        echo "<p>No hay imágenes disponibles</p>";
-                        echo "</div>";
-                        echo "</div>";
-                    }
-                ?></div>
-
-
-                <!-- Controles -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#retroCarousel"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#retroCarousel"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
+<div class="container-fluid p-0">
+    <!-- Hero Section - Medicina Online -->
+    <section class="hero-pharmacy">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content-pharmacy">
+                        <h1 class="hero-title-pharmacy">Welcome To Our<br><span class="highlight-cyan">Online Medicine</span></h1>
+                        <p class="hero-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et gravida mauris, sit amet consectetur augue lorem eget gravida mauris lorem eget gravida.</p>
+                        <a href="productos.php" class="btn btn-pharmacy-primary">
+                            <i class="fas fa-pills me-2"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-pharmacy">
+                        <img src="assets/images/medicine-hero.png" alt="Medicine" class="img-fluid" onerror="this.src='assets/images/products/product1.jpg'">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="hero-content">
-                <h1>FESTIVAL RETRO</h1>
-                <p>Pasión por los píxeles y las consolas clásicas. Desde cartuchos de NES hasta discos de PlayStation,
-                    aquí cada partida comienza con nostalgia. Compra, vende o intercambia tus videojuegos favoritos y
-                    revive esos momentos en los que un "Game Over" solo significaba volver a intentarlo.</p>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>
 
 <!-- Servicios Section -->
-<section class="services-section py-5">
+<section class="services-pharmacy py-5">
     <div class="container">
         <div class="row justify-content-center g-4">
-            <!-- Envíos -->
+            <!-- Fast Delivery -->
             <div class="col-md-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <img src="assets/images/icons/enviar.png" alt="Envíos a todo el país">
+                <div class="service-card-pharmacy text-center">
+                    <div class="service-icon-pharmacy">
+                        <i class="fas fa-shipping-fast"></i>
                     </div>
-                    <h3>ENVIOS</h3>
-                    <h4>A TODO EL PAIS</h4>
+                    <h3 class="service-title-pharmacy">FAST DELIVERY</h3>
+                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
                 </div>
             </div>
 
-            <!-- Vendemos tu consola -->
+            <!-- Online of Government -->
             <div class="col-md-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <img src="assets/images/icons/juego.png" alt="Vendemos tu consola">
+                <div class="service-card-pharmacy text-center">
+                    <div class="service-icon-pharmacy">
+                        <i class="fas fa-file-medical"></i>
                     </div>
-                    <h3>VENDEMOS</h3>
-                    <h4>TU CONSOLA</h4>
+                    <h3 class="service-title-pharmacy">ONLINE OF GOVERNMENT</h3>
+                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
                 </div>
             </div>
 
-            <!-- Descuentos -->
+            <!-- Support 24*7 -->
             <div class="col-md-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <img src="assets/images/icons/billete-de-banco.png" alt="Descuentos en efectivo">
+                <div class="service-card-pharmacy text-center">
+                    <div class="service-icon-pharmacy">
+                        <i class="fas fa-headset"></i>
                     </div>
-                    <h3>DESCUENTOS</h3>
-                    <h4>EN EFECTIVO</h4>
+                    <h3 class="service-title-pharmacy">SUPPORT (24*7)</h3>
+                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Sección de Novedades -->
-<section class="novedades-section">
-    <h2 class="novedades-title">NOVEDADES</h2>
+<!-- Sección Promocional - 10% Descuento -->
+<section class="discount-section-pharmacy py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="horizontal-carousel" id="productCarousel">
-                    <!-- Botones de navegación -->
-                    <button class="carousel-control-prev" type="button" id="productCarouselPrev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" id="productCarouselNext">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-
-                    <!-- Contenedor de productos con scroll horizontal -->
-                    <div class="carousel-track" id="productCarouselTrack">
-                        <?php if (!empty($new_products)): ?>
-                        <?php foreach ($new_products as $product): ?>
-                        <div class="product-slide">
-                            <div class="product-card">
-                                <button class="favorite-btn btn-wishlist"
-                                    data-product-id="<?php echo $product['id']; ?>"
-                                    data-product-name="<?php echo htmlspecialchars($product['name']); ?>">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <?php 
-                                        // Construir ruta de imagen correctamente
-                                        $product_image = 'assets/images/products/product1.jpg'; // Default
-                                        if (!empty($product['primary_image'])) {
-                                            $product_image = 'uploads/products/' . htmlspecialchars($product['primary_image']);
-                                        } elseif (!empty($product['image_url'])) {
-                                            $product_image = htmlspecialchars($product['image_url']);
-                                        }
-                                        ?>
-                                <img src="<?php echo $product_image; ?>" class="card-img-top"
-                                    alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                    onerror="this.src='assets/images/products/product1.jpg'">
-                                <div class="card-body">
-                                    <h5 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                    <?php if (!empty($product['console_name'])): ?>
-                                        <p class="product-console-name"><?php echo htmlspecialchars($product['console_name']); ?></p>
-                                    <?php endif; ?>
-                                    <?php 
-                                            // Calcular precio en efectivo (con 10% de descuento del precio regular)
-                                            $product_price = $product['price_pesos'] ?? $product['price'];
-                                            $cash_price = $product_price * 0.9;
-                                            $regular_price = $product_price;
-                                            
-                                            // Si hay precio de oferta, usarlo como base
-                                            if (!empty($product['sale_price']) && $product['sale_price'] > 0) {
-                                                $cash_price = $product['sale_price'] * 0.9;
-                                                $regular_price = $product['sale_price'];
-                                            }
-                                            ?>
-                                    <p class="product-price-cash">
-                                        $<?php echo number_format($cash_price, 0, ',', '.'); ?> En efectivo</p>
-                                    <p class="product-price-card">
-                                        $<?php echo number_format($regular_price, 0, ',', '.'); ?></p>
-                                    <div class="card-buttons">
-                                        <a href="<?php echo getProductUrl($product); ?>"
-                                            class="btn btn-secondary view-details me-2">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <?php 
-                                        // Verificar si el producto ya está en el carrito
-                                        $isInCart = !empty($_SESSION['cart']) && isset($_SESSION['cart'][$product['id']]);
-                                        $btnClass = $isInCart ? 'btn-add-to-cart-modern in-cart' : 'btn-add-to-cart-modern';
-                                        ?>
-                                        <button class="<?php echo $btnClass; ?>" 
-                                                data-product-id="<?php echo $product['id']; ?>"
-                                                data-product-name="<?php echo htmlspecialchars($product['name']); ?>"
-                                                data-product-price="<?php echo $regular_price; ?>"
-                                                data-product-image="<?php echo htmlspecialchars($product_image); ?>"
-                                                data-in-cart="<?php echo $isInCart ? 'true' : 'false'; ?>">
-                                            <?php if ($isInCart): ?>
-                                                <!-- Producto en carrito: solo mostrar icono del carrito -->
-                                                <i class="fas fa-shopping-cart cart-icon"></i>
-                                            <?php else: ?>
-                                                <!-- Producto no en carrito: mostrar carrito normal -->
-                                                <i class="fas fa-shopping-cart cart-icon"></i>
-                                                <div class="loading-spinner"></div>
-                                                <i class="fas fa-check success-check"></i>
-                                                <span class="btn-text">AGREGAR</span>
-                                            <?php endif; ?>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <div class="product-slide">
-                            <div class="text-center text-white">
-                                <p>No hay productos disponibles en este momento.</p>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="discount-content-pharmacy">
+                    <h2 class="discount-title-pharmacy">YOU GET<br>ANY MEDICINE<br>ON <span class="highlight-percentage">10% DISCOUNT</span></h2>
+                    <p class="discount-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
+                    <a href="productos.php" class="btn btn-pharmacy-secondary">Shop Now</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="discount-image-pharmacy">
+                    <img src="assets/images/medicine-discount.png" alt="Medicine Discount" class="img-fluid" onerror="this.src='assets/images/products/product1.jpg'">
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Sección de Productos Destacados -->
-<section class="featured-section">
-    <h2 class="featured-title">PRODUCTOS DESTACADOS</h2>
+<!-- Sección de Productos - MEDICINE & HEALTH -->
+<section class="products-section-pharmacy py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="horizontal-carousel" id="featuredCarousel">
-                    <!-- Botones de navegación -->
-                    <button class="carousel-control-prev" type="button" id="featuredCarouselPrev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" id="featuredCarouselNext">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-
-                    <!-- Contenedor de productos con scroll horizontal -->
-                    <div class="carousel-track" id="featuredCarouselTrack">
-                        <?php if (!empty($featured_products)): ?>
-                        <?php foreach ($featured_products as $product): ?>
-                        <div class="product-slide">
-                            <div class="featured-card">
-                                <button class="favorite-btn btn-wishlist"
-                                    data-product-id="<?php echo $product['id']; ?>"
-                                    data-product-name="<?php echo htmlspecialchars($product['name']); ?>">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <?php 
-                                    // Construir ruta de imagen correctamente
-                                    $featured_image = 'assets/images/products/product1.jpg';
-                                    if (!empty($product['primary_image'])) {
-                                        $featured_image = 'uploads/products/' . htmlspecialchars($product['primary_image']);
-                                    } elseif (!empty($product['image_url'])) {
-                                        $featured_image = htmlspecialchars($product['image_url']);
-                                    }
-                                ?>
-                                <div class="featured-card-image"
-                                    style="background-image: url('<?php echo $featured_image; ?>');">
-                                    <div class="featured-overlay">
-                                        <div class="featured-content">
-                                            <h5 class="featured-name"><?php echo htmlspecialchars($product['name']); ?>
-                                            </h5>
-                                            <?php if (!empty($product['console_name'])): ?>
-                                                <p class="featured-console-name"><?php echo htmlspecialchars($product['console_name']); ?></p>
-                                            <?php endif; ?>
-                                            <p class="featured-price-cash">
-                                                $<?php echo number_format($product['price_pesos'] ?? $product['price'], 0, ',', '.'); ?>
-                                            </p>
-                                            <?php if ($product['sale_price'] && $product['sale_price'] < $product['price']): ?>
-                                            <p class="featured-price-card text-decoration-line-through">
-                                                $<?php echo number_format($product['sale_price'], 0, ',', '.'); ?></p>
-                                            <?php endif; ?>
-                                            <div class="featured-buttons">
-                                                <a href="<?php echo getProductUrl($product); ?>"
-                                                    class="btn btn-outline-light view-details-featured me-2">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <?php 
-                                                // Verificar si el producto ya está en el carrito
-                                                $isInCart = !empty($_SESSION['cart']) && isset($_SESSION['cart'][$product['id']]);
-                                                $btnClass = $isInCart ? 'btn-add-to-cart-modern in-cart' : 'btn-add-to-cart-modern';
-                                                ?>
-                                                <button class="<?php echo $btnClass; ?>" 
-                                                        data-product-id="<?php echo $product['id']; ?>"
-                                                        data-product-name="<?php echo htmlspecialchars($product['name']); ?>"
-                                                        data-product-price="<?php echo $product['price_pesos'] ?? $product['price']; ?>"
-                                                        data-product-image="<?php echo htmlspecialchars($featured_image); ?>"
-                                                        data-in-cart="<?php echo $isInCart ? 'true' : 'false'; ?>">
-                                                    <?php if ($isInCart): ?>
-                                                        <!-- Producto en carrito: solo mostrar icono del carrito -->
-                                                        <i class="fas fa-shopping-cart cart-icon"></i>
-                                                    <?php else: ?>
-                                                        <!-- Producto no en carrito: mostrar carrito normal -->
-                                                        <i class="fas fa-shopping-cart cart-icon"></i>
-                                                        <div class="loading-spinner"></div>
-                                                        <i class="fas fa-check success-check"></i>
-                                                        <span class="btn-text">AGREGAR</span>
-                                                    <?php endif; ?>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <div class="product-slide">
-                            <div class="featured-card">
-                                <div class="featured-card-image"
-                                    style="background: linear-gradient(135deg, #1a1a1a, #333);">
-                                    <div class="featured-overlay">
-                                        <div class="featured-content">
-                                            <h5 class="featured-name">No hay productos destacados</h5>
-                                            <p class="featured-price-cash">Próximamente nuevos productos</p>
-                                            <div class="featured-buttons">
-                                                <a href="productos.php" class="btn btn-outline-light">Ver todos los
-                                                    productos</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <h2 class="section-title-pharmacy text-center mb-5">MEDICINE & HEALTH</h2>
+        <div class="row g-4">
+            <?php if (!empty($new_products)): ?>
+                <?php foreach (array_slice($new_products, 0, 8) as $product): ?>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product-card-pharmacy">
+                        <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
+                        <span class="badge-discount-pharmacy">SALE</span>
                         <?php endif; ?>
+                        <div class="product-image-pharmacy">
+                            <?php 
+                            $product_image = 'assets/images/products/product1.jpg';
+                            if (!empty($product['primary_image'])) {
+                                $product_image = 'uploads/products/' . htmlspecialchars($product['primary_image']);
+                            } elseif (!empty($product['image_url'])) {
+                                $product_image = htmlspecialchars($product['image_url']);
+                            }
+                            ?>
+                            <img src="<?php echo $product_image; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='assets/images/products/product1.jpg'">
+                        </div>
+                        <div class="product-body-pharmacy">
+                            <h5 class="product-name-pharmacy"><?php echo htmlspecialchars($product['name']); ?></h5>
+                            <div class="product-rating-pharmacy">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="product-price-pharmacy">
+                                <span class="price-current-pharmacy">$<?php echo number_format($product['price'], 0); ?></span>
+                                <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
+                                <span class="price-old-pharmacy">$<?php echo number_format($product['sale_price'], 0); ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <button class="btn btn-add-pharmacy btn-add-to-cart-modern" 
+                                    data-product-id="<?php echo $product['id']; ?>"
+                                    data-product-name="<?php echo htmlspecialchars($product['name']); ?>"
+                                    data-product-price="<?php echo $product['price']; ?>"
+                                    data-product-image="<?php echo htmlspecialchars($product_image); ?>">
+                                <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                            </button>
+                        </div>
                     </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No hay productos disponibles en este momento.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="text-center mt-5">
+            <a href="productos.php" class="btn btn-pharmacy-outline">See More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de VITAMINS & SUPPLEMENTS -->
+<section class="vitamins-section-pharmacy py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title-pharmacy text-center mb-5">VITAMINS & SUPPLEMENTS</h2>
+        <div class="row g-4">
+            <?php if (!empty($featured_products)): ?>
+                <?php foreach (array_slice($featured_products, 0, 8) as $product): ?>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product-card-pharmacy">
+                        <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
+                        <span class="badge-discount-pharmacy">SALE</span>
+                        <?php endif; ?>
+                        <div class="product-image-pharmacy">
+                            <?php 
+                            $product_image = 'assets/images/products/product1.jpg';
+                            if (!empty($product['primary_image'])) {
+                                $product_image = 'uploads/products/' . htmlspecialchars($product['primary_image']);
+                            } elseif (!empty($product['image_url'])) {
+                                $product_image = htmlspecialchars($product['image_url']);
+                            }
+                            ?>
+                            <img src="<?php echo $product_image; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='assets/images/products/product1.jpg'">
+                        </div>
+                        <div class="product-body-pharmacy">
+                            <h5 class="product-name-pharmacy"><?php echo htmlspecialchars($product['name']); ?></h5>
+                            <div class="product-rating-pharmacy">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="product-price-pharmacy">
+                                <span class="price-current-pharmacy">$<?php echo number_format($product['price'], 0); ?></span>
+                                <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
+                                <span class="price-old-pharmacy">$<?php echo number_format($product['sale_price'], 0); ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <button class="btn btn-add-pharmacy btn-add-to-cart-modern" 
+                                    data-product-id="<?php echo $product['id']; ?>"
+                                    data-product-name="<?php echo htmlspecialchars($product['name']); ?>"
+                                    data-product-price="<?php echo $product['price']; ?>"
+                                    data-product-image="<?php echo htmlspecialchars($product_image); ?>">
+                                <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No hay productos disponibles en este momento.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="text-center mt-5">
+            <a href="productos.php" class="btn btn-pharmacy-outline">See More</a>
+        </div>
+    </div>
+</section>
+<!-- Sección About Us -->
+<section class="about-pharmacy py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="about-image-pharmacy">
+                    <img src="assets/images/about-medicine.png" alt="About Us" class="img-fluid" onerror="this.src='assets/images/products/product1.jpg'">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="about-content-pharmacy">
+                    <h2 class="about-title-pharmacy">ABOUT US</h2>
+                    <p class="about-description-pharmacy">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text.</p>
+                    <a href="contacto.php" class="btn btn-pharmacy-primary">Read More</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- Sección de Contacto -->
-<section class="contact-section">
-    <div class="container-fluid">
+
+<!-- Sección de Testimonios -->
+<section class="testimonials-pharmacy py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title-pharmacy text-center mb-5">WHAT IS SAYS OUR CLIENTS</h2>
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5 p-0">
-                <div class="contact-image-container">
-                    <img src="assets/images/contacto.jpg" alt="Contacto" class="contact-image">
+            <div class="col-lg-6">
+                <div class="testimonial-card-pharmacy">
+                    <div class="testimonial-image-pharmacy">
+                        <img src="assets/images/client-testimonial.jpg" alt="Mr. Denny Crood" onerror="this.src='assets/images/products/product1.jpg'">
+                    </div>
+                    <h5 class="testimonial-name-pharmacy">Mr. Denny Crood</h5>
+                    <p class="testimonial-text-pharmacy">"Many or more Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the"</p>
+                    <div class="testimonial-dots-pharmacy">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-5 p-0">
-                <div class="contact-container">
-                    <h2 class="contact-title">CONTÁCTANOS</h2>
-                    <form class="contact-form" action="contact_process.php" method="POST">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control contact-input" placeholder="Nombre"
-                                        name="nombre" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control contact-input" placeholder="Apellido"
-                                        name="apellido" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" class="form-control contact-input" placeholder="Email" name="email"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control contact-textarea" placeholder="Mensaje" name="mensaje"
-                                rows="4" required></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-contact">ENVIAR MENSAJE</button>
-                        </div>
-                    </form>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Get New Medicines -->
+<section class="newsletter-pharmacy py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="newsletter-content-pharmacy">
+                    <h2 class="newsletter-title-pharmacy">Get New Medicines<br>Update!!!</h2>
+                    <p class="newsletter-description-pharmacy">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration</p>
                 </div>
+            </div>
+            <div class="col-lg-6">
+                <form class="newsletter-form-pharmacy">
+                    <div class="input-group">
+                        <input type="email" class="form-control newsletter-input-pharmacy" placeholder="Enter Email" required>
+                        <button type="submit" class="btn btn-pharmacy-subscribe">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de Contacto -->
+<section class="contact-section-pharmacy py-5">
+    <div class="container">
+        <h2 class="section-title-pharmacy text-center mb-5">REQUEST A CALL BACK</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <form class="contact-form-pharmacy" action="contact_process.php" method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control contact-input-pharmacy" placeholder="Name" name="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control contact-input-pharmacy" placeholder="Phone Number" name="apellido" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control contact-input-pharmacy" placeholder="Email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control contact-textarea-pharmacy" placeholder="Message" name="mensaje" rows="4" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-pharmacy-primary w-100">Send</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -14,8 +14,9 @@ if (file_exists(__DIR__ . '/../config/asset_versions.php')) {
                 <div class="row align-items-center">
                     <div class="col-md-5">
                         <div class="footer-branding">
-                            <div class="footer-logo">
-                                <img src="/assets/images/footer/logo-footer.png" alt="MultiGamer360 Logo" class="footer-logo-img">
+                            <div class="footer-logo d-flex align-items-center">
+                                <i class="fas fa-pills" style="font-size: 2rem; color: #00D4FF; margin-right: 12px;"></i>
+                                <span style="font-size: 1.5rem; font-weight: 700; color: white;">MediCare<span style="color: #00D4FF;">Online</span></span>
                             </div>
                             <div class="footer-social-icons">
                                 <a href="#" class="social-icon" target="_blank" aria-label="Instagram">
@@ -42,7 +43,7 @@ if (file_exists(__DIR__ . '/../config/asset_versions.php')) {
                         <ul class="footer-contact">
                             <li>
                                 <i class="fas fa-envelope"></i>
-                                <span>info@multigamer360.com</span>
+                                <span>info@medicareonline.com</span>
                             </li>
                             <li>
                                 <i class="fas fa-map-marker-alt"></i>
@@ -75,7 +76,7 @@ if (file_exists(__DIR__ . '/../config/asset_versions.php')) {
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <p>&copy; <?php echo date('Y'); ?> MultiGamer360. Todos los derechos reservados.</p>
+                        <p>&copy; <?php echo date('Y'); ?> MediCareOnline. Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>

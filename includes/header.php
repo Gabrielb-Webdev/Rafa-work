@@ -74,10 +74,14 @@ if ($cartCount > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiGamer360 - Tu tienda de videojuegos</title>
+    <title>MediCareOnline - Tu Farmacia Digital</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/style.css?v=5.3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css?v=6.0">
+    <link rel="stylesheet" href="/assets/css/pharmacy-style.css?v=1.0">
     <!-- CSS específico para la página de contacto moderna -->
     <link rel="stylesheet" href="/assets/css/contact-modern.css?v=4.2">
     <!-- CSS para botón moderno de carrito -->
@@ -200,21 +204,21 @@ if ($cartCount > 0) {
     <!-- Header Banner -->
     <header class="main-header">
         <div class="container-fluid p-0">
-            <div class="header-banner position-relative">
-                <img src="/assets/images/Pre-header.png" alt="MultiGamer360 Header" class="w-100">
+            <div class="header-banner position-relative" style="background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);">
                 <div class="header-overlay">
                     <div class="container-fluid px-4 h-100">
                         <div class="d-flex justify-content-between align-items-center h-100">
                             <div class="header-logo">
-                                <a href="/index.php">
-                                    <img src="/assets/images/logo.png" alt="MultiGamer360 Logo" class="header-logo-img">
+                                <a href="/index.php" class="d-flex align-items-center">
+                                    <i class="fas fa-pills" style="font-size: 2.5rem; color: white; margin-right: 15px;"></i>
+                                    <span style="font-size: 1.8rem; font-weight: 700; color: white;">MediCare<span style="color: #1A1A1A;">Online</span></span>
                                 </a>
                             </div>
                             <div class="header-actions d-flex align-items-center">
                                 <div class="auth-buttons me-4 d-none d-lg-block">
                                     <?php if ($isLoggedIn): ?>
                                         <div class="dropdown">
-                                            <button class="btn header-btn dropdown-toggle" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="btn header-btn dropdown-toggle" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: white; color: #00D4FF;">
                                                 <i class="fas fa-user"></i> <?= htmlspecialchars($currentUser['first_name']) ?>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu">
@@ -242,8 +246,8 @@ if ($cartCount > 0) {
                                             </ul>
                                         </div>
                                     <?php else: ?>
-                                        <a href="/register.php" class="btn header-btn me-2"><i class="fas fa-user-plus"></i> CREAR CUENTA</a>
-                                        <a href="/login.php" class="btn header-btn me-4"><i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN</a>
+                                        <a href="/register.php" class="btn header-btn me-2" style="background-color: white; color: #00D4FF;"><i class="fas fa-user-plus"></i> CREAR CUENTA</a>
+                                        <a href="/login.php" class="btn header-btn me-4" style="background-color: white; color: #00D4FF;"><i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN</a>
                                     <?php endif; ?>
                                 </div>
                                 <div class="wishlist-button me-2">
