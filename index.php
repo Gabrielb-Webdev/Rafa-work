@@ -129,6 +129,7 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/pharmacy-enhanced.css?v=<?= time() ?>">
     <?php if (file_exists('assets/css/pharmacy-style.css')): ?>
     <link rel="stylesheet" href="assets/css/pharmacy-style.css?v=<?= time() ?>">
     <?php endif; ?>
@@ -268,122 +269,116 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     <section class="hero-pharmacy">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-lg-7">
                     <h1 class="hero-title">Welcome To Our<br>Online Medicine</h1>
-                    <p class="hero-subtitle">Tu farmacia digital de confianza. Encuentra los mejores medicamentos y suplementos con entrega rápida y segura.</p>
-                    <a href="productos.php" class="btn-primary-pharmacy">
-                        <i class="fas fa-pills me-2"></i> Buy Now
+                    <p class="hero-subtitle">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                    <a href="productos.php?v=<?= time() ?>" class="btn-primary-pharmacy">
+                        <i class="fas fa-shopping-bag"></i> Shop Now
                     </a>
                 </div>
-                <div class="col-lg-6">
-                    <img src="assets/images/medicine-hero.png" alt="Medicine" class="img-fluid" 
-                         onerror="this.src='https://via.placeholder.com/500x400/00D4FF/ffffff?text=MediCare'" style="max-width: 100%;">
-                </div>
             </div>
         </div>
     </section>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
 
-<!-- Servicios Section -->
-<section class="services-pharmacy py-5">
+<!-- Services Section -->
+<section class="services-section">
     <div class="container">
         <div class="row justify-content-center g-4">
             <!-- Fast Delivery -->
             <div class="col-md-4">
-                <div class="service-card-pharmacy text-center">
-                    <div class="service-icon-pharmacy">
+                <div class="service-card">
+                    <div class="service-icon">
                         <i class="fas fa-shipping-fast"></i>
                     </div>
-                    <h3 class="service-title-pharmacy">FAST DELIVERY</h3>
-                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
+                    <h3>FAST DELIVERY</h3>
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
                 </div>
             </div>
 
-            <!-- Online of Government -->
+            <!-- Online Procurement -->
             <div class="col-md-4">
-                <div class="service-card-pharmacy text-center">
-                    <div class="service-icon-pharmacy">
-                        <i class="fas fa-file-medical"></i>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-cart"></i>
                     </div>
-                    <h3 class="service-title-pharmacy">ONLINE OF GOVERNMENT</h3>
-                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
+                    <h3>ONLINE PROCUREMENT</h3>
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
                 </div>
             </div>
 
-            <!-- Support 24*7 -->
+            <!-- Support 24/7 -->
             <div class="col-md-4">
-                <div class="service-card-pharmacy text-center">
-                    <div class="service-icon-pharmacy">
+                <div class="service-card">
+                    <div class="service-icon">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <h3 class="service-title-pharmacy">SUPPORT (24*7)</h3>
-                    <p class="service-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
+                    <h3>SUPPORT 24*7</h3>
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Sección Promocional - 10% Descuento -->
-<section class="discount-section-pharmacy py-5">
+<!-- Discount Banner -->
+<section class="discount-banner">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <div class="discount-content-pharmacy">
-                    <h2 class="discount-title-pharmacy">YOU GET<br>ANY MEDICINE<br>ON <span class="highlight-percentage">10% DISCOUNT</span></h2>
-                    <p class="discount-description-pharmacy">It is a long established fact that a reader will be distracted by the readable</p>
-                    <a href="productos.php" class="btn btn-pharmacy-secondary">Shop Now</a>
-                </div>
+                <h2>YOU GET<br>ANY MEDICINE<br>ON <span class="discount-highlight">10% DISCOUNT</span></h2>
+                <p class="mb-4">Limited time offer! Get your essential medicines at discounted prices. Shop now and save on all your healthcare needs.</p>
+                <a href="productos.php?v=<?= time() ?>" class="btn-primary-pharmacy">
+                    <i class="fas fa-tag"></i> Get Discount
+                </a>
             </div>
-            <div class="col-lg-6">
-                <div class="discount-image-pharmacy">
-                    <img src="assets/images/medicine-discount.png" alt="Medicine Discount" class="img-fluid" onerror="this.src='assets/images/products/product1.jpg'">
-                </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://via.placeholder.com/400x500/1a1a1a/00D4FF?text=Medicine+Products" 
+                     alt="Medicine Products" 
+                     class="img-fluid" 
+                     style="max-height: 500px; border-radius: 15px;">
             </div>
         </div>
     </div>
 </section>
 
-<!-- Sección de Productos - MEDICINE & HEALTH -->
-<section class="products-section-pharmacy py-5">
+<section class="products-section">
     <div class="container">
-        <h2 class="section-title-pharmacy text-center mb-5">MEDICINE & HEALTH</h2>
+        <div class="section-title">
+            <h2>MEDICINE & HEALTH</h2>
+        </div>
         <div class="row g-4">
             <?php if (!empty($new_products)): ?>
                 <?php foreach (array_slice($new_products, 0, 8) as $product): ?>
                 <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product-card-pharmacy">
+                    <div class="product-card">
                         <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
-                        <span class="badge-discount-pharmacy">SALE</span>
+                        <div class="product-badge">SALE</div>
                         <?php endif; ?>
-                        <div class="product-image-pharmacy">
+                        <div class="product-image">
                             <?php 
-                            $product_image = 'assets/images/products/product1.jpg';
+                            $product_image = 'https://via.placeholder.com/300x300/f8f9fa/00D4FF?text=' . urlencode(substr($product['name'], 0, 20));
                             if (!empty($product['primary_image'])) {
                                 $product_image = 'uploads/products/' . htmlspecialchars($product['primary_image']);
                             } elseif (!empty($product['image_url'])) {
                                 $product_image = htmlspecialchars($product['image_url']);
                             }
                             ?>
-                            <img src="<?php echo $product_image; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='assets/images/products/product1.jpg'">
+                            <img src="<?php echo $product_image; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='https://via.placeholder.com/300x300/f8f9fa/00D4FF?text=Product'">
                         </div>
-                        <div class="product-body-pharmacy">
-                            <h5 class="product-name-pharmacy"><?php echo htmlspecialchars($product['name']); ?></h5>
-                            <div class="product-rating-pharmacy">
+                        <div class="product-body">
+                            <div class="product-category">MEDICINE</div>
+                            <h5 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h5>
+                            <div class="product-rating">
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                             </div>
-                            <div class="product-price-pharmacy">
-                                <span class="price-current-pharmacy">$<?php echo number_format($product['price'], 0); ?></span>
+                            <div class="product-price">
+                                $<?php echo number_format($product['price'], 2); ?>
                                 <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['price']): ?>
-                                <span class="price-old-pharmacy">$<?php echo number_format($product['sale_price'], 0); ?></span>
+                                <small>$<?php echo number_format($product['sale_price'], 2); ?></small>
                                 <?php endif; ?>
                             </div>
                             <button class="btn btn-add-pharmacy btn-add-to-cart-modern" 
@@ -581,6 +576,7 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/pharmacy-enhanced.js?v=<?= time() ?>"></script>
 <?php if (file_exists('assets/js/main.js')): ?>
 <script src="assets/js/main.js?v=<?= time() ?>"></script>
 <?php endif; ?>
@@ -590,39 +586,8 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 <?php if (file_exists('assets/js/wishlist-system.js')): ?>
 <script src="assets/js/wishlist-system.js?v=<?= time() ?>"></script>
 <?php endif; ?>
-<script>
-function addToCart(productId) {
-    // Agregar al carrito via AJAX o redireccionar
-    if (confirm('¿Deseas agregar este producto al carrito?')) {
-        fetch('ajax/add-to-cart.php?v=<?= time() ?>', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'product_id=' + productId + '&quantity=1'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Producto agregado al carrito');
-                location.reload();
-            } else {
-                alert('Error: ' + (data.message || 'No se pudo agregar el producto'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al agregar el producto');
-        });
-    }
-}
-
-// Efecto scroll suave
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+</body>
+</html>
     });
 });
 </script>
