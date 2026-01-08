@@ -10,6 +10,7 @@ require_once 'includes/cart_manager.php';
 
 // Verificar si hay productos en el carrito
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+    $_SESSION['checkout_error'] = "Tu carrito está vacío.";
     header('Location: carrito.php');
     exit();
 }
@@ -20,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Validar datos requeridos
-$required_fields = ['firstName', 'lastName', 'email', 'phone', 'paymentMethod'];
+// Validar datos requeridos para un PEDIDO (no compra)
+$required_fields = ['firstName', 'lastName', 'email', 'phone'];
 
 foreach ($required_fields as $field) {
     if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
@@ -36,19 +37,13 @@ $firstName = trim($_POST['firstName']);
 $lastName = trim($_POST['lastName']);
 $email = trim($_POST['email']);
 $phone = trim($_POST['phone']);
-$paymentMethod = $_POST['paymentMethod'];
+$notes = trim($_POST['notes'] ?? '');
 
-// Obtener método de envío de la sesión (ya fue guardado en el carrito)
-$shippingMethod = $_SESSION['shipping_method'] ?? '';
+// Obtener método de envío de la sesión
+$shippingMethod = $_SESSION['shipping_method'] ?? 'pickup';
 $shippingCost = $_SESSION['shipping_cost'] ?? 0;
-$shippingName = $_SESSION['shipping_name'] ?? 'No especificado';
+$shippingName = $_SESSION['shipping_name'] ?? 'Retiro en tienda';
 $postalCode = $_SESSION['postal_code'] ?? '';
-
-if (empty($shippingMethod)) {
-    $_SESSION['checkout_error'] = "Método de envío no seleccionado.";
-    header('Location: carrito.php');
-    exit();
-}
 
 // Validar email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -79,22 +74,6 @@ if (in_array($shippingMethod, $delivery_methods)) {
     $city = trim($_POST['city']);
     $province = trim($_POST['province']);
     $zipCode = trim($_POST['zipCode']);
-}
-
-// Validar método de pago según tipo de envío
-$pickup_methods = ['0', '2207']; // multigamer360, puntoRetiro
-$valid_payment_methods = [];
-
-if (in_array($shippingMethod, $pickup_methods)) {
-    $valid_payment_methods = ['local', 'online'];
-} else {
-    $valid_payment_methods = ['online', 'cod'];
-}
-
-if (!in_array($paymentMethod, $valid_payment_methods)) {
-    $_SESSION['checkout_error'] = "Método de pago no válido para el tipo de envío seleccionado.";
-    header('Location: checkout.php');
-    exit();
 }
 
 // =====================================================
@@ -193,29 +172,20 @@ if (isset($_SESSION['applied_coupon'])) {
 $subtotal_with_discount = $subtotal - $coupon_discount;
 $total = $subtotal_with_discount + $shippingCost;
 
-// Obtener nombres de métodos
-$payment_names = [
-    'local' => 'Pagar en el Local',
-    'online' => 'Pago Online',
-    'cod' => 'Contra Entrega'
-];
-
-$payment_name = $payment_names[$paymentMethod] ?? 'Desconocido';
-
-// Generar ID de orden único
-$order_id = 'MG360-' . date('Ymd') . '-' . rand(1000, 9999);
+// Generar número de pedido único
+$order_number = 'PEDIDO-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6));
 
 // Preparar datos de usuario
 $user_id = $_SESSION['user_id'] ?? null;
 
 // =====================================================
-// GUARDAR ORDEN EN LA BASE DE DATOS
+// GUARDAR PEDIDO EN LA BASE DE DATOS
 // =====================================================
 try {
     // Iniciar transacción
     $pdo->beginTransaction();
     
-    // Insertar orden principal
+    // Insertar pedido principal (sin pago, solo pedido)
     $stmt = $pdo->prepare("
         INSERT INTO orders (
             order_number, user_id, 
@@ -278,13 +248,8 @@ try {
             throw new Exception("Producto no encontrado: " . $item['name']);
         }
         
-        if ($product_check['stock_quantity'] < $item['quantity']) {
-            throw new Exception("Stock insuficiente para: " . $item['name'] . " (Disponible: {$product_check['stock_quantity']}, Solicitado: {$item['quantity']})");
-        }
-        
-        // Insertar item de orden (con imagen)
+        // Insertar item del pedido (con imagen)
         $image_to_save = $item['image'] ?? null;
-        error_log("DEBUG CHECKOUT - Guardando item: {$item['name']}, image: " . ($image_to_save ?? 'NULL'));
         
         $stmt_insert_item->execute([
             $inserted_order_id,
@@ -293,21 +258,12 @@ try {
             $item['quantity'],
             $item['price'],
             $item['total'],
-            $image_to_save  // Guardar la imagen
+            $image_to_save
         ]);
-        
-        // Descontar stock
-        $stmt_update_stock->execute([
-            $item['quantity'],
-            $item['id'],
-            $item['quantity']
-        ]);
-        
-        $rows_affected = $stmt_update_stock->rowCount();
-        error_log("DEBUG - Stock actualizado para {$item['name']}: $rows_affected filas afectadas");
-        
-        // Verificar que se actualizó el stock
-        if ($rows_affected === 0) {
+    }
+    
+    // Guardar información del cupón si existe
+    if ($coupon_data) {
             throw new Exception("Error al actualizar stock de: " . $item['name'] . " - No se pudo descontar del inventario");
         }
     }
@@ -333,9 +289,9 @@ try {
     // Confirmar transacción
     $pdo->commit();
     
-    // Crear datos de la orden para mostrar en confirmación
+    // Crear datos del pedido para mostrar en confirmación
     $order_data = [
-        'order_id' => $order_id,
+        'order_number' => $order_number,
         'date' => date('Y-m-d H:i:s'),
         'customer' => [
             'first_name' => $firstName,
@@ -353,10 +309,7 @@ try {
             'name' => $shippingName,
             'cost' => $shippingCost
         ],
-        'payment' => [
-            'method' => $paymentMethod,
-            'name' => $payment_name
-        ],
+        'notes' => $notes,
         'coupon' => $coupon_data ? [
             'code' => $coupon_data['code'],
             'name' => $coupon_data['name'],
@@ -379,11 +332,10 @@ try {
     // Limpiar carrito de la sesión
     $_SESSION['cart'] = [];
     
-    // IMPORTANTE: Eliminar el carrito de la BASE DE DATOS también
+    // Eliminar el carrito de la BASE DE DATOS también
     if ($user_id) {
         $stmt_delete_cart = $pdo->prepare("DELETE FROM cart_sessions WHERE user_id = ?");
         $stmt_delete_cart->execute([$user_id]);
-        error_log("Carrito eliminado de BD para usuario: $user_id");
     }
     
     // Limpiar datos de envío y cupones
@@ -393,16 +345,16 @@ try {
     unset($_SESSION['shipping_name']);
     unset($_SESSION['postal_code']);
     
-    // Redirigir a página de confirmación
-    header('Location: order_confirmation.php?order_id=' . $order_id);
+    // Redirigir a página de confirmación del pedido
+    header('Location: order_confirmation.php?order_number=' . $order_number);
     exit();
     
 } catch (Exception $e) {
     // Revertir transacción en caso de error
     $pdo->rollBack();
     
-    error_log("Error al procesar orden: " . $e->getMessage());
-    $_SESSION['checkout_error'] = "Hubo un error al procesar tu orden. Por favor, intenta nuevamente.";
+    error_log("Error al procesar pedido: " . $e->getMessage());
+    $_SESSION['checkout_error'] = "Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.";
     header('Location: checkout.php');
     exit();
 }
