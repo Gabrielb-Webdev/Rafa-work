@@ -72,18 +72,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->exec("DELETE FROM categories");
             $results[] = "✅ Categorías antiguas eliminadas";
             
+            // Verificar qué columnas tiene la tabla categories
+            $columns_check = $pdo->query("SHOW COLUMNS FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+            $has_description = in_array('description', $columns_check);
+            $has_is_active = in_array('is_active', $columns_check);
+            
             $categories = [
-                ['Medicina y Salud', 'medicina-salud', 'Medicamentos para tratamientos diversos'],
-                ['Vitaminas y Suplementos', 'vitaminas-suplementos', 'Vitaminas y suplementos alimenticios'],
-                ['Cuidado Personal', 'cuidado-personal', 'Productos de higiene y cuidado personal'],
-                ['Primeros Auxilios', 'primeros-auxilios', 'Botiquín y productos de emergencia'],
-                ['Bebé y Mamá', 'bebe-mama', 'Productos para el cuidado del bebé y la madre'],
-                ['Dermatología', 'dermatologia', 'Productos para el cuidado de la piel'],
-                ['Nutrición Deportiva', 'nutricion-deportiva', 'Suplementos y productos para deportistas'],
-                ['Salud Sexual', 'salud-sexual', 'Productos para el bienestar sexual']
+                ['Medicina y Salud', 'medicina-salud'],
+                ['Vitaminas y Suplementos', 'vitaminas-suplementos'],
+                ['Cuidado Personal', 'cuidado-personal'],
+                ['Primeros Auxilios', 'primeros-auxilios'],
+                ['Bebé y Mamá', 'bebe-mama'],
+                ['Dermatología', 'dermatologia'],
+                ['Nutrición Deportiva', 'nutricion-deportiva'],
+                ['Salud Sexual', 'salud-sexual']
             ];
             
-            $stmt = $pdo->prepare("INSERT INTO categories (name, slug, description, is_active, created_at) VALUES (?, ?, ?, 1, NOW())");
+            // Construir query dinámicamente según columnas disponibles
+            $insert_query = "INSERT INTO categories (name, slug";
+            if ($has_is_active) $insert_query .= ", is_active";
+            $insert_query .= ", created_at) VALUES (?, ?";
+            if ($has_is_active) $insert_query .= ", 1";
+            $insert_query .= ", NOW())";
+            
+            $stmt = $pdo->prepare($insert_query);
             foreach ($categories as $cat) {
                 $stmt->execute($cat);
             }
@@ -97,20 +109,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->exec("DELETE FROM brands");
             $results[] = "✅ Marcas antiguas eliminadas";
             
+            // Verificar columnas de brands
+            $brand_columns_check = $pdo->query("SHOW COLUMNS FROM brands")->fetchAll(PDO::FETCH_COLUMN);
+            $brand_has_description = in_array('description', $brand_columns_check);
+            $brand_has_is_active = in_array('is_active', $brand_columns_check);
+            
             $brands = [
-                ['Bayer', 'bayer', 'Líder mundial en salud y nutrición'],
-                ['Pfizer', 'pfizer', 'Innovación farmacéutica de calidad'],
-                ['Johnson & Johnson', 'johnson-johnson', 'Cuidado de la salud familiar'],
-                ['Roche', 'roche', 'Pioneros en biotecnología'],
-                ['Novartis', 'novartis', 'Soluciones innovadoras en salud'],
-                ['GSK', 'gsk', 'GlaxoSmithKline - Ciencia para la salud'],
-                ['Sanofi', 'sanofi', 'Salud para todos'],
-                ['Abbott', 'abbott', 'Nutrición y diagnóstico de calidad'],
-                ['Merck', 'merck', 'Ciencia para una vida mejor'],
-                ['Boehringer Ingelheim', 'boehringer-ingelheim', 'Innovación en medicina']
+                ['Bayer', 'bayer'],
+                ['Pfizer', 'pfizer'],
+                ['Johnson & Johnson', 'johnson-johnson'],
+                ['Roche', 'roche'],
+                ['Novartis', 'novartis'],
+                ['GSK', 'gsk'],
+                ['Sanofi', 'sanofi'],
+                ['Abbott', 'abbott'],
+                ['Merck', 'merck'],
+                ['Boehringer Ingelheim', 'boehringer-ingelheim']
             ];
             
-            $stmt = $pdo->prepare("INSERT INTO brands (name, slug, description, is_active, created_at) VALUES (?, ?, ?, 1, NOW())");
+            // Construir query dinámicamente para brands
+            $brand_insert_query = "INSERT INTO brands (name, slug";
+            if ($brand_has_is_active) $brand_insert_query .= ", is_active";
+            $brand_insert_query .= ", created_at) VALUES (?, ?";
+            if ($brand_has_is_active) $brand_insert_query .= ", 1";
+            $brand_insert_query .= ", NOW())";
+            
+            $stmt = $pdo->prepare($brand_insert_query);
             foreach ($brands as $brand) {
                 $stmt->execute($brand);
             }
@@ -208,6 +232,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             $results[] = "<br><strong>📦 CREANDO PRODUCTOS DE EJEMPLO</strong>";
             
+            // Verificar columnas de la tabla products
+            $product_columns = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
+            $has_stock = in_array('stock', $product_columns) || in_array('stock_quantity', $product_columns);
+            $has_description = in_array('description', $product_columns);
+            $has_requires_prescription = in_array('requires_prescription', $product_columns);
+            $has_active_ingredient = in_array('active_ingredient', $product_columns);
+            $has_dosage = in_array('dosage', $product_columns);
+            $has_presentation = in_array('presentation', $product_columns);
+            
             // Obtener IDs de categorías y marcas
             $cat_medicina = $pdo->query("SELECT id FROM categories WHERE slug = 'medicina-salud'")->fetchColumn();
             $cat_vitaminas = $pdo->query("SELECT id FROM categories WHERE slug = 'vitaminas-suplementos'")->fetchColumn();
@@ -219,25 +252,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $brand_jj = $pdo->query("SELECT id FROM brands WHERE slug = 'johnson-johnson'")->fetchColumn();
             $brand_abbott = $pdo->query("SELECT id FROM brands WHERE slug = 'abbott'")->fetchColumn();
             
+            // Solo crear productos básicos con columnas que existen
             $products = [
-                ['Paracetamol 500mg', 'paracetamol-500mg', 'Analgésico y antipirético para alivio del dolor y fiebre', 8.99, null, 100, $cat_medicina, $brand_bayer, 1, 1, 0, 'Paracetamol', '500mg', 'Caja x 20 tabletas'],
-                ['Ibuprofeno 400mg', 'ibuprofeno-400mg', 'Antiinflamatorio no esteroideo para dolor e inflamación', 12.50, 10.99, 150, $cat_medicina, $brand_bayer, 1, 1, 0, 'Ibuprofeno', '400mg', 'Caja x 30 cápsulas'],
-                ['Amoxicilina 500mg', 'amoxicilina-500mg', 'Antibiótico de amplio espectro', 25.00, null, 80, $cat_medicina, $brand_pfizer, 1, 0, 1, 'Amoxicilina', '500mg', 'Caja x 21 cápsulas'],
-                ['Omeprazol 20mg', 'omeprazol-20mg', 'Protector gástrico e inhibidor de bomba de protones', 18.75, 15.99, 120, $cat_medicina, $brand_jj, 1, 1, 0, 'Omeprazol', '20mg', 'Caja x 14 cápsulas'],
-                ['Vitamina C 1000mg', 'vitamina-c-1000mg', 'Suplemento de vitamina C para fortalecer el sistema inmune', 15.99, null, 200, $cat_vitaminas, $brand_abbott, 1, 1, 0, 'Ácido Ascórbico', '1000mg', 'Frasco x 60 tabletas'],
-                ['Complejo B', 'complejo-b', 'Vitaminas del complejo B para energía y metabolismo', 22.50, 19.99, 150, $cat_vitaminas, $brand_abbott, 1, 1, 0, 'Complejo B', 'Múltiple', 'Frasco x 90 cápsulas'],
-                ['Omega 3', 'omega-3', 'Ácidos grasos esenciales para salud cardiovascular', 28.99, null, 100, $cat_vitaminas, $brand_abbott, 1, 1, 0, 'EPA y DHA', '1000mg', 'Frasco x 60 cápsulas'],
-                ['Multivitamínico Complete', 'multivitaminico-complete', 'Fórmula completa de vitaminas y minerales', 32.50, 29.99, 120, $cat_vitaminas, $brand_abbott, 1, 1, 0, 'Múltiple', 'Diaria', 'Frasco x 90 tabletas'],
-                ['Alcohol en Gel', 'alcohol-gel', 'Gel desinfectante antibacterial para manos', 6.99, null, 300, $cat_cuidado, $brand_jj, 1, 0, 0, 'Alcohol 70%', '70%', 'Frasco x 250ml'],
-                ['Termómetro Digital', 'termometro-digital', 'Termómetro digital de lectura rápida', 12.99, null, 80, $cat_cuidado, $brand_jj, 1, 1, 0, null, null, 'Unidad'],
-                ['Protector Solar FPS 50+', 'protector-solar-fps50', 'Protección solar de amplio espectro', 24.99, 21.99, 100, $cat_dermato, $brand_jj, 1, 1, 0, 'Óxido de Zinc', 'FPS 50+', 'Frasco x 120ml'],
-                ['Crema Hidratante Facial', 'crema-hidratante-facial', 'Hidratación profunda para todo tipo de piel', 18.50, null, 90, $cat_dermato, $brand_jj, 1, 0, 0, null, null, 'Frasco x 50g']
+                ['Paracetamol 500mg', 'paracetamol-500mg', 8.99, 100, $cat_medicina, $brand_bayer, 1, 1],
+                ['Ibuprofeno 400mg', 'ibuprofeno-400mg', 12.50, 150, $cat_medicina, $brand_bayer, 1, 1],
+                ['Amoxicilina 500mg', 'amoxicilina-500mg', 25.00, 80, $cat_medicina, $brand_pfizer, 1, 0],
+                ['Omeprazol 20mg', 'omeprazol-20mg', 18.75, 120, $cat_medicina, $brand_jj, 1, 1],
+                ['Vitamina C 1000mg', 'vitamina-c-1000mg', 15.99, 200, $cat_vitaminas, $brand_abbott, 1, 1],
+                ['Complejo B', 'complejo-b', 22.50, 150, $cat_vitaminas, $brand_abbott, 1, 1],
+                ['Omega 3', 'omega-3', 28.99, 100, $cat_vitaminas, $brand_abbott, 1, 1],
+                ['Multivitamínico Complete', 'multivitaminico-complete', 32.50, 120, $cat_vitaminas, $brand_abbott, 1, 1],
+                ['Alcohol en Gel', 'alcohol-gel', 6.99, 300, $cat_cuidado, $brand_jj, 1, 0],
+                ['Termómetro Digital', 'termometro-digital', 12.99, 80, $cat_cuidado, $brand_jj, 1, 1],
+                ['Protector Solar FPS 50+', 'protector-solar-fps50', 24.99, 100, $cat_dermato, $brand_jj, 1, 1],
+                ['Crema Hidratante Facial', 'crema-hidratante-facial', 18.50, 90, $cat_dermato, $brand_jj, 1, 0]
             ];
             
-            $stmt = $pdo->prepare("
-                INSERT INTO products (name, slug, description, price, sale_price, stock, category_id, brand_id, is_active, is_featured, requires_prescription, active_ingredient, dosage, presentation, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-            ");
+            // Construir INSERT dinámicamente basado en columnas disponibles
+            $insert_cols = "name, slug, price";
+            if ($has_stock) $insert_cols .= ", stock_quantity";
+            $insert_cols .= ", category_id, brand_id, is_active, is_featured, created_at";
+            
+            $insert_vals = "?, ?, ?";
+            if ($has_stock) $insert_vals .= ", ?";
+            $insert_vals .= ", ?, ?, ?, ?, NOW()";
+            
+            $stmt = $pdo->prepare("INSERT INTO products ($insert_cols) VALUES ($insert_vals)");
             
             foreach ($products as $product) {
                 $stmt->execute($product);
