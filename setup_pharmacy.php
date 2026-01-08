@@ -55,6 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         
         try {
+            // Desactivar verificación de foreign keys temporalmente
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+            
             // Iniciar transacción
             $pdo->beginTransaction();
             
@@ -66,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             $results[] = "<br><strong>📁 ACTUALIZANDO CATEGORÍAS</strong>";
             
-            $pdo->exec("TRUNCATE TABLE categories");
+            $pdo->exec("DELETE FROM categories");
             $results[] = "✅ Categorías antiguas eliminadas";
             
             $categories = [
@@ -91,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             $results[] = "<br><strong>🏷️ ACTUALIZANDO MARCAS</strong>";
             
-            $pdo->exec("TRUNCATE TABLE brands");
+            $pdo->exec("DELETE FROM brands");
             $results[] = "✅ Marcas antiguas eliminadas";
             
             $brands = [
@@ -246,6 +249,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             $pdo->commit();
             
+            // Reactivar verificación de foreign keys
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+            
             $results[] = "<br><strong>🎉 ¡MIGRACIÓN COMPLETADA EXITOSAMENTE!</strong>";
             $results[] = "✅ Base de datos actualizada a MediCareOnline";
             $results[] = "✅ Todas las tablas y datos migrados correctamente";
@@ -258,6 +264,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+            
+            // Reactivar foreign keys incluso si hay error
+            try {
+                $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+            } catch (Exception $fk_error) {
+                // Ignorar error al reactivar foreign keys
+            }
+            
             $errors[] = "❌ Error durante la migración: " . $e->getMessage();
             $errors[] = "📝 Archivo: " . $e->getFile();
             $errors[] = "📍 Línea: " . $e->getLine();
