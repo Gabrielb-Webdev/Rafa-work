@@ -141,91 +141,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $results[] = "✅ " . count($brands) . " marcas farmacéuticas creadas";
             
             // =====================================================
-            // 3. AGREGAR CAMPOS PARA MEDICAMENTOS
+            // 3. AGREGAR CAMPOS PARA MEDICAMENTOS (OPCIONAL)
             // =====================================================
             $results[] = "<br><strong>🔧 ACTUALIZANDO ESTRUCTURA DE PRODUCTOS</strong>";
             
-            // Verificar y agregar columnas si no existen
-            $columns_to_add = [
-                "ALTER TABLE products ADD COLUMN requires_prescription BOOLEAN DEFAULT FALSE AFTER stock",
-                "ALTER TABLE products ADD COLUMN expiration_date DATE NULL AFTER requires_prescription",
-                "ALTER TABLE products ADD COLUMN active_ingredient VARCHAR(255) NULL AFTER expiration_date",
-                "ALTER TABLE products ADD COLUMN dosage VARCHAR(100) NULL AFTER active_ingredient",
-                "ALTER TABLE products ADD COLUMN presentation VARCHAR(100) NULL AFTER dosage",
-                "ALTER TABLE products ADD COLUMN warnings TEXT NULL AFTER presentation"
-            ];
-            
-            foreach ($columns_to_add as $sql) {
-                try {
-                    $pdo->exec($sql);
-                } catch (PDOException $e) {
-                    // Si la columna ya existe, continuar
-                    if ($e->getCode() != '42S21') {
-                        throw $e;
+            // Verificar que la tabla products existe
+            $products_table_check = $pdo->query("SHOW TABLES LIKE 'products'")->fetchAll();
+            if (count($products_table_check) > 0) {
+                // Verificar y agregar columnas si no existen
+                $columns_to_add = [
+                    ["requires_prescription", "ALTER TABLE products ADD COLUMN requires_prescription BOOLEAN DEFAULT FALSE"],
+                    ["expiration_date", "ALTER TABLE products ADD COLUMN expiration_date DATE NULL"],
+                    ["active_ingredient", "ALTER TABLE products ADD COLUMN active_ingredient VARCHAR(255) NULL"],
+                    ["dosage", "ALTER TABLE products ADD COLUMN dosage VARCHAR(100) NULL"],
+                    ["presentation", "ALTER TABLE products ADD COLUMN presentation VARCHAR(100) NULL"],
+                    ["warnings", "ALTER TABLE products ADD COLUMN warnings TEXT NULL"]
+                ];
+                
+                $existing_columns = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
+                
+                foreach ($columns_to_add as $col_info) {
+                    $col_name = $col_info[0];
+                    $sql = $col_info[1];
+                    
+                    if (!in_array($col_name, $existing_columns)) {
+                        try {
+                            $pdo->exec($sql);
+                            $results[] = "✅ Columna '$col_name' agregada";
+                        } catch (PDOException $e) {
+                            $results[] = "⚠️ No se pudo agregar columna '$col_name'";
+                        }
                     }
                 }
+                $results[] = "✅ Estructura de productos actualizada";
+            } else {
+                $results[] = "⚠️ Tabla 'products' no existe - omitiendo actualización de estructura";
             }
-            $results[] = "✅ Campos de medicamentos agregados a tabla products";
             
             // =====================================================
-            // 4. CREAR TABLA DE PRESCRIPCIONES
+            // 4. CREAR TABLA DE PRESCRIPCIONES (OPCIONAL)
             // =====================================================
-            $results[] = "<br><strong>💊 CREANDO TABLA DE PRESCRIPCIONES</strong>";
+            $results[] = "<br><strong>💊 VERIFICANDO TABLA DE PRESCRIPCIONES</strong>";
             
-            $pdo->exec("
-                CREATE TABLE IF NOT EXISTS prescriptions (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    order_id INT NOT NULL,
-                    user_id INT NOT NULL,
-                    prescription_file VARCHAR(255) NOT NULL,
-                    verified BOOLEAN DEFAULT FALSE,
-                    verified_by INT NULL,
-                    verified_at DATETIME NULL,
-                    notes TEXT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            ");
-            $results[] = "✅ Tabla de prescripciones médicas creada";
+            // Verificar si existen las tablas necesarias para foreign keys
+            $orders_exists = $pdo->query("SHOW TABLES LIKE 'orders'")->fetchAll();
+            $users_exists = $pdo->query("SHOW TABLES LIKE 'users'")->fetchAll();
+            
+            if (count($orders_exists) > 0 && count($users_exists) > 0) {
+                try {
+                    $pdo->exec("
+                        CREATE TABLE IF NOT EXISTS prescriptions (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            order_id INT NOT NULL,
+                            user_id INT NOT NULL,
+                            prescription_file VARCHAR(255) NOT NULL,
+                            verified BOOLEAN DEFAULT FALSE,
+                            verified_by INT NULL,
+                            verified_at DATETIME NULL,
+                            notes TEXT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                    ");
+                    $results[] = "✅ Tabla de prescripciones médicas creada";
+                } catch (PDOException $e) {
+                    $results[] = "⚠️ No se pudo crear tabla prescriptions: " . $e->getMessage();
+                }
+            } else {
+                $results[] = "⚠️ Tablas 'orders' o 'users' no existen - omitiendo tabla prescriptions";
+            }
             
             // =====================================================
-            // 5. CREAR ÍNDICES
+            // 5. CREAR ÍNDICES (OPCIONAL)
             // =====================================================
             $results[] = "<br><strong>⚡ OPTIMIZANDO ÍNDICES</strong>";
             
-            $indexes = [
-                "CREATE INDEX IF NOT EXISTS idx_requires_prescription ON products(requires_prescription)",
-                "CREATE INDEX IF NOT EXISTS idx_expiration_date ON products(expiration_date)",
-                "CREATE INDEX IF NOT EXISTS idx_active_ingredient ON products(active_ingredient)"
-            ];
-            
-            foreach ($indexes as $sql) {
-                try {
-                    $pdo->exec($sql);
-                } catch (PDOException $e) {
-                    // Si el índice ya existe, continuar
+            // Solo crear índices si la tabla products existe
+            $products_table_check2 = $pdo->query("SHOW TABLES LIKE 'products'")->fetchAll();
+            if (count($products_table_check2) > 0) {
+                $indexes = [
+                    "CREATE INDEX IF NOT EXISTS idx_requires_prescription ON products(requires_prescription)",
+                    "CREATE INDEX IF NOT EXISTS idx_expiration_date ON products(expiration_date)",
+                    "CREATE INDEX IF NOT EXISTS idx_active_ingredient ON products(active_ingredient)"
+                ];
+                
+                foreach ($indexes as $sql) {
+                    try {
+                        $pdo->exec($sql);
+                    } catch (PDOException $e) {
+                        // Si el índice ya existe o la columna no existe, continuar
+                    }
                 }
+                $results[] = "✅ Índices de rendimiento creados";
+            } else {
+                $results[] = "⚠️ Tabla products no existe - omitiendo índices";
             }
-            $results[] = "✅ Índices de rendimiento creados";
             
             // =====================================================
-            // 6. ACTUALIZAR CONFIGURACIÓN DEL SITIO
+            // 6. ACTUALIZAR CONFIGURACIÓN DEL SITIO (OPCIONAL)
             // =====================================================
-            $results[] = "<br><strong>⚙️ ACTUALIZANDO CONFIGURACIÓN</strong>";
+            $results[] = "<br><strong>⚙️ VERIFICANDO CONFIGURACIÓN</strong>";
             
-            $configs = [
-                ['site_name', 'MediCareOnline'],
-                ['site_description', 'Tu Farmacia Digital de Confianza'],
-                ['site_email', 'info@medicareonline.com']
-            ];
-            
-            $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key_name = ?");
-            foreach ($configs as $config) {
-                $stmt->execute([$config[1], $config[0]]);
+            // Verificar si existe la tabla settings
+            $tables_check = $pdo->query("SHOW TABLES LIKE 'settings'")->fetchAll();
+            if (count($tables_check) > 0) {
+                try {
+                    $configs = [
+                        ['site_name', 'MediCareOnline'],
+                        ['site_description', 'Tu Farmacia Digital de Confianza'],
+                        ['site_email', 'info@medicareonline.com']
+                    ];
+                    
+                    $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key_name = ?");
+                    foreach ($configs as $config) {
+                        $stmt->execute([$config[1], $config[0]]);
+                    }
+                    $results[] = "✅ Configuración del sitio actualizada";
+                } catch (Exception $e) {
+                    $results[] = "⚠️ No se pudo actualizar configuración (tabla settings no compatible)";
+                }
+            } else {
+                $results[] = "⚠️ Tabla 'settings' no existe - omitiendo configuración";
             }
-            $results[] = "✅ Configuración del sitio actualizada";
             
             // =====================================================
             // 7. CREAR PRODUCTOS DE EJEMPLO
