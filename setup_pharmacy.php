@@ -16,8 +16,30 @@ define('SETUP_PASSWORD', 'MediCare2026'); // CAMBIAR ESTO POR SEGURIDAD
 
 session_start();
 
-// Incluir configuración de base de datos
-require_once 'config/database.php';
+// =====================================================
+// CONEXIÓN A BASE DE DATOS (STANDALONE)
+// =====================================================
+$db_config = [
+    'host' => 'localhost',
+    'database' => 'u851317150_mg360_db',
+    'username' => 'u851317150_mg360_user',
+    'password' => 'MultiGamer2025'
+];
+
+try {
+    $pdo = new PDO(
+        "mysql:host={$db_config['host']};dbname={$db_config['database']};charset=utf8mb4",
+        $db_config['username'],
+        $db_config['password'],
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]
+    );
+} catch (PDOException $e) {
+    die("❌ Error de conexión: " . $e->getMessage());
+}
 
 // Variable para controlar si ya se ejecutó
 $executed = false;
