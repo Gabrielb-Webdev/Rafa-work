@@ -345,7 +345,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             // COMMIT TRANSACTION
             // =====================================================
-            $pdo->commit();
+            if ($pdo->inTransaction()) {
+                $pdo->commit();
+                $results[] = "✅ Transacción completada exitosamente";
+            }
             
             // Reactivar verificación de foreign keys
             $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
