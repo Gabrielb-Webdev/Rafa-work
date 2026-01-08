@@ -130,7 +130,10 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <?php if (file_exists('assets/css/pharmacy-style.css')): ?>
-    <link rel="stylesheet" href="assets/css/pharmacy-style.css?v=1.0">
+    <link rel="stylesheet" href="assets/css/pharmacy-style.css?v=<?= time() ?>">
+    <?php endif; ?>
+    <?php if (file_exists('assets/css/style.css')): ?>
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= time() ?>">
     <?php endif; ?>
     <style>
         :root {
@@ -578,11 +581,20 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<?php if (file_exists('assets/js/main.js')): ?>
+<script src="assets/js/main.js?v=<?= time() ?>"></script>
+<?php endif; ?>
+<?php if (file_exists('assets/js/cart-system-advanced.js')): ?>
+<script src="assets/js/cart-system-advanced.js?v=<?= time() ?>"></script>
+<?php endif; ?>
+<?php if (file_exists('assets/js/wishlist-system.js')): ?>
+<script src="assets/js/wishlist-system.js?v=<?= time() ?>"></script>
+<?php endif; ?>
 <script>
 function addToCart(productId) {
     // Agregar al carrito via AJAX o redireccionar
     if (confirm('¿Deseas agregar este producto al carrito?')) {
-        fetch('ajax/add-to-cart.php', {
+        fetch('ajax/add-to-cart.php?v=<?= time() ?>', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'product_id=' + productId + '&quantity=1'
