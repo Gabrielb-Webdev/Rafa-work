@@ -13,7 +13,11 @@
 // Password de seguridad para ejecutar este script
 define('CREATE_ADMIN_PASSWORD', 'MediCare2026');
 
-require_once 'config/database.php';
+// Mostrar errores para debug
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+require_once __DIR__ . '/config/database.php';
 
 $executed = false;
 $message = '';
