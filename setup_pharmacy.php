@@ -270,26 +270,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Verificar columnas de la tabla products
             $product_columns = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
+            $has_price = in_array('price', $product_columns);
             $has_stock = in_array('stock', $product_columns) || in_array('stock_quantity', $product_columns);
             $has_description = in_array('description', $product_columns);
-            $has_requires_prescription = in_array('requires_prescription', $product_columns);
-            $has_active_ingredient = in_array('active_ingredient', $product_columns);
-            $has_dosage = in_array('dosage', $product_columns);
-            $has_presentation = in_array('presentation', $product_columns);
+            $has_category = in_array('category_id', $product_columns);
+            $has_brand = in_array('brand_id', $product_columns);
+            $has_active = in_array('is_active', $product_columns);
+            $has_featured = in_array('is_featured', $product_columns);
             
-            // Obtener IDs de categorías y marcas
-            $cat_medicina = $pdo->query("SELECT id FROM categories WHERE slug = 'medicina-salud'")->fetchColumn();
-            $cat_vitaminas = $pdo->query("SELECT id FROM categories WHERE slug = 'vitaminas-suplementos'")->fetchColumn();
-            $cat_cuidado = $pdo->query("SELECT id FROM categories WHERE slug = 'cuidado-personal'")->fetchColumn();
-            $cat_dermato = $pdo->query("SELECT id FROM categories WHERE slug = 'dermatologia'")->fetchColumn();
+            // Obtener IDs de categorías y marcas si existen
+            $cat_medicina = $has_category ? $pdo->query("SELECT id FROM categories WHERE slug = 'medicina-salud'")->fetchColumn() : null;
+            $cat_vitaminas = $has_category ? $pdo->query("SELECT id FROM categories WHERE slug = 'vitaminas-suplementos'")->fetchColumn() : null;
+            $cat_cuidado = $has_category ? $pdo->query("SELECT id FROM categories WHERE slug = 'cuidado-personal'")->fetchColumn() : null;
+            $cat_dermato = $has_category ? $pdo->query("SELECT id FROM categories WHERE slug = 'dermatologia'")->fetchColumn() : null;
             
-            $brand_bayer = $pdo->query("SELECT id FROM brands WHERE slug = 'bayer'")->fetchColumn();
-            $brand_pfizer = $pdo->query("SELECT id FROM brands WHERE slug = 'pfizer'")->fetchColumn();
-            $brand_jj = $pdo->query("SELECT id FROM brands WHERE slug = 'johnson-johnson'")->fetchColumn();
-            $brand_abbott = $pdo->query("SELECT id FROM brands WHERE slug = 'abbott'")->fetchColumn();
+            $brand_bayer = $has_brand ? $pdo->query("SELECT id FROM brands WHERE slug = 'bayer'")->fetchColumn() : null;
+            $brand_pfizer = $has_brand ? $pdo->query("SELECT id FROM brands WHERE slug = 'pfizer'")->fetchColumn() : null;
+            $brand_jj = $has_brand ? $pdo->query("SELECT id FROM brands WHERE slug = 'johnson-johnson'")->fetchColumn() : null;
+            $brand_abbott = $has_brand ? $pdo->query("SELECT id FROM brands WHERE slug = 'abbott'")->fetchColumn() : null;
             
-            // Solo crear productos básicos con columnas que existen
-            $products = [
+            // Productos de ejemplo (name, slug, price, stock, category_id, brand_id, is_active, is_featured)
+            $products_data = [
                 ['Paracetamol 500mg', 'paracetamol-500mg', 8.99, 100, $cat_medicina, $brand_bayer, 1, 1],
                 ['Ibuprofeno 400mg', 'ibuprofeno-400mg', 12.50, 150, $cat_medicina, $brand_bayer, 1, 1],
                 ['Amoxicilina 500mg', 'amoxicilina-500mg', 25.00, 80, $cat_medicina, $brand_pfizer, 1, 0],
@@ -305,20 +306,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             
             // Construir INSERT dinámicamente basado en columnas disponibles
-            $insert_cols = "name, slug, price";
-            if ($has_stock) $insert_cols .= ", stock_quantity";
-            $insert_cols .= ", category_id, brand_id, is_active, is_featured, created_at";
+            $insert_cols = [];
+            $insert_placeholders = [];
             
-            $insert_vals = "?, ?, ?";
-            if ($has_stock) $insert_vals .= ", ?";
-            $insert_vals .= ", ?, ?, ?, ?, NOW()";
+            $insert_cols[] = "name";
+            $insert_cols[] = "slug";
+            if ($has_price) $insert_cols[] = "price";
+            if ($has_stock) $insert_cols[] = "stock_quantity";
+            if ($has_category) $insert_cols[] = "category_id";
+            if ($has_brand) $insert_cols[] = "brand_id";
+            if ($has_active) $insert_cols[] = "is_active";
+            if ($has_featured) $insert_cols[] = "is_featured";
+            $insert_cols[] = "created_at";
             
-            $stmt = $pdo->prepare("INSERT INTO products ($insert_cols) VALUES ($insert_vals)");
+            $insert_placeholders = array_fill(0, count($insert_cols) - 1, '?'); // -1 porque created_at usa NOW()
+            $insert_placeholders[] = 'NOW()';
             
-            foreach ($products as $product) {
-                $stmt->execute($product);
+            $sql = "INSERT INTO products (" . implode(", ", $insert_cols) . ") VALUES (" . implode(", ", $insert_placeholders) . ")";
+            $stmt = $pdo->prepare($sql);
+            
+            foreach ($products_data as $product) {
+                // Construir array de valores según columnas disponibles
+                $values = [];
+                $values[] = $product[0]; // name
+                $values[] = $product[1]; // slug
+                if ($has_price) $values[] = $product[2]; // price
+                if ($has_stock) $values[] = $product[3]; // stock
+                if ($has_category) $values[] = $product[4]; // category_id
+                if ($has_brand) $values[] = $product[5]; // brand_id
+                if ($has_active) $values[] = $product[6]; // is_active
+                if ($has_featured) $values[] = $product[7]; // is_featured
+                // created_at se maneja con NOW()
+                
+                $stmt->execute($values);
             }
-            $results[] = "✅ " . count($products) . " productos farmacéuticos de ejemplo creados";
+            $results[] = "✅ " . count($products_data) . " productos farmacéuticos de ejemplo creados";
             
             // =====================================================
             // COMMIT TRANSACTION
