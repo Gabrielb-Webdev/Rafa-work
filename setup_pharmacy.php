@@ -268,6 +268,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =====================================================
             $results[] = "<br><strong>📦 CREANDO PRODUCTOS DE EJEMPLO</strong>";
             
+            // Limpiar productos existentes
+            try {
+                $pdo->exec("DELETE FROM products");
+                $results[] = "✅ Productos antiguos eliminados";
+            } catch (PDOException $e) {
+                $results[] = "⚠️ No se pudieron eliminar productos antiguos: " . $e->getMessage();
+            }
+            
             // Verificar columnas de la tabla products
             $product_columns = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
             $has_price = in_array('price', $product_columns);
