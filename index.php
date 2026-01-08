@@ -22,94 +22,163 @@
 
 // Activar reporte de errores solo en desarrollo
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Cambiar a 1 para debug
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Iniciar sesión si no está activa
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// Iniciar sesión
+session_start();
+
+// Conexión a base de datos directa
+$is_local = (isset($_SERVER['SERVER_NAME']) && ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1'));
+
+if ($is_local) {
+    $host = 'localhost';
+    $dbname = 'multigamer360';
+    $username = 'root';
+    $password = '';
+} else {
+    $host = 'localhost';
+    $dbname = 'u851317150_mg360_db';
+    $username = 'u851317150_mg360_user';
+    $password = 'MultiGamer2025';
 }
 
-// Incluir archivos necesarios con manejo de errores
 try {
-    if (!file_exists('config/database.php')) {
-        throw new Exception('Archivo config/database.php no encontrado');
-    }
-    require_once 'config/database.php';
-    
-    if (!file_exists('includes/auth.php')) {
-        throw new Exception('Archivo includes/auth.php no encontrado');
-    }
-    require_once 'includes/auth.php';
-    
-    if (!file_exists('includes/functions.php')) {
-        throw new Exception('Archivo includes/functions.php no encontrado');
-    }
-    require_once 'includes/functions.php';
-    
-    if (!file_exists('includes/product_manager.php')) {
-        throw new Exception('Archivo includes/product_manager.php no encontrado');
-    }
-    require_once 'includes/product_manager.php';
-    
-    if (!file_exists('config/user_manager.php')) {
-        throw new Exception('Archivo config/user_manager.php no encontrado');
-    }
-    require_once 'config/user_manager.php';
-} catch (Exception $e) {
-    error_log("Error fatal en index.php: " . $e->getMessage());
-    die("Error al cargar el sitio. Por favor, contacta al administrador. <a href='check_errors.php'>Ver diagnóstico</a>");
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error de conexión a la base de datos. <a href='check_errors.php'>Ver diagnóstico</a>");
 }
 
 // =====================================================
-// INICIALIZACIÓN DE MANAGERS
+// FUNCIONES AUXILIARES
 // =====================================================
 
-// Crear instancias de los managers para manejo de datos
-try {
-    $productManager = new ProductManager($pdo);
-    $userManager = new UserManager($pdo);
-} catch (Exception $e) {
-    error_log("Error al inicializar managers: " . $e->getMessage());
-    $productManager = null;
-    $userManager = null;
+function isLoggedIn() {
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
+
+function getCurrentUser() {
+    global $pdo;
+    if (!isLoggedIn()) return null;
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
+// =====================================================
+// INICIALIZACIÓN
+// =====================================================
+
+$currentUser = getCurrentUser();
+$isLoggedIn = isLoggedIn();
 
 // =====================================================
 // PROCESAMIENTO DE DATOS
 // =====================================================
 
-// Verificar si el usuario acaba de registrarse para mostrar mensaje de bienvenida
 $showWelcomeMessage = isset($_GET['registered']) && $_GET['registered'] == '1';
 
-// Obtener datos principales para la página de inicio
+// Obtener productos
 try {
-    if ($productManager) {
-        $featured_products = $productManager->getFeaturedProducts(10);     // Productos destacados (máx 10)
-        $new_products = $productManager->getNewProducts(10);               // Productos nuevos (máx 10)
-        $categories = $productManager->getCategories();                    // Categorías disponibles
-    } else {
-        $featured_products = [];
-        $new_products = [];
-        $categories = [];
-    }
+    $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT 8");
+    $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT 8");
+    $new_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $stmt = $pdo->query("SELECT * FROM categories WHERE is_active = 1");
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    error_log("Error en index.php: " . $e->getMessage());
     $featured_products = [];
     $new_products = [];
     $categories = [];
 }
 
-// =====================================================
-// INCLUIR HEADER
-// =====================================================
-if (file_exists('includes/header.php')) {
-    include 'includes/header.php';
-} else {
-    echo "<!DOCTYPE html><html><head><title>MediCareOnline</title></head><body>";
-    echo "<h1>Error: Header no encontrado</h1>";
-} 
+// Carrito
+$cartCount = 0;
+$cartTotal = 0;
+if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+    $cartCount = array_sum($_SESSION['cart']);
+    // Calcular total
+    foreach ($_SESSION['cart'] as $productId => $qty) {
+        try {
+            $stmt = $pdo->prepare("SELECT price FROM products WHERE id = ?");
+            $stmt->execute([$productId]);
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($product) {
+                $cartTotal += $product['price'] * $qty;
+            }
+        } catch (Exception $e) {}
+    }
+}
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCareOnline - Tu Farmacia Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <?php if (file_exists('assets/css/pharmacy-style.css')): ?>
+    <link rel="stylesheet" href="assets/css/pharmacy-style.css?v=1.0">
+    <?php endif; ?>
+    <style>
+        :root {
+            --primary-color: #00D4FF;
+            --primary-dark: #00A8CC;
+            --secondary-color: #0088AA;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; color: #333; }
+        .main-header { background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%); padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { display: flex; align-items: center; color: white; text-decoration: none; font-size: 1.8rem; font-weight: 700; }
+        .logo i { font-size: 2.5rem; margin-right: 15px; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        .btn-cart { background: white; color: var(--primary-color); padding: 8px 20px; border-radius: 50px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="index.php" class="logo">
+                        <i class="fas fa-pills"></i>
+                        <span>MediCare<span style="color: #1a1a1a;">Online</span></span>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <div class="nav-links justify-content-end">
+                        <a href="productos.php">Productos</a>
+                        <a href="contacto.php">Contacto</a>
+                        <?php if ($isLoggedIn && $currentUser): ?>
+                            <a href="profile.php"><?= htmlspecialchars($currentUser['first_name'] ?? 'Mi Cuenta') ?></a>
+                            <a href="logout.php">Salir</a>
+                        <?php else: ?>
+                            <a href="login.php">Iniciar Sesión</a>
+                            <a href="register.php">Registrarse</a>
+                        <?php endif; ?>
+                        <a href="carrito.php" class="btn-cart">
+                            <i class="fas fa-shopping-cart"></i> <?= $cartCount > 0 ? "($cartCount) $" . number_format($cartTotal, 2) : '(0) $0.00' ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
 <?php if ($showWelcomeMessage): ?>
 <div class="container mt-3">
@@ -132,24 +201,84 @@ if (file_exists('includes/header.php')) {
 </div>
 <?php endif; ?>
 
+<style>
+/* Hero Section */
+.hero-pharmacy { background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%); padding: 80px 0; min-height: 500px; }
+.hero-title { font-size: 3.5rem; font-weight: 700; color: white; margin-bottom: 20px; }
+.hero-subtitle { color: white; font-size: 1.2rem; margin-bottom: 30px; opacity: 0.95; }
+.btn-primary-pharmacy { background: white; color: var(--primary-color); padding: 15px 40px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
+.btn-primary-pharmacy:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+/* Services */
+.services-section { padding: 80px 0; background: white; }
+.service-card { text-align: center; padding: 40px 20px; border-radius: 15px; transition: all 0.3s; }
+.service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,212,255,0.2); }
+.service-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; color: white; }
+/* Products */
+.products-section { padding: 80px 0; background: #f8f9fa; }
+.section-title { font-size: 2.5rem; font-weight: 700; text-align: center; margin-bottom: 50px; color: #333; position: relative; padding-bottom: 15px; }
+.section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: linear-gradient(90deg, #00D4FF 0%, #00A8CC 100%); border-radius: 2px; }
+.product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: all 0.3s; margin-bottom: 30px; }
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 10px 30px rgba(0,212,255,0.2); }
+.product-image { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; padding: 20px; }
+.product-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.product-body { padding: 20px; }
+.product-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; min-height: 50px; color: #333; }
+.product-price { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; }
+.btn-add-cart { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 50px; width: 100%; font-weight: 600; transition: all 0.3s; cursor: pointer; }
+.btn-add-cart:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.btn-see-more { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 12px 40px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
+.btn-see-more:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
+/* About */
+.about-section { padding: 80px 0; background: white; }
+.about-title { font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 20px; }
+.about-text { color: #666; font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; }
+/* Testimonials */
+.testimonials-section { padding: 80px 0; background: #f8f9fa; }
+.testimonial-card { background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; }
+.testimonial-image { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px; border: 5px solid var(--primary-color); }
+.testimonial-image img { width: 100%; height: 100%; object-fit: cover; }
+.testimonial-name { font-size: 1.5rem; font-weight: 700; color: #333; margin-bottom: 15px; }
+.testimonial-text { color: #666; font-size: 1rem; line-height: 1.8; font-style: italic; }
+/* Newsletter */
+.newsletter-section { padding: 80px 0; background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%); }
+.newsletter-title { font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 15px; }
+.newsletter-text { color: white; font-size: 1.1rem; opacity: 0.95; }
+.newsletter-input { border: none; padding: 15px 25px; font-size: 1rem; border-radius: 50px 0 0 50px; flex: 1; }
+.btn-subscribe { background: #1a1a1a; color: white; border: none; padding: 15px 40px; font-size: 1rem; font-weight: 600; border-radius: 0 50px 50px 0; transition: all 0.3s; }
+.btn-subscribe:hover { background: #333; }
+/* Contact */
+.contact-section { padding: 80px 0; background: white; }
+.contact-input, .contact-textarea { border: 2px solid #e0e0e0; padding: 12px 20px; font-size: 1rem; border-radius: 8px; transition: all 0.3s; width: 100%; }
+.contact-input:focus, .contact-textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
+/* Footer */
+.footer { background: #1a1a1a; color: white; padding: 40px 0; text-align: center; }
+.footer-logo { font-size: 1.8rem; font-weight: 700; margin-bottom: 20px; }
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem; }
+    .section-title { font-size: 2rem; }
+    .nav-links { flex-direction: column; gap: 15px; }
+}
+</style>
+
 <div class="container-fluid p-0">
-    <!-- Hero Section - Medicina Online -->
+    <!-- Hero Section -->
     <section class="hero-pharmacy">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="hero-content-pharmacy">
-                        <h1 class="hero-title-pharmacy">Welcome To Our<br><span class="highlight-cyan">Online Medicine</span></h1>
-                        <p class="hero-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et gravida mauris, sit amet consectetur augue lorem eget gravida mauris lorem eget gravida.</p>
-                        <a href="productos.php" class="btn btn-pharmacy-primary">
-                            <i class="fas fa-pills me-2"></i> Buy Now
-                        </a>
-                    </div>
+                    <h1 class="hero-title">Welcome To Our<br>Online Medicine</h1>
+                    <p class="hero-subtitle">Tu farmacia digital de confianza. Encuentra los mejores medicamentos y suplementos con entrega rápida y segura.</p>
+                    <a href="productos.php" class="btn-primary-pharmacy">
+                        <i class="fas fa-pills me-2"></i> Buy Now
+                    </a>
                 </div>
                 <div class="col-lg-6">
-                    <div class="hero-image-pharmacy">
-                        <img src="assets/images/medicine-hero.png" alt="Medicine" class="img-fluid" onerror="this.src='assets/images/products/product1.jpg'">
-                    </div>
+                    <img src="assets/images/medicine-hero.png" alt="Medicine" class="img-fluid" 
+                         onerror="this.src='https://via.placeholder.com/500x400/00D4FF/ffffff?text=MediCare'" style="max-width: 100%;">
+                </div>
+            </div>
+        </div>
+    </section>
                 </div>
             </div>
         </div>
@@ -424,7 +553,7 @@ if (file_exists('includes/header.php')) {
                         <textarea class="form-control contact-textarea-pharmacy" placeholder="Message" name="mensaje" rows="4" required></textarea>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-pharmacy-primary w-100">Send</button>
+                        <button type="submit" class="btn-primary-pharmacy w-100" style="width: auto !important; display: inline-block;">Send</button>
                     </div>
                 </form>
             </div>
@@ -432,36 +561,58 @@ if (file_exists('includes/header.php')) {
     </div>
 </section>
 
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">
+            <i class="fas fa-pills"></i> MediCareOnline
+        </div>
+        <p>&copy; <?= date('Y') ?> MediCareOnline. Todos los derechos reservados.</p>
+        <p>info@medicareonline.com | Soporte 24/7</p>
+        <div class="mt-3">
+            <a href="https://facebook.com" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://instagram.com" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com" class="text-white"><i class="fab fa-twitter"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Debug: Mostrar estado actual del carrito en la consola
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== DEBUG CARRITO ===');
-
-    // Verificar estado del carrito para cada producto
-    const productIds = [1, 2, 3, 4];
-    productIds.forEach(productId => {
-        fetch(`ajax/check-cart-item.php?product_id=${productId}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(`Producto ${productId}:`, data);
-            })
-            .catch(error => console.error(`Error verificando producto ${productId}:`, error));
-    });
-
-    // Verificar contador total del carrito
-    fetch('ajax/get-cart-count.php')
+function addToCart(productId) {
+    // Agregar al carrito via AJAX o redireccionar
+    if (confirm('¿Deseas agregar este producto al carrito?')) {
+        fetch('ajax/add-to-cart.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'product_id=' + productId + '&quantity=1'
+        })
         .then(response => response.json())
         .then(data => {
-            console.log('Estado general del carrito:', data);
+            if (data.success) {
+                alert('Producto agregado al carrito');
+                location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'No se pudo agregar el producto'));
+            }
         })
-        .catch(error => console.error('Error cargando estado del carrito:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al agregar el producto');
+        });
+    }
+}
+
+// Efecto scroll suave
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
 });
 </script>
-
-<?php 
-if (file_exists('includes/footer.php')) {
-    include 'includes/footer.php';
-} else {
-    echo "</body></html>";
-}
-?>
+</body>
+</html>
