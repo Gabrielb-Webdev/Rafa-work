@@ -20,25 +20,60 @@
 // CONFIGURACIÓN INICIAL
 // =====================================================
 
+// Activar reporte de errores solo en desarrollo
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Cambiar a 1 para debug
+ini_set('log_errors', 1);
+
 // Iniciar sesión si no está activa
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Incluir archivos necesarios
-require_once 'config/database.php';
-require_once 'includes/auth.php';
-require_once 'includes/functions.php';
-require_once 'includes/product_manager.php';
-require_once 'config/user_manager.php';
+// Incluir archivos necesarios con manejo de errores
+try {
+    if (!file_exists('config/database.php')) {
+        throw new Exception('Archivo config/database.php no encontrado');
+    }
+    require_once 'config/database.php';
+    
+    if (!file_exists('includes/auth.php')) {
+        throw new Exception('Archivo includes/auth.php no encontrado');
+    }
+    require_once 'includes/auth.php';
+    
+    if (!file_exists('includes/functions.php')) {
+        throw new Exception('Archivo includes/functions.php no encontrado');
+    }
+    require_once 'includes/functions.php';
+    
+    if (!file_exists('includes/product_manager.php')) {
+        throw new Exception('Archivo includes/product_manager.php no encontrado');
+    }
+    require_once 'includes/product_manager.php';
+    
+    if (!file_exists('config/user_manager.php')) {
+        throw new Exception('Archivo config/user_manager.php no encontrado');
+    }
+    require_once 'config/user_manager.php';
+} catch (Exception $e) {
+    error_log("Error fatal en index.php: " . $e->getMessage());
+    die("Error al cargar el sitio. Por favor, contacta al administrador. <a href='check_errors.php'>Ver diagnóstico</a>");
+}
 
 // =====================================================
 // INICIALIZACIÓN DE MANAGERS
 // =====================================================
 
 // Crear instancias de los managers para manejo de datos
-$productManager = new ProductManager($pdo);
-$userManager = new UserManager($pdo);
+try {
+    $productManager = new ProductManager($pdo);
+    $userManager = new UserManager($pdo);
+} catch (Exception $e) {
+    error_log("Error al inicializar managers: " . $e->getMessage());
+    $productManager = null;
+    $userManager = null;
+}
 
 // =====================================================
 // PROCESAMIENTO DE DATOS
@@ -49,9 +84,15 @@ $showWelcomeMessage = isset($_GET['registered']) && $_GET['registered'] == '1';
 
 // Obtener datos principales para la página de inicio
 try {
-    $featured_products = $productManager->getFeaturedProducts(10);     // Productos destacados (máx 10)
-    $new_products = $productManager->getNewProducts(10);               // Productos nuevos (máx 10)
-    $categories = $productManager->getCategories();                    // Categorías disponibles
+    if ($productManager) {
+        $featured_products = $productManager->getFeaturedProducts(10);     // Productos destacados (máx 10)
+        $new_products = $productManager->getNewProducts(10);               // Productos nuevos (máx 10)
+        $categories = $productManager->getCategories();                    // Categorías disponibles
+    } else {
+        $featured_products = [];
+        $new_products = [];
+        $categories = [];
+    }
 } catch (Exception $e) {
     error_log("Error en index.php: " . $e->getMessage());
     $featured_products = [];
@@ -62,7 +103,12 @@ try {
 // =====================================================
 // INCLUIR HEADER
 // =====================================================
-include 'includes/header.php'; 
+if (file_exists('includes/header.php')) {
+    include 'includes/header.php';
+} else {
+    echo "<!DOCTYPE html><html><head><title>MediCareOnline</title></head><body>";
+    echo "<h1>Error: Header no encontrado</h1>";
+} 
 ?>
 
 <?php if ($showWelcomeMessage): ?>
@@ -412,4 +458,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php 
+if (file_exists('includes/footer.php')) {
+    include 'includes/footer.php';
+} else {
+    echo "</body></html>";
+}
+?>
