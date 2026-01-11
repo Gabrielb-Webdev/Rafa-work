@@ -57,7 +57,10 @@ try {
             file_put_contents('config/database.php', $database_php_content);
             $results[] = "✅ Archivo config/database.php creado";
             
-            // ==================== TABLA USERS ====================
+            // ==================== ELIMINAR TABLAS ANTIGUAS ====================
+            // Desactivar verificación de foreign keys
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+            
             $pdo->exec("DROP TABLE IF EXISTS prescriptions");
             $pdo->exec("DROP TABLE IF EXISTS order_items");
             $pdo->exec("DROP TABLE IF EXISTS orders");
@@ -67,6 +70,9 @@ try {
             $pdo->exec("DROP TABLE IF EXISTS categories");
             $pdo->exec("DROP TABLE IF EXISTS brands");
             $pdo->exec("DROP TABLE IF EXISTS users");
+            
+            // Reactivar verificación de foreign keys
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
             
             $results[] = "✅ Tablas antiguas eliminadas";
             
