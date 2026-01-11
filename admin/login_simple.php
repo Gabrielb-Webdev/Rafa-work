@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['is_admin'] = true;
                     $_SESSION['role'] = $user['role'];
                     
-                    header('Location: index.php');
+                    header('Location: index_simple.php');
                     exit;
                 }
             } else {
