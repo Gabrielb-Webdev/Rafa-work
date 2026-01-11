@@ -32,6 +32,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $results[] = "✅ Conexión establecida a: $dbname";
             
+            // ==================== CREAR ARCHIVO config/database.php ====================
+            $database_php_content = "<?php
+/**
+ * CONFIGURACIÓN DE BASE DE DATOS - MediCareOnline
+ */
+\$host = 'localhost';
+\$dbname = 'u851317150_mg360_db';
+\$username = 'u851317150_mg360_user';
+\$password = 'MultiGamer2025';
+
+try {
+    \$pdo = new PDO(\"mysql:host=\$host;dbname=\$dbname;charset=utf8mb4\", \$username, \$password);
+    \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    \$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException \$e) {
+    die('Error de conexión: ' . \$e->getMessage());
+}
+?>";
+            
+            if (!is_dir('config')) {
+                mkdir('config', 0755, true);
+            }
+            file_put_contents('config/database.php', $database_php_content);
+            $results[] = "✅ Archivo config/database.php creado";
+            
             // ==================== TABLA USERS ====================
             $pdo->exec("DROP TABLE IF EXISTS prescriptions");
             $pdo->exec("DROP TABLE IF EXISTS order_items");
