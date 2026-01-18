@@ -46,7 +46,10 @@ include __DIR__ . '/includes/header.php';
                     <a href="<?php echo BASE_URL; ?>/products.php" class="btn-shop">Shop Now</a>
                 </div>
                 <div class="hero-image">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/hero-pills.png" alt="Pills" class="pills-image">
+                    <div class="hero-placeholder">
+                        <div class="hero-placeholder-icon">💊</div>
+                        <div class="hero-placeholder-text">Hero Pills Image</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -92,7 +95,12 @@ include __DIR__ . '/includes/header.php';
                 <a href="<?php echo BASE_URL; ?>/products.php" class="btn-get-now">Get Now</a>
             </div>
             <div class="discount-image">
-                <img src="<?php echo BASE_URL; ?>/assets/images/pills-scattered.png" alt="Pills">
+                <div class="discount-placeholder">
+                    <div class="discount-placeholder-content">
+                        <div class="discount-placeholder-icon">💊💊💊</div>
+                        <div class="discount-placeholder-text">Scattered Pills Image</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -117,9 +125,16 @@ include __DIR__ . '/includes/header.php';
                     <?php endif; ?>
                     
                     <div class="product-image">
-                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.png'); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>"
-                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                        <?php if (!empty($product['image']) && file_exists(__DIR__ . '/uploads/products/' . $product['image'])): ?>
+                            <img src="<?php echo BASE_URL . '/uploads/products/' . $product['image']; ?>" 
+                                 alt="<?php echo htmlspecialchars($product['name']); ?>">
+                        <?php else: ?>
+                            <div class="img-placeholder">
+                                <div class="img-placeholder-icon">📦</div>
+                                <div class="img-placeholder-text">Product Image</div>
+                                <div class="img-placeholder-subtext">Upload image here</div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="product-info">
@@ -180,9 +195,16 @@ $vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($f
                     <?php endif; ?>
                     
                     <div class="product-image">
-                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.png'); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>"
-                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                        <?php if (!empty($product['image']) && file_exists(__DIR__ . '/uploads/products/' . $product['image'])): ?>
+                            <img src="<?php echo BASE_URL . '/uploads/products/' . $product['image']; ?>" 
+                                 alt="<?php echo htmlspecialchars($product['name']); ?>">
+                        <?php else: ?>
+                            <div class="img-placeholder">
+                                <div class="img-placeholder-icon">📦</div>
+                                <div class="img-placeholder-text">Product Image</div>
+                                <div class="img-placeholder-subtext">Upload image here</div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="product-info">
@@ -228,7 +250,11 @@ $vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($f
         <h2 class="section-title centered">ABOUT US</h2>
         <div class="about-content">
             <div class="about-image">
-                <img src="<?php echo BASE_URL; ?>/assets/images/about-products.png" alt="About Us">
+                <div class="about-placeholder">
+                    <div class="about-placeholder-icon">🏥</div>
+                    <div class="about-placeholder-text">About Section Image</div>
+                    <div class="img-placeholder-subtext">Medical products showcase</div>
+                </div>
             </div>
             <div class="about-text">
                 <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
@@ -245,7 +271,9 @@ $vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($f
         <div class="testimonial-card">
             <p class="testimonial-text">"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be"</p>
             <div class="testimonial-author">
-                <img src="<?php echo BASE_URL; ?>/assets/images/client-avatar.jpg" alt="Client" class="author-avatar">
+                <div class="author-avatar placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
                 <div class="author-info">
                     <h4>Venison Aune</h4>
                     <p>Customer</p>

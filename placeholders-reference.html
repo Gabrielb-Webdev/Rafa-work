@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placeholders Reference - Online Medicine Store</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .reference-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .reference-title {
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+        }
+        .reference-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .reference-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .placeholder-section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .placeholder-section h2 {
+            color: #00d4d4;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .placeholder-section h2::before {
+            content: '▸';
+            color: #00d4d4;
+        }
+        .placeholder-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00d4d4;
+        }
+        .placeholder-info p {
+            margin: 5px 0;
+            color: #333;
+        }
+        .placeholder-info strong {
+            color: #00d4d4;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .hero-demo {
+            min-height: 400px;
+            background: linear-gradient(135deg, #00d4d4 0%, #00b8e6 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .code-snippet {
+            background: #1a1a1a;
+            color: #00d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .code-snippet pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #e0e0e0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 2px solid #e0e0e0;
+        }
+        .legend-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="reference-container">
+        <div class="reference-title">
+            <h1>📸 Placeholders Reference Guide</h1>
+            <p>Todos los placeholders visuales implementados en tu sitio</p>
+        </div>
+
+        <!-- Hero Placeholder -->
+        <div class="placeholder-section">
+            <h2>Hero Pills Image</h2>
+            <div class="placeholder-info">
+                <p><strong>Ubicación:</strong> Sección Hero principal (primera pantalla)</p>
+                <p><strong>Dimensiones:</strong> 500x500px circular</p>
+                <p><strong>Uso:</strong> Imagen 3D de píldoras azules y blancas flotantes</p>
+            </div>
+            <div class="hero-demo">
+                <div class="hero-placeholder">
+                    <div class="hero-placeholder-icon">💊</div>
+                    <div class="hero-placeholder-text">Hero Pills Image</div>
+                </div>
+            </div>
+            <div class="code-snippet">
+                <pre>&lt;div class="hero-placeholder"&gt;
+    &lt;div class="hero-placeholder-icon"&gt;💊&lt;/div&gt;
+    &lt;div class="hero-placeholder-text"&gt;Hero Pills Image&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- Product Placeholder -->
+        <div class="placeholder-section">
+            <h2>Product Image</h2>
+            <div class="placeholder-info">
+                <p><strong>Ubicación:</strong> Cards de productos (Medicine & Vitamins)</p>
+                <p><strong>Dimensiones:</strong> 400x400px cuadrado</p>
+                <p><strong>Uso:</strong> Fotos de productos individuales con fondo blanco</p>
+                <p><strong>Comportamiento:</strong> Se oculta automáticamente si existe imagen real</p>
+            </div>
+            <div class="demo-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="img-placeholder">
+                            <div class="img-placeholder-icon">📦</div>
+                            <div class="img-placeholder-text">Product Image</div>
+                            <div class="img-placeholder-subtext">Upload image here</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="sale-badge">SALE</span>
+                    <div class="product-image">
+                        <div class="img-placeholder">
+                            <div class="img-placeholder-icon">📦</div>
+                            <div class="img-placeholder-text">Product Image</div>
+                            <div class="img-placeholder-subtext">Upload image here</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="img-placeholder">
+                            <div class="img-placeholder-icon">📦</div>
+                            <div class="img-placeholder-text">Product Image</div>
+                            <div class="img-placeholder-subtext">Upload image here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-snippet">
+                <pre>&lt;div class="img-placeholder"&gt;
+    &lt;div class="img-placeholder-icon"&gt;📦&lt;/div&gt;
+    &lt;div class="img-placeholder-text"&gt;Product Image&lt;/div&gt;
+    &lt;div class="img-placeholder-subtext"&gt;Upload image here&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- Discount Banner Placeholder -->
+        <div class="placeholder-section">
+            <h2>Scattered Pills Image</h2>
+            <div class="placeholder-info">
+                <p><strong>Ubicación:</strong> Banner de descuento (sección oscura)</p>
+                <p><strong>Dimensiones:</strong> Flexible, aproximadamente 600x400px</p>
+                <p><strong>Uso:</strong> Imagen de píldoras dispersas con transparencia</p>
+            </div>
+            <div style="background: #1a1a1a; padding: 40px; border-radius: 15px;">
+                <div class="discount-placeholder">
+                    <div class="discount-placeholder-content">
+                        <div class="discount-placeholder-icon">💊💊💊</div>
+                        <div class="discount-placeholder-text">Scattered Pills Image</div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-snippet">
+                <pre>&lt;div class="discount-placeholder"&gt;
+    &lt;div class="discount-placeholder-content"&gt;
+        &lt;div class="discount-placeholder-icon"&gt;💊💊💊&lt;/div&gt;
+        &lt;div class="discount-placeholder-text"&gt;Scattered Pills Image&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- About Placeholder -->
+        <div class="placeholder-section">
+            <h2>About Section Image</h2>
+            <div class="placeholder-info">
+                <p><strong>Ubicación:</strong> Sección About Us</p>
+                <p><strong>Dimensiones:</strong> 600x400px rectangular</p>
+                <p><strong>Uso:</strong> Showcase de productos médicos, vitaminas en exhibición</p>
+            </div>
+            <div class="about-placeholder">
+                <div class="about-placeholder-icon">🏥</div>
+                <div class="about-placeholder-text">About Section Image</div>
+                <div class="img-placeholder-subtext">Medical products showcase</div>
+            </div>
+            <div class="code-snippet">
+                <pre>&lt;div class="about-placeholder"&gt;
+    &lt;div class="about-placeholder-icon"&gt;🏥&lt;/div&gt;
+    &lt;div class="about-placeholder-text"&gt;About Section Image&lt;/div&gt;
+    &lt;div class="img-placeholder-subtext"&gt;Medical products showcase&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- Avatar Placeholder -->
+        <div class="placeholder-section">
+            <h2>Client Avatar</h2>
+            <div class="placeholder-info">
+                <p><strong>Ubicación:</strong> Sección de testimonios</p>
+                <p><strong>Dimensiones:</strong> 80x80px circular</p>
+                <p><strong>Uso:</strong> Foto del cliente que da el testimonio</p>
+            </div>
+            <div style="display: flex; justify-content: center; padding: 40px;">
+                <div class="author-avatar placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <div class="code-snippet">
+                <pre>&lt;div class="author-avatar placeholder"&gt;
+    &lt;i class="fas fa-user"&gt;&lt;/i&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- Color Legend -->
+        <div class="placeholder-section">
+            <h2>Color Guide</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb);"></div>
+                    <div class="legend-text">
+                        <strong>Product Placeholder</strong><br>
+                        #e3f2fd → #bbdefb
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,255,255,0.2);"></div>
+                    <div class="legend-text">
+                        <strong>Hero Placeholder</strong><br>
+                        rgba(255,255,255,0.2)
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9);"></div>
+                    <div class="legend-text">
+                        <strong>About Placeholder</strong><br>
+                        #e8f5e9 → #c8e6c9
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #00d4d4, #00b8e6);"></div>
+                    <div class="legend-text">
+                        <strong>Avatar Placeholder</strong><br>
+                        #00d4d4 → #00b8e6
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="placeholder-section" style="background: #00d4d4; color: white;">
+            <h2 style="color: white;">Quick Reference</h2>
+            <div style="display: grid; gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>✅ Sistema Inteligente</strong><br>
+                    Si existe imagen real → se muestra<br>
+                    Si NO existe → placeholder bonito
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>🎨 Estilos en</strong><br>
+                    assets/css/style.css<br>
+                    Sección: "IMAGE PLACEHOLDERS"
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>📖 Documentación</strong><br>
+                    PLACEHOLDERS-GUIDE.md<br>
+                    IMAGES-GUIDE.md
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>🚀 Estado</strong><br>
+                    ✅ Listo para producción<br>
+                    ✅ Sin errores 404<br>
+                    ✅ Diseño profesional
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
