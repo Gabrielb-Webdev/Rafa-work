@@ -19,7 +19,8 @@
 
             <div class="footer-section">
                 <h3>NEWSLETTER</h3>
-                <p>Suscríbete para recibir las últimas ofertas y noticias</p>
+                <p>Get Now Medicines</p>
+                <p style="font-size: 14px; margin-top: 10px; opacity: 0.9;">Suscríbete para recibir las últimas ofertas y noticias de salud</p>
                 <form class="newsletter-form">
                     <input type="email" placeholder="Enter Your email" required>
                     <button type="submit">Subscribe</button>
@@ -32,6 +33,6 @@
         </div>
     </footer>
 
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=6"></script>
 </body>
 </html>
