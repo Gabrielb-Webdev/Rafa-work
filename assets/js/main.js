@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - Main JavaScript
-   Version 5.3 - Products Page UI Enhancement
+   Version 5.4 - Products Page Complete Redesign
 ============================================ */
 
 // Update cart count on page load
@@ -112,4 +112,4 @@ function initializeProductNavigation() {
     });
 }
 
-console.log('Online Medicine Store v5.3 - JavaScript loaded');
+console.log('Online Medicine Store v5.4 - JavaScript loaded');
