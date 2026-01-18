@@ -12,10 +12,35 @@ include __DIR__ . '/includes/header.php';
         <h2 class="section-title centered">ABOUT US</h2>
         
         <div class="about-page-image">
-            <div class="about-placeholder">
-                <div class="about-placeholder-icon">🏥</div>
-                <div class="about-placeholder-text">Vitamins Image</div>
-                <div class="img-placeholder-subtext">Vitamin C & B12 bottles</div>
+            <div class="vitamins-placeholder">
+                <div class="vitamin-bottle vitamin-c">
+                    <div class="bottle-cap"></div>
+                    <div class="bottle-body">
+                        <div class="bottle-label">
+                            <span class="vitamin-name">VITAMIN</span>
+                            <span class="vitamin-letter">C</span>
+                        </div>
+                    </div>
+                    <div class="pills-scattered">
+                        <span class="pill pill-orange"></span>
+                        <span class="pill pill-orange"></span>
+                        <span class="pill pill-orange"></span>
+                    </div>
+                </div>
+                <div class="vitamin-bottle vitamin-b12">
+                    <div class="bottle-cap"></div>
+                    <div class="bottle-body">
+                        <div class="bottle-label">
+                            <span class="vitamin-name">VITAMIN</span>
+                            <span class="vitamin-letter">B<sub>12</sub></span>
+                        </div>
+                    </div>
+                    <div class="pills-scattered">
+                        <span class="pill pill-yellow"></span>
+                        <span class="pill pill-yellow"></span>
+                        <span class="pill pill-yellow"></span>
+                    </div>
+                </div>
             </div>
         </div>
         
