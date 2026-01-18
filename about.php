@@ -1,32 +1,32 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 
-$pageTitle = 'Acerca de Nosotros - Forethink Health';
+$pageTitle = 'About Us - Online Medicine Store';
 
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="about-section">
-    <div class="about-content">
-        <h2>ABOUT US</h2>
-        <div class="about-image">
-            <img src="<?php echo BASE_URL; ?>/assets/images/vitamins.png" alt="About Us" onerror="this.style.display='none'">
+<!-- About Page -->
+<section class="about-page-section">
+    <div class="container">
+        <h2 class="section-title centered">ABOUT US</h2>
+        
+        <div class="about-page-image">
+            <div class="about-placeholder">
+                <div class="about-placeholder-icon">🏥</div>
+                <div class="about-placeholder-text">Vitamins Image</div>
+                <div class="img-placeholder-subtext">Vitamin C & B12 bottles</div>
+            </div>
         </div>
-        <p>
-            En Forethink Health nos dedicamos a proporcionar productos farmacéuticos de la más alta calidad 
-            para cuidar la salud y el bienestar de nuestros clientes. Con años de experiencia en el sector, 
-            nos hemos convertido en un referente de confianza.
-        </p>
-        <p>
-            Nuestra misión es hacer que el acceso a medicamentos y suplementos de calidad sea fácil, 
-            rápido y seguro. Contamos con un amplio catálogo de productos, desde medicinas esenciales 
-            hasta vitaminas y suplementos para mejorar tu calidad de vida.
-        </p>
-        <p>
-            Trabajamos con los mejores laboratorios y proveedores certificados, garantizando que cada 
-            producto cumpla con los más altos estándares de calidad y seguridad. Tu salud es nuestra prioridad.
-        </p>
+        
+        <div class="about-page-text">
+            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it</p>
+        </div>
+        
+        <div class="about-page-button">
+            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-read-more">Read More</a>
+        </div>
     </div>
-</div>
+</section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
