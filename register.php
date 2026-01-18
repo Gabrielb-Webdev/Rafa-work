@@ -65,7 +65,7 @@ include __DIR__ . '/includes/header.php';
 
 <style>
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #A89BC7 0%, #4DB8AC 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -102,20 +102,18 @@ header, footer {
 }
 
 .auth-logo {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
-    box-shadow: 0 8px 16px rgba(0, 212, 255, 0.3);
 }
 
-.auth-logo i {
-    font-size: 36px;
-    color: var(--white);
+.auth-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .auth-container h2 {
@@ -265,7 +263,7 @@ header, footer {
 <div class="auth-wrapper">
     <div class="auth-container">
         <div class="auth-logo">
-            <i class="fas fa-user-plus"></i>
+            <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="Forethink Health">
         </div>
         <h2>Crear Cuenta</h2>
         <p class="auth-subtitle">Únete a Forethink Health hoy</p>

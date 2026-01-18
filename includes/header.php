@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'Forethink Health - Online Medicine Store'; ?></title>
     <meta name="description" content="Forethink Health - Tu tienda online de medicinas, vitaminas y suplementos de confianza.">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=3">
+    <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="apple-touch-icon" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=4">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -29,10 +31,7 @@
     <header>
         <nav>
             <a href="<?php echo BASE_URL; ?>/index.php" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-capsules"></i>
-                </div>
-                <?php echo SITE_NAME; ?>
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="<?php echo SITE_NAME; ?>" />
             </a>
 
             <ul class="nav-links">

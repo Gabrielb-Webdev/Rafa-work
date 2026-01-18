@@ -57,7 +57,9 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=3">
+    <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="apple-touch-icon" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=4">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .admin-layout {
@@ -221,7 +223,9 @@ try {
 <body>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <h2><i class="fas fa-capsules"></i> <?php echo SITE_NAME; ?></h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="<?php echo SITE_NAME; ?>" style="max-width: 150px; height: auto;">
+            </div>
             
             <ul class="admin-menu">
                 <li><a href="<?php echo BASE_URL; ?>/admin/index.php" class="active">
@@ -364,6 +368,6 @@ try {
         </main>
     </div>
     
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=3"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=4"></script>
 </body>
 </html>
