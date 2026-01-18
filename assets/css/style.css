@@ -1325,251 +1325,261 @@ footer {
 
 /* ===== ABOUT PAGE ===== */
 .about-page-section {
-    padding: 80px 0 100px;
-    background: var(--bg-light);
+    padding: 100px 0 120px;
+    background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
     min-height: calc(100vh - 200px);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-page-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 212, 0.3) 50%, transparent 100%);
+}
+
+.about-page-content {
+    position: relative;
+    z-index: 1;
 }
 
 .about-page-section .section-title {
-    margin-bottom: 50px;
+    margin-bottom: 60px;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.about-page-section .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, var(--primary-cyan) 50%, transparent 100%);
+    border-radius: 2px;
 }
 
 .about-page-image {
     max-width: 600px;
-    margin: 0 auto 40px;
-}
-
-/* Vitamins Placeholder - CSS Illustration */
-.vitamins-placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 30px;
-    padding: 60px 40px;
-    min-height: 350px;
-    position: relative;
-}
-
-.vitamin-bottle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    animation: float 3s ease-in-out infinite;
-}
-
-.vitamin-bottle.vitamin-b12 {
-    animation-delay: 0.5s;
-}
-
-.bottle-cap {
-    width: 50px;
-    height: 20px;
-    background: linear-gradient(180deg, #4a90e2 0%, #357abd 100%);
-    border-radius: 8px 8px 0 0;
-    border: 2px solid #2d5a8f;
-    position: relative;
-    z-index: 2;
-}
-
-.bottle-cap::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 10px;
-    background: linear-gradient(180deg, #5aa0f2 0%, #4a90e2 100%);
-    border-radius: 5px 5px 0 0;
-}
-
-.bottle-cap::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.3);
-    top: 5px;
-    left: 0;
-    border-radius: 2px;
-}
-
-.bottle-body {
-    width: 90px;
-    height: 140px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-    border: 3px solid #4a90e2;
-    border-radius: 8px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.1),
-        inset -5px 0 10px rgba(0, 0, 0, 0.05),
-        inset 5px 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.bottle-body::before {
-    content: '';
-    position: absolute;
-    left: 10px;
-    top: 20px;
-    width: 15px;
-    height: 80px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-    border-radius: 5px;
-}
-
-.bottle-label {
+    margin: 0 auto 50px;
+    padding: 40px;
     background: white;
-    border: 2px solid #333;
-    border-radius: 5px;
-    padding: 15px 10px;
-    text-align: center;
-    width: 70px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
-.vitamin-name {
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #333;
-    letter-spacing: 0.5px;
-}
-
-.vitamin-letter {
-    display: block;
-    font-size: 2rem;
-    font-weight: 900;
-    line-height: 1;
-    margin-top: 5px;
-}
-
-.vitamin-c .vitamin-letter {
-    color: #ff6b35;
-}
-
-.vitamin-b12 .vitamin-letter {
-    color: #f7b731;
-}
-
-.vitamin-letter sub {
-    font-size: 1rem;
-}
-
-.pills-scattered {
+.about-page-image::before {
+    content: '';
     position: absolute;
-    width: 120px;
-    height: 100px;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, var(--primary-cyan) 0%, #00b8e6 50%, var(--primary-cyan) 100%);
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
 }
 
-.pill {
-    position: absolute;
-    width: 20px;
-    height: 12px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.about-page-image:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 20px 60px rgba(0, 212, 212, 0.15),
+        0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
-.pill-orange {
-    background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%);
+.about-page-image:hover::before {
+    opacity: 1;
 }
 
-.pill-yellow {
-    background: linear-gradient(135deg, #f7b731 0%, #fdd665 100%);
+.vitamins-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.vitamin-c .pill:nth-child(1) {
-    bottom: 10px;
-    left: 10px;
-    transform: rotate(-15deg);
-}
-
-.vitamin-c .pill:nth-child(2) {
-    bottom: 5px;
-    left: 35px;
-    transform: rotate(25deg);
-}
-
-.vitamin-c .pill:nth-child(3) {
-    bottom: 0px;
-    left: 20px;
-    transform: rotate(45deg);
-}
-
-.vitamin-b12 .pill:nth-child(1) {
-    bottom: 15px;
-    right: 10px;
-    transform: rotate(20deg);
-}
-
-.vitamin-b12 .pill:nth-child(2) {
-    bottom: 8px;
-    right: 35px;
-    transform: rotate(-30deg);
-}
-
-.vitamin-b12 .pill:nth-child(3) {
-    bottom: 2px;
-    right: 22px;
-    transform: rotate(60deg);
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-15px);
-    }
+.about-page-image:hover .vitamins-image {
+    transform: scale(1.03);
 }
 
 .about-page-text {
     max-width: 900px;
-    margin: 0 auto 40px;
+    margin: 0 auto 50px;
     text-align: center;
+    padding: 0 20px;
 }
 
 .about-page-text p {
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 1.1rem;
+    line-height: 1.9;
     color: var(--text-dark);
+    font-weight: 400;
+    position: relative;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--primary-cyan);
+    transition: all 0.3s ease;
+}
+
+.about-page-text p:hover {
+    box-shadow: 0 8px 30px rgba(0, 212, 212, 0.1);
+    transform: translateX(5px);
+}
+
+.about-page-text p::before {
+    content: '"';
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 3rem;
+    color: var(--primary-cyan);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+    line-height: 1;
 }
 
 .about-page-button {
     text-align: center;
+    margin-top: 40px;
 }
 
+.about-page-button .btn-read-more {
+    display: inline-block;
+    padding: 16px 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: var(--primary-dark);
+    color: white;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.about-page-button .btn-read-more::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan) 0%, #00b8e6 100%);
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.about-page-button .btn-read-more:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 212, 212, 0.4);
+    color: white;
+}
+
+.about-page-button .btn-read-more:hover::before {
+    left: 0;
+}
+
+.about-page-button .btn-read-more:active {
+    transform: translateY(-1px);
+}
+
+/* Animaciones de entrada */
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-delay {
+    animation: fadeIn 0.8s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-delay-2 {
+    animation: fadeIn 0.8s ease-out 0.6s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .vitamins-placeholder {
-        gap: 20px;
-        padding: 40px 20px;
-        min-height: 280px;
+    .about-page-section {
+        padding: 60px 0 80px;
     }
     
-    .bottle-cap {
-        width: 40px;
-        height: 16px;
+    .about-page-image {
+        padding: 30px 20px;
+        margin-bottom: 40px;
     }
     
-    .bottle-body {
-        width: 70px;
-        height: 110px;
+    .about-page-text p {
+        font-size: 1rem;
+        line-height: 1.8;
+        padding: 25px 20px;
     }
     
-    .bottle-label {
-        width: 55px;
-        padding: 12px 8px;
+    .about-page-button .btn-read-more {
+        padding: 14px 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-page-section .section-title {
+        font-size: 1.8rem;
     }
     
-    .vitamin-letter {
-        font-size: 1.5rem;
+    .about-page-image {
+        padding: 20px 15px;
+    }
+    
+    .about-page-text {
+        padding: 0 15px;
     }
 }
 
