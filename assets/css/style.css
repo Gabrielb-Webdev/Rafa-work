@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - MODERN UI
-   Version 5.4 - Products Page Complete Redesign
+   Version 5.5 - About Page Fix
 ============================================ */
 
 /* ===== RESET & BASE ===== */
@@ -1325,7 +1325,7 @@ footer {
 
 /* ===== ABOUT PAGE ===== */
 .about-page-section {
-    padding: 100px 0 120px;
+    padding: 80px 0 100px;
     background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
     min-height: calc(100vh - 200px);
     position: relative;
@@ -1352,17 +1352,22 @@ footer {
     position: relative;
     z-index: 1;
     width: 100%;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    margin: 0 auto;
 }
 
 .about-page-section .section-title {
-    margin-bottom: 60px;
+    margin-bottom: 50px;
     position: relative;
     text-align: center;
     width: 100%;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
 }
 
 .about-page-section .section-title::after {
@@ -1378,14 +1383,14 @@ footer {
 }
 
 .about-page-image {
-    max-width: 500px;
+    max-width: 450px;
     width: 100%;
-    margin: 0 auto 50px;
-    padding: 50px;
+    margin: 0 auto 40px;
+    padding: 40px;
     background: white;
-    border-radius: 20px;
+    border-radius: 15px;
     box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.08),
+        0 8px 30px rgba(0, 0, 0, 0.08),
         0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -1402,16 +1407,16 @@ footer {
     right: -2px;
     bottom: -2px;
     background: linear-gradient(135deg, var(--primary-cyan) 0%, #00b8e6 50%, var(--primary-cyan) 100%);
-    border-radius: 20px;
+    border-radius: 15px;
     opacity: 0;
     transition: opacity 0.4s ease;
     z-index: -1;
 }
 
 .about-page-image:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     box-shadow: 
-        0 20px 60px rgba(0, 212, 212, 0.15),
+        0 15px 50px rgba(0, 212, 212, 0.15),
         0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -1423,31 +1428,33 @@ footer {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+    max-height: 350px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .about-page-image:hover .vitamins-image {
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
 .about-page-text {
-    max-width: 800px;
+    max-width: 850px;
     width: 100%;
-    margin: 0 auto 50px;
+    margin: 0 auto 45px;
     text-align: center;
     padding: 0 20px;
 }
 
 .about-page-text p {
-    font-size: 1.05rem;
-    line-height: 1.9;
+    font-size: 1rem;
+    line-height: 1.8;
     color: #555;
     font-weight: 400;
     position: relative;
-    padding: 35px 40px;
+    padding: 30px 35px;
     background: white;
-    border-radius: 15px;
+    border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     border-left: 4px solid var(--primary-cyan);
     transition: all 0.3s ease;
@@ -1457,15 +1464,15 @@ footer {
 
 .about-page-text p:hover {
     box-shadow: 0 8px 30px rgba(0, 212, 212, 0.1);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
 .about-page-text p::before {
-    content: '"';
+    content: '\201C';
     position: absolute;
-    top: 10px;
-    left: 15px;
-    font-size: 3rem;
+    top: 8px;
+    left: 12px;
+    font-size: 2.5rem;
     color: var(--primary-cyan);
     opacity: 0.2;
     font-family: Georgia, serif;
@@ -1474,16 +1481,16 @@ footer {
 
 .about-page-button {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 35px;
 }
 
 .about-page-button .btn-read-more {
     display: inline-block;
-    padding: 16px 50px;
-    font-size: 1rem;
+    padding: 14px 45px;
+    font-size: 0.95rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     background: var(--primary-dark);
     color: white;
     border-radius: 50px;
@@ -1492,6 +1499,7 @@ footer {
     position: relative;
     overflow: hidden;
     z-index: 1;
+    text-decoration: none;
 }
 
 .about-page-button .btn-read-more::before {
@@ -1566,24 +1574,37 @@ footer {
 /* Responsive */
 @media (max-width: 992px) {
     .about-page-section {
-        padding: 80px 0 100px;
+        padding: 70px 0 90px;
     }
     
     .about-page-image {
-        max-width: 450px;
-        padding: 40px;
+        max-width: 400px;
+        padding: 35px;
+    }
+    
+    .vitamins-image {
+        max-height: 300px;
     }
 }
 
 @media (max-width: 768px) {
     .about-page-section {
-        padding: 60px 0 80px;
+        padding: 50px 0 70px;
+    }
+    
+    .about-page-section .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 40px;
     }
     
     .about-page-image {
-        max-width: 400px;
-        padding: 35px 25px;
-        margin-bottom: 40px;
+        max-width: 350px;
+        padding: 30px 25px;
+        margin-bottom: 35px;
+    }
+    
+    .vitamins-image {
+        max-height: 250px;
     }
     
     .about-page-text {
@@ -1591,25 +1612,29 @@ footer {
     }
     
     .about-page-text p {
-        font-size: 1rem;
-        line-height: 1.8;
-        padding: 28px 25px;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        padding: 25px 20px;
     }
     
     .about-page-button .btn-read-more {
-        padding: 14px 40px;
+        padding: 13px 38px;
         font-size: 0.9rem;
     }
 }
 
 @media (max-width: 480px) {
     .about-page-section .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     
     .about-page-image {
-        max-width: 320px;
+        max-width: 300px;
         padding: 25px 20px;
+    }
+    
+    .vitamins-image {
+        max-height: 220px;
     }
     
     .about-page-text {
@@ -1617,8 +1642,8 @@ footer {
     }
     
     .about-page-text p {
-        padding: 25px 20px;
-        font-size: 0.95rem;
+        padding: 22px 18px;
+        font-size: 0.9rem;
     }
 }
 
