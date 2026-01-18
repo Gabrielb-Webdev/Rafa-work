@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - Main JavaScript
-   Version 5.1
+   Version 5.2 - Products Page Navigation
 ============================================ */
 
 // Update cart count on page load
@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
     initializeSearch();
     initializeNewsletterForm();
+    initializeProductNavigation();
 });
 
 // Update cart count
@@ -90,4 +91,25 @@ document.querySelectorAll('.feature-item, .product-card, .testimonial-card').for
     observer.observe(el);
 });
 
-console.log('Online Medicine Store v5.1 - JavaScript loaded');
+// Initialize product grid navigation
+function initializeProductNavigation() {
+    const navButtons = document.querySelectorAll('.nav-arrow');
+    
+    navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const grid = document.getElementById(`${category}-grid`);
+            const isPrev = this.classList.contains('nav-prev');
+            
+            if (grid) {
+                const scrollAmount = grid.offsetWidth / 2;
+                grid.scrollBy({
+                    left: isPrev ? -scrollAmount : scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+console.log('Online Medicine Store v5.2 - JavaScript loaded');

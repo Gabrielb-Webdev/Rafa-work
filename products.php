@@ -1,186 +1,128 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 
-$pageTitle = 'Productos - Forethink Health';
-
-// Obtener categorías
-try {
-    $stmt = executeQuery("SELECT * FROM categories WHERE is_active = 1 ORDER BY display_order");
-    $categories = $stmt->fetchAll();
-} catch (Exception $e) {
-    $categories = [];
-}
-
-// Filtros
-$categoryFilter = $_GET['category'] ?? '';
-$searchQuery = $_GET['search'] ?? '';
-
-// Construir la consulta
-$sql = "
-    SELECT p.*, c.name as category_name, c.slug as category_slug
-    FROM products p
-    JOIN categories c ON p.category_id = c.id
-    WHERE p.is_active = 1
-";
-
-$params = [];
-
-if ($categoryFilter) {
-    $sql .= " AND c.slug = ?";
-    $params[] = $categoryFilter;
-}
-
-if ($searchQuery) {
-    $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
-    $params[] = "%$searchQuery%";
-    $params[] = "%$searchQuery%";
-}
-
-$sql .= " ORDER BY p.created_at DESC";
-
-try {
-    $stmt = executeQuery($sql, $params);
-    $products = $stmt->fetchAll();
-} catch (Exception $e) {
-    $products = [];
-}
+$pageTitle = 'Products - Online Medicine Store';
 
 include __DIR__ . '/includes/header.php';
+
+// Sample products data (replace with database query)
+$medicineProducts = [
+    ['id' => 1, 'name' => 'Pain Relief Medicine', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-1.png'],
+    ['id' => 2, 'name' => 'Vitamin C Tablets', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-2.png'],
+    ['id' => 3, 'name' => 'B12 Supplement', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-3.png'],
+    ['id' => 4, 'name' => 'Multivitamin Complex', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-4.png'],
+    ['id' => 5, 'name' => 'Pain Relief Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-1.png'],
+    ['id' => 6, 'name' => 'Antibiotic Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-2.png'],
+    ['id' => 7, 'name' => 'Vitamin D Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-3.png'],
+    ['id' => 8, 'name' => 'Omega-3 Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-4.png'],
+];
+
+$vitaminsProducts = [
+    ['id' => 9, 'name' => 'Vitamin C 1000mg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-1.png'],
+    ['id' => 10, 'name' => 'B-Complex Vitamins', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-2.png'],
+    ['id' => 11, 'name' => 'Calcium + D3', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-3.png'],
+    ['id' => 12, 'name' => 'Iron Supplement', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-4.png'],
+    ['id' => 13, 'name' => 'Zinc Tablets', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-5.png'],
+    ['id' => 14, 'name' => 'Magnesium Citrate', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-6.png'],
+    ['id' => 15, 'name' => 'Biotin 5000mcg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-7.png'],
+    ['id' => 16, 'name' => 'Folic Acid 400mcg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-8.png'],
+];
 ?>
 
-<style>
-.products-page {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.products-header {
-    margin-bottom: 30px;
-}
-
-.products-header h1 {
-    margin-bottom: 10px;
-}
-
-.filters {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    padding: 10px 20px;
-    border: 2px solid var(--border-color);
-    background-color: white;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.products-count {
-    color: var(--text-light);
-    margin-bottom: 20px;
-}
-</style>
-
-<div class="products-page">
-    <div class="products-header">
-        <h1>Nuestros Productos</h1>
-        <?php if ($searchQuery): ?>
-            <p>Resultados de búsqueda para: <strong>"<?php echo htmlspecialchars($searchQuery); ?>"</strong></p>
-        <?php endif; ?>
-    </div>
-    
-    <div class="filters">
-        <a href="<?php echo BASE_URL; ?>/products.php">
-            <button class="filter-btn <?php echo !$categoryFilter ? 'active' : ''; ?>">
-                Todos
-            </button>
-        </a>
-        <?php foreach ($categories as $category): ?>
-            <a href="<?php echo BASE_URL; ?>/products.php?category=<?php echo $category['slug']; ?>">
-                <button class="filter-btn <?php echo $categoryFilter === $category['slug'] ? 'active' : ''; ?>">
-                    <?php echo htmlspecialchars($category['name']); ?>
-                </button>
-            </a>
-        <?php endforeach; ?>
-    </div>
-    
-    <div class="products-count">
-        Mostrando <?php echo count($products); ?> producto(s)
-    </div>
-    
-    <div class="products-grid">
-        <?php foreach ($products as $product): ?>
-            <div class="product-card">
-                <?php if ($product['discount_price']): ?>
-                    <div class="product-badge">Sale</div>
-                <?php endif; ?>
-                
-                <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.jpg'); ?>" 
-                     alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                     class="product-image"
-                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
-                
-                <div class="product-info">
-                    <div class="product-rating">
-                        <div class="stars">
-                            <?php 
-                            $rating = $product['rating'];
-                            for ($i = 1; $i <= 5; $i++) {
-                                echo $i <= $rating ? '★' : '☆';
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    
-                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    
-                    <?php if ($product['description']): ?>
-                        <p style="font-size: 14px; color: var(--text-light); margin: 10px 0;">
-                            <?php echo htmlspecialchars(substr($product['description'], 0, 80)) . '...'; ?>
-                        </p>
-                    <?php endif; ?>
-                    
-                    <div class="product-price">
-                        <span class="price"><?php echo formatPrice($product['discount_price'] ?: $product['price']); ?></span>
-                        <?php if ($product['discount_price']): ?>
-                            <span class="old-price"><?php echo formatPrice($product['price']); ?></span>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <?php if ($product['stock'] > 0): ?>
-                        <button class="btn-add-cart" 
-                                data-product-id="<?php echo $product['id']; ?>"
-                                data-product-price="<?php echo $product['discount_price'] ?: $product['price']; ?>">
-                            <i class="fas fa-cart-plus"></i> Agregar al Carrito
-                        </button>
-                    <?php else: ?>
-                        <button class="btn-add-cart" disabled style="background-color: #ccc; cursor: not-allowed;">
-                            Agotado
-                        </button>
-                    <?php endif; ?>
+<!-- Products Page -->
+<section class="products-page-section">
+    <div class="container">
+        <!-- Medicine & Health Section -->
+        <div class="products-category-section">
+            <div class="category-header">
+                <h2 class="category-title">MEDICINE & HEALTH</h2>
+                <div class="category-nav">
+                    <button class="nav-arrow nav-prev" data-category="medicine">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow nav-next" data-category="medicine">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
-        <?php endforeach; ?>
-        
-        <?php if (empty($products)): ?>
-            <p style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #666;">
-                <i class="fas fa-search" style="font-size: 60px; display: block; margin-bottom: 20px; opacity: 0.3;"></i>
-                No se encontraron productos.
-            </p>
-        <?php endif; ?>
+            
+            <div class="products-grid" id="medicine-grid">
+                <?php foreach ($medicineProducts as $product): ?>
+                    <div class="product-card-page">
+                        <div class="product-badge-page">Buy Now</div>
+                        <div class="product-image-wrapper-page">
+                            <div class="product-placeholder-page">
+                                <i class="fas fa-pills"></i>
+                                <span>Product Image</span>
+                            </div>
+                        </div>
+                        <div class="product-info-page">
+                            <div class="product-rating-page">
+                                <div class="stars">
+                                    <?php for ($i = 0; $i < 5; $i++): ?>
+                                        <i class="<?php echo $i < $product['rating'] ? 'fas' : 'far'; ?> fa-star"></i>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            <div class="product-category-page"><?php echo $product['category']; ?></div>
+                            <div class="product-price-page">
+                                <span class="price-symbol">$</span>
+                                <span class="price-amount"><?php echo $product['price']; ?></span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Vitamins & Supplements Section -->
+        <div class="products-category-section">
+            <div class="category-header">
+                <h2 class="category-title">VITAMINS & SUPPLEMENTS</h2>
+                <div class="category-nav">
+                    <button class="nav-arrow nav-prev" data-category="vitamins">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow nav-next" data-category="vitamins">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="products-grid" id="vitamins-grid">
+                <?php foreach ($vitaminsProducts as $product): ?>
+                    <div class="product-card-page">
+                        <div class="product-badge-page">Buy Now</div>
+                        <div class="product-image-wrapper-page">
+                            <div class="product-placeholder-page">
+                                <i class="fas fa-capsules"></i>
+                                <span>Product Image</span>
+                            </div>
+                        </div>
+                        <div class="product-info-page">
+                            <div class="product-rating-page">
+                                <div class="stars">
+                                    <?php for ($i = 0; $i < 5; $i++): ?>
+                                        <i class="<?php echo $i < $product['rating'] ? 'fas' : 'far'; ?> fa-star"></i>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            <div class="product-category-page"><?php echo $product['category']; ?></div>
+                            <div class="product-price-page">
+                                <span class="price-symbol">$</span>
+                                <span class="price-amount"><?php echo $product['price']; ?></span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- See More Button -->
+        <div class="see-more-section">
+            <button class="btn-see-more">See more</button>
+        </div>
     </div>
-</div>
+</section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
