@@ -13,7 +13,7 @@
     </filter>
   </defs>
   
-  <rect width="800" height="400" fill="#f8f9fa"/>
+  <rect width="800" height="400" fill="transparent"/>
   
   <!-- Píldoras azules -->
   <g filter="url(#pillShadow)">

@@ -54,7 +54,7 @@ include __DIR__ . '/includes/header.php';
             <a href="<?php echo BASE_URL; ?>/products.php" class="btn-primary">Buy Now</a>
         </div>
         <div class="hero-image">
-            <img src="<?php echo BASE_URL; ?>/assets/images/hero-pills.png" alt="Medicine" onerror="this.style.display='none'">
+            <img src="<?php echo BASE_URL; ?>/assets/images/hero-pills.svg" alt="Medicine" onerror="this.style.display='none'">
         </div>
     </div>
 </section>
@@ -97,7 +97,7 @@ include __DIR__ . '/includes/header.php';
             <a href="<?php echo BASE_URL; ?>/products.php" class="btn-primary">Buy Now</a>
         </div>
         <div class="discount-image">
-            <img src="<?php echo BASE_URL; ?>/assets/images/pills-banner.png" alt="Discount" onerror="this.style.display='none'">
+            <img src="<?php echo BASE_URL; ?>/assets/images/pills-banner.svg" alt="Discount" onerror="this.style.display='none'">
         </div>
     </div>
 </section>
@@ -119,7 +119,7 @@ include __DIR__ . '/includes/header.php';
                     <div class="product-badge">Sale</div>
                 <?php endif; ?>
                 
-                <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.jpg'); ?>" 
+                <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.svg'); ?>" 
                      alt="<?php echo htmlspecialchars($product['name']); ?>" 
                      class="product-image"
                      onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
@@ -180,7 +180,7 @@ include __DIR__ . '/includes/header.php';
                         <div class="product-badge">Sale</div>
                     <?php endif; ?>
                     
-                    <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.jpg'); ?>" 
+                    <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.svg'); ?>" 
                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
                          class="product-image"
                          onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
@@ -229,7 +229,7 @@ include __DIR__ . '/includes/header.php';
     <div class="about-content">
         <h2>ABOUT US</h2>
         <div class="about-image">
-            <img src="<?php echo BASE_URL; ?>/assets/images/vitamins.png" alt="About Us" onerror="this.style.display='none'">
+            <img src="<?php echo BASE_URL; ?>/assets/images/vitamins.svg" alt="About Us" onerror="this.style.display='none'">
         </div>
         <p>En Forethink Health nos comprometemos con tu bienestar. Ofrecemos productos farmacéuticos de la más alta calidad, respaldados por la confianza de miles de clientes satisfechos.</p>
         <a href="<?php echo BASE_URL; ?>/about.php" class="btn-primary">Read More</a>
@@ -242,7 +242,7 @@ include __DIR__ . '/includes/header.php';
     <div class="testimonial-card">
         <p class="testimonial-text">"Excelente servicio y productos de calidad. La entrega fue rápida y el personal muy atento. Totalmente recomendado."</p>
         <div class="testimonial-author">
-            <img src="<?php echo BASE_URL; ?>/assets/images/testimonial.jpg" alt="Client" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/user-placeholder.svg'">
+            <img src="<?php echo BASE_URL; ?>/assets/images/testimonial.svg" alt="Client" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/user-placeholder.svg'">
             <h4>Maria González</h4>
             <p>CUSTOMER</p>
         </div>

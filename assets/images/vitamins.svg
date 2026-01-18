@@ -10,7 +10,7 @@
     </linearGradient>
   </defs>
   
-  <rect width="400" height="400" fill="#f0f0f0"/>
+  <rect width="400" height="400" fill="transparent"/>
   
   <!-- Botella de vitaminas -->
   <g>
