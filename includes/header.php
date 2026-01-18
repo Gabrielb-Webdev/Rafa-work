@@ -37,8 +37,7 @@
             <ul class="nav-links">
                 <li><a href="<?php echo BASE_URL; ?>/index.php">HOME</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/about.php">ABOUT</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/products.php">MEDICINE</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements">ONLINE BUY</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/products.php">ONLINE BUY</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/news.php">NEWS</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/contact.php">CONTACT US</a></li>
             </ul>
