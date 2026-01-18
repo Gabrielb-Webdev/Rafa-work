@@ -1,0 +1,84 @@
+# Forethink Health - Configuración Apache
+
+# Habilitar RewriteEngine
+RewriteEngine On
+
+# Redirigir www a no-www (opcional)
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Forzar HTTPS (opcional, Hostinger lo hace automáticamente)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Proteger archivos sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Proteger archivos de configuración
+<FilesMatch "\.(env|ini|log|sql|bak|backup)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Proteger config/database.php
+<Files "database.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Habilitar compresión GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Cache de recursos estáticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType application/x-shockwave-flash "access plus 1 month"
+</IfModule>
+
+# Prevenir directory listing
+Options -Indexes
+
+# Página de error personalizada (opcional)
+# ErrorDocument 404 /404.php
+# ErrorDocument 500 /500.php
+
+# Limitar tamaño de upload (ajustar según necesidad)
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value memory_limit 128M
+php_value max_execution_time 300
+
+# Configuración de seguridad
+<IfModule mod_headers.c>
+    # Prevenir clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevenir XSS
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevenir MIME sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Política de referrer
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# URLs amigables (opcional - descomentar si quieres URLs bonitas)
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^product/([a-z0-9-]+)$ product.php?slug=$1 [L,QSA]
+# RewriteRule ^category/([a-z0-9-]+)$ products.php?category=$1 [L,QSA]

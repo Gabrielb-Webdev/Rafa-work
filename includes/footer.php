@@ -1,0 +1,37 @@
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CONTACT</h3>
+                <p><i class="fas fa-phone"></i> <?php echo SITE_PHONE; ?></p>
+                <p><i class="fas fa-envelope"></i> <?php echo SITE_EMAIL; ?></p>
+            </div>
+
+            <div class="footer-section">
+                <h3>MENU</h3>
+                <ul>
+                    <li><a href="<?php echo BASE_URL; ?>/index.php">Home</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/about.php">About</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/products.php">Medicine</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements">Online Buy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>NEWSLETTER</h3>
+                <p>Suscríbete para recibir las últimas ofertas y noticias</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; <?php echo date('Y'); ?> All Rights Reserved. Design by Forethink Health</p>
+        </div>
+    </footer>
+
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+</body>
+</html>

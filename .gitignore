@@ -1,0 +1,41 @@
+# Forethink Health - Ignorar archivos
+
+# Archivos de configuración sensibles
+config/database.php
+.env
+
+# Archivos subidos por usuarios
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+*.log
+error_log
+
+# Archivos temporales
+*.tmp
+*.temp
+*.cache
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Composer (si lo usas en el futuro)
+/vendor/
+
+# Node modules (si agregas herramientas de build)
+node_modules/
+package-lock.json
+
+# Backups
+*.bak
+*.backup
+*.sql.gz
