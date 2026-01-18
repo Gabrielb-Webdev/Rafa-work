@@ -43,29 +43,59 @@ try {
     
     $sql = file_get_contents($sqlFile);
     
-    // Dividir por comandos (separados por ;)
-    $commands = array_filter(array_map('trim', explode(';', $sql)), function($cmd) {
-        return !empty($cmd) && !preg_match('/^--/', $cmd);
-    });
+    // Limpiar comentarios del SQL
+    $sql = preg_replace('/--[^\n]*\n/', "\n", $sql);
+    $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
     
-    $tablesCreated = 0;
-    foreach ($commands as $command) {
-        if (!empty($command)) {
+    // Ejecutar todo el SQL de una vez usando exec múltiple
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
+    
+    try {
+        // Dividir por punto y coma pero respetando las estructuras CREATE TABLE
+        $statements = [];
+        $current = '';
+        $lines = explode("\n", $sql);
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            $current .= $line . "\n";
+            
+            // Si termina en ; y no estamos dentro de un CREATE TABLE o INSERT
+            if (substr(rtrim($line), -1) === ';') {
+                $statements[] = trim($current);
+                $current = '';
+            }
+        }
+        
+        if (!empty($current)) {
+            $statements[] = trim($current);
+        }
+        
+        $tablesCreated = 0;
+        foreach ($statements as $statement) {
+            if (empty($statement)) continue;
+            
             try {
-                $pdo->exec($command);
-                if (stripos($command, 'CREATE TABLE') !== false) {
+                $pdo->exec($statement);
+                if (stripos($statement, 'CREATE TABLE') !== false) {
                     $tablesCreated++;
                 }
             } catch (PDOException $e) {
-                // Ignorar errores de "tabla ya existe"
-                if (strpos($e->getMessage(), 'already exists') === false) {
-                    $response['errors'][] = 'Error SQL: ' . $e->getMessage();
+                // Solo ignorar errores de "ya existe"
+                if (strpos($e->getMessage(), 'already exists') === false && 
+                    strpos($e->getMessage(), 'Duplicate entry') === false) {
+                    throw $e;
                 }
             }
         }
+        
+        $response['messages'][] = "✓ {$tablesCreated} tablas creadas";
+        
+    } catch (PDOException $e) {
+        throw new Exception('Error al crear tablas: ' . $e->getMessage());
     }
-    
-    $response['messages'][] = "✓ {$tablesCreated} tablas creadas";
     
     // Verificar que las tablas se crearon
     $stmt = $pdo->query("SHOW TABLES");
