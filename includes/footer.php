@@ -33,6 +33,6 @@
         </div>
     </footer>
 
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=6"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=7"></script>
 </body>
 </html>
