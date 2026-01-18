@@ -89,7 +89,7 @@ include __DIR__ . '/includes/header.php';
     <div class="news-grid">
         <div class="news-card">
             <img src="<?php echo BASE_URL; ?>/assets/images/news1.jpg" alt="News" class="news-image"
-                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
             <div class="news-content">
                 <div class="news-date">
                     <i class="fas fa-calendar"></i> <?php echo date('d M Y'); ?>
@@ -107,7 +107,7 @@ include __DIR__ . '/includes/header.php';
 
         <div class="news-card">
             <img src="<?php echo BASE_URL; ?>/assets/images/news2.jpg" alt="News" class="news-image"
-                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
             <div class="news-content">
                 <div class="news-date">
                     <i class="fas fa-calendar"></i> <?php echo date('d M Y', strtotime('-3 days')); ?>
@@ -125,7 +125,7 @@ include __DIR__ . '/includes/header.php';
 
         <div class="news-card">
             <img src="<?php echo BASE_URL; ?>/assets/images/news3.jpg" alt="News" class="news-image"
-                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
             <div class="news-content">
                 <div class="news-date">
                     <i class="fas fa-calendar"></i> <?php echo date('d M Y', strtotime('-7 days')); ?>

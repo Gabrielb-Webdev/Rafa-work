@@ -249,7 +249,7 @@ function loadCart() {
         cartItemsHTML += `
             <div class="cart-item" data-product-id="${item.id}">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image" 
-                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
                 <div class="cart-item-details">
                     <h3>${item.name}</h3>
                     <div class="cart-item-price">${formatPrice(item.price)}</div>

@@ -130,7 +130,7 @@ include __DIR__ . '/includes/header.php';
                 <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.jpg'); ?>" 
                      alt="<?php echo htmlspecialchars($product['name']); ?>" 
                      class="product-image"
-                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
                 
                 <div class="product-info">
                     <div class="product-rating">

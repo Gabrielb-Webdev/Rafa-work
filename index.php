@@ -183,7 +183,7 @@ include __DIR__ . '/includes/header.php';
                     <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.jpg'); ?>" 
                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
                          class="product-image"
-                         onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
+                         onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
                     
                     <div class="product-info">
                         <div class="product-rating">
@@ -242,7 +242,7 @@ include __DIR__ . '/includes/header.php';
     <div class="testimonial-card">
         <p class="testimonial-text">"Excelente servicio y productos de calidad. La entrega fue rápida y el personal muy atento. Totalmente recomendado."</p>
         <div class="testimonial-author">
-            <img src="<?php echo BASE_URL; ?>/assets/images/testimonial.jpg" alt="Client" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/user-placeholder.png'">
+            <img src="<?php echo BASE_URL; ?>/assets/images/testimonial.jpg" alt="Client" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/user-placeholder.svg'">
             <h4>Maria González</h4>
             <p>CUSTOMER</p>
         </div>
