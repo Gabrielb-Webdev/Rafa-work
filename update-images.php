@@ -7,21 +7,21 @@ require_once 'config/database.php';
 try {
     // Actualizar productos que tengan product-placeholder.png
     $query = "UPDATE products 
-              SET image_url = REPLACE(image_url, 'product-placeholder.png', 'product-placeholder.svg')
-              WHERE image_url LIKE '%product-placeholder.png%'";
+              SET image = REPLACE(image, 'product-placeholder.png', 'product-placeholder.svg')
+              WHERE image LIKE '%product-placeholder.png%'";
     
     executeQuery($query);
     
     echo "✓ URLs de productos actualizadas de PNG a SVG<br>";
     
     // Mostrar productos actualizados
-    $check = executeQuery("SELECT id, name, image_url FROM products WHERE image_url LIKE '%placeholder%'");
+    $check = executeQuery("SELECT id, name, image FROM products WHERE image LIKE '%placeholder%'");
     $products = $check->fetchAll();
     
     if (!empty($products)) {
         echo "<br><strong>Productos con placeholders:</strong><br>";
         foreach ($products as $product) {
-            echo "- {$product['name']}: {$product['image_url']}<br>";
+            echo "- {$product['name']}: {$product['image']}<br>";
         }
     }
     
