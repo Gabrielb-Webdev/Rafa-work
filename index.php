@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 
-$pageTitle = 'Home - Forethink Health';
+$pageTitle = 'Home - Online Medicine Store';
 
 // Obtener productos destacados
 try {
@@ -11,62 +11,42 @@ try {
         JOIN categories c ON p.category_id = c.id
         WHERE p.is_active = 1 AND p.is_featured = 1
         ORDER BY p.created_at DESC
-        LIMIT 4
+        LIMIT 8
     ");
     $featuredProducts = $stmt->fetchAll();
 
-    // Obtener últimos productos
-    $stmtLatest = executeQuery("
+    // Obtener productos de vitaminas
+    $stmtVitamins = executeQuery("
         SELECT p.*, c.name as category_name
         FROM products p
         JOIN categories c ON p.category_id = c.id
-        WHERE p.is_active = 1
+        WHERE p.is_active = 1 AND c.slug = 'vitamins-supplements'
         ORDER BY p.created_at DESC
-        LIMIT 8
+        LIMIT 4
     ");
-    $latestProducts = $stmtLatest->fetchAll();
+    $vitaminsProducts = $stmtVitamins->fetchAll();
 
 } catch (Exception $e) {
     $featuredProducts = [];
-    $latestProducts = [];
+    $vitaminsProducts = [];
 }
 
 include __DIR__ . '/includes/header.php';
 ?>
 
-<!-- Modern Hero Section -->
-<section class="modern-hero">
-    <div class="hero-container">
-        <div class="hero-content-wrapper">
-            <div class="hero-text-section">
-                <span class="hero-badge">🏥 Trusted Healthcare</span>
-                <h1 class="hero-title">Your Health, <br><span class="gradient-text">Our Priority</span></h1>
-                <p class="hero-description">Encuentra medicamentos, vitaminas y suplementos de la más alta calidad. Entrega rápida y segura directamente a tu puerta.</p>
-                <div class="hero-cta">
-                    <a href="<?php echo BASE_URL; ?>/products.php" class="btn-hero-primary">
-                        <span>Explorar Productos</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a href="#featured" class="btn-hero-secondary">Ver Destacados</a>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <h1 class="hero-title">Welcome to Our<br><span class="highlight">Online Medicine</span></h1>
+                    <p class="hero-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec odio vitae mauris sagittis aliquet. Nam viverra pharetra est, ut vehicula tortor tincidunt vel.</p>
+                    <a href="<?php echo BASE_URL; ?>/products.php" class="btn-shop">Shop Now</a>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <strong>5000+</strong>
-                        <span>Clientes Satisfechos</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong>500+</strong>
-                        <span>Productos</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong>24/7</strong>
-                        <span>Soporte</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="hero-image-wrapper">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/hero-pills.svg" alt="Healthcare" class="floating-image">
+                <div class="hero-image">
+                    <img src="<?php echo BASE_URL; ?>/assets/images/hero-pills.png" alt="Pills" class="pills-image">
                 </div>
             </div>
         </div>
@@ -74,280 +54,205 @@ include __DIR__ . '/includes/header.php';
 </section>
 
 <!-- Features Section -->
-<section class="modern-features">
+<section class="features-section">
     <div class="container">
-        <div class="features-wrapper">
-            <div class="feature-box">
-                <div class="feature-icon-wrapper">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
                     <i class="fas fa-shipping-fast"></i>
                 </div>
-                <h3>Entrega Rápida</h3>
-                <p>Envío express en 24-48 horas a todo el país</p>
+                <h3>FAST DELIVERY</h3>
+                <p>It is a long established fact that a reader will be distracted by</p>
             </div>
-            <div class="feature-box">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-shield-alt"></i>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop-medical"></i>
                 </div>
-                <h3>100% Seguro</h3>
-                <p>Productos certificados y garantizados</p>
+                <h3>ONLINE ORDER</h3>
+                <p>It is a long established fact that a reader will be distracted by</p>
             </div>
-            <div class="feature-box">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-headphones-alt"></i>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
                 </div>
-                <h3>Soporte 24/7</h3>
-                <p>Asistencia profesional siempre disponible</p>
-            </div>
-            <div class="feature-box">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-tags"></i>
-                </div>
-                <h3>Mejores Precios</h3>
-                <p>Ofertas y descuentos exclusivos</p>
+                <h3>SUPPORT</h3>
+                <p>It is a long established fact that a reader will be distracted by</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Categories Section -->
-<section class="categories-section">
+<!-- Discount Banner -->
+<section class="discount-banner">
     <div class="container">
-        <div class="section-title-wrapper">
-            <h2 class="section-title">Compra por Categoría</h2>
-            <p class="section-subtitle">Encuentra exactamente lo que necesitas</p>
-        </div>
-        <div class="categories-grid">
-            <a href="<?php echo BASE_URL; ?>/products.php?category=medicine-health" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-pills"></i>
-                </div>
-                <h3>Medicamentos</h3>
-                <p>Prescripción y OTC</p>
-                <span class="category-arrow">→</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-capsules"></i>
-                </div>
-                <h3>Vitaminas</h3>
-                <p>Suplementos alimenticios</p>
-                <span class="category-arrow">→</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/products.php" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-heartbeat"></i>
-                </div>
-                <h3>Salud</h3>
-                <p>Cuidado general</p>
-                <span class="category-arrow">→</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/products.php" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-first-aid"></i>
-                </div>
-                <h3>Primeros Auxilios</h3>
-                <p>Equipos médicos</p>
-                <span class="category-arrow">→</span>
-            </a>
+        <div class="discount-content">
+            <div class="discount-text">
+                <h2>YOU GET<br>ANY MEDICINE<br>ON <span class="discount-highlight">10% DISCOUNT</span></h2>
+                <p>It is a long established fact that a reader will be distracted by the readable content of a page.</p>
+                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-get-now">Get Now</a>
+            </div>
+            <div class="discount-image">
+                <img src="<?php echo BASE_URL; ?>/assets/images/pills-scattered.png" alt="Pills">
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Featured Products -->
+<!-- Medicine & Health Products -->
 <?php if (!empty($featuredProducts)): ?>
-<section class="featured-products" id="featured">
+<section class="products-section">
     <div class="container">
-        <div class="section-title-wrapper">
-            <h2 class="section-title">Productos Destacados</h2>
-            <p class="section-subtitle">Los más populares y mejor valorados</p>
+        <div class="section-header">
+            <h2 class="section-title">MEDICINE & HEALTH</h2>
+            <div class="section-arrows">
+                <button class="arrow-btn prev-btn" onclick="scrollProducts('medicine', 'left')"><i class="fas fa-chevron-left"></i></button>
+                <button class="arrow-btn next-btn" onclick="scrollProducts('medicine', 'right')"><i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
-        <div class="products-modern-grid">
-            <?php foreach ($featuredProducts as $product): ?>
-                <div class="product-modern-card">
+        <div class="products-carousel" id="medicine-carousel">
+            <?php foreach (array_slice($featuredProducts, 0, 8) as $product): ?>
+                <div class="product-card">
                     <?php if ($product['discount_price']): ?>
-                        <span class="product-discount-badge">-<?php echo round((($product['price'] - $product['discount_price']) / $product['price']) * 100); ?>%</span>
+                        <span class="sale-badge">SALE</span>
                     <?php endif; ?>
                     
-                    <div class="product-image-container">
-                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.svg'); ?>" 
+                    <div class="product-image">
+                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.png'); ?>" 
                              alt="<?php echo htmlspecialchars($product['name']); ?>"
-                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
+                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
                     </div>
                     
-                    <div class="product-modern-info">
-                        <span class="product-category"><?php echo htmlspecialchars($product['category_name']); ?></span>
+                    <div class="product-info">
                         <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
                         
-                        <div class="product-rating-modern">
+                        <div class="product-rating">
                             <?php 
-                            $rating = $product['rating'];
+                            $rating = $product['rating'] ?? 4;
                             for ($i = 1; $i <= 5; $i++) {
                                 echo $i <= $rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
                             }
                             ?>
-                            <span class="rating-count">(<?php echo $rating; ?>)</span>
                         </div>
                         
-                        <div class="product-price-modern">
+                        <div class="product-price">
                             <?php if ($product['discount_price']): ?>
-                                <span class="price-new"><?php echo formatPrice($product['discount_price']); ?></span>
-                                <span class="price-old"><?php echo formatPrice($product['price']); ?></span>
+                                <span class="price"><?php echo formatPrice($product['discount_price']); ?></span>
+                                <span class="old-price"><?php echo formatPrice($product['price']); ?></span>
                             <?php else: ?>
-                                <span class="price-new"><?php echo formatPrice($product['price']); ?></span>
+                                <span class="price"><?php echo formatPrice($product['price']); ?></span>
                             <?php endif; ?>
                         </div>
                         
-                        <button class="btn-add-modern" 
+                        <button class="btn-buy-now" 
                                 data-product-id="<?php echo $product['id']; ?>"
                                 data-product-price="<?php echo $product['discount_price'] ?: $product['price']; ?>">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Agregar al Carrito</span>
+                            Buy Now
                         </button>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
-        <div class="view-all-wrapper">
-            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-view-all">
-                Ver Todos los Productos
-                <i class="fas fa-arrow-right"></i>
-            </a>
+        <div class="view-all-center">
+            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-view-all">View All</a>
         </div>
     </div>
 </section>
 <?php endif; ?>
 
-<!-- Promo Banner -->
-<section class="promo-banner">
+<!-- Vitamins & Supplements -->
+<?php if (!empty($vitaminsProducts) || !empty($featuredProducts)): 
+$vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($featuredProducts, 0, 4);
+?>
+<section class="products-section vitamins-section">
     <div class="container">
-        <div class="promo-content">
-            <div class="promo-text">
-                <span class="promo-label">Oferta Especial</span>
-                <h2>Hasta 30% de Descuento</h2>
-                <p>En productos seleccionados. Aprovecha nuestras ofertas por tiempo limitado.</p>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-promo">Comprar Ahora</a>
-            </div>
-            <div class="promo-image">
-                <img src="<?php echo BASE_URL; ?>/assets/images/pills-banner.svg" alt="Special Offer">
+        <div class="section-header">
+            <h2 class="section-title">VITAMINS & SUPPLEMENTS</h2>
+            <div class="section-arrows">
+                <button class="arrow-btn prev-btn" onclick="scrollProducts('vitamins', 'left')"><i class="fas fa-chevron-left"></i></button>
+                <button class="arrow-btn next-btn" onclick="scrollProducts('vitamins', 'right')"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Latest Products -->
-<?php if (!empty($latestProducts)): ?>
-<section class="latest-products">
-    <div class="container">
-        <div class="section-title-wrapper">
-            <h2 class="section-title">Últimos Productos</h2>
-            <p class="section-subtitle">Recién agregados a nuestro catálogo</p>
-        </div>
-        <div class="products-modern-grid">
-            <?php foreach ($latestProducts as $product): ?>
-                <div class="product-modern-card">
+        <div class="products-carousel" id="vitamins-carousel">
+            <?php foreach ($vitaminsToShow as $product): ?>
+                <div class="product-card">
                     <?php if ($product['discount_price']): ?>
-                        <span class="product-discount-badge">-<?php echo round((($product['price'] - $product['discount_price']) / $product['price']) * 100); ?>%</span>
+                        <span class="sale-badge">SALE</span>
                     <?php endif; ?>
                     
-                    <div class="product-image-container">
-                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.svg'); ?>" 
+                    <div class="product-image">
+                        <img src="<?php echo BASE_URL . '/uploads/products/' . ($product['image'] ?: 'default.png'); ?>" 
                              alt="<?php echo htmlspecialchars($product['name']); ?>"
-                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
+                             onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.png'">
                     </div>
                     
-                    <div class="product-modern-info">
-                        <span class="product-category"><?php echo htmlspecialchars($product['category_name']); ?></span>
+                    <div class="product-info">
                         <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
                         
-                        <div class="product-rating-modern">
+                        <div class="product-rating">
                             <?php 
-                            $rating = $product['rating'];
+                            $rating = $product['rating'] ?? 5;
                             for ($i = 1; $i <= 5; $i++) {
                                 echo $i <= $rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
                             }
                             ?>
-                            <span class="rating-count">(<?php echo $rating; ?>)</span>
                         </div>
                         
-                        <div class="product-price-modern">
+                        <div class="product-price">
                             <?php if ($product['discount_price']): ?>
-                                <span class="price-new"><?php echo formatPrice($product['discount_price']); ?></span>
-                                <span class="price-old"><?php echo formatPrice($product['price']); ?></span>
+                                <span class="price"><?php echo formatPrice($product['discount_price']); ?></span>
+                                <span class="old-price"><?php echo formatPrice($product['price']); ?></span>
                             <?php else: ?>
-                                <span class="price-new"><?php echo formatPrice($product['price']); ?></span>
+                                <span class="price"><?php echo formatPrice($product['price']); ?></span>
                             <?php endif; ?>
                         </div>
                         
-                        <button class="btn-add-modern" 
+                        <button class="btn-buy-now" 
                                 data-product-id="<?php echo $product['id']; ?>"
                                 data-product-price="<?php echo $product['discount_price'] ?: $product['price']; ?>">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Agregar al Carrito</span>
+                            Buy Now
                         </button>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
+        <div class="view-all-center">
+            <a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements" class="btn-view-all">View All</a>
+        </div>
     </div>
 </section>
 <?php endif; ?>
 
-<!-- Testimonials -->
-<section class="modern-testimonials">
+<!-- About Us Section -->
+<section class="about-section">
     <div class="container">
-        <div class="section-title-wrapper">
-            <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
-            <p class="section-subtitle">Miles de clientes satisfechos confían en nosotros</p>
+        <h2 class="section-title centered">ABOUT US</h2>
+        <div class="about-content">
+            <div class="about-image">
+                <img src="<?php echo BASE_URL; ?>/assets/images/about-products.png" alt="About Us">
+            </div>
+            <div class="about-text">
+                <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+                <a href="<?php echo BASE_URL; ?>/about.php" class="btn-read-more">Read More</a>
+            </div>
         </div>
-        <div class="testimonials-grid">
-            <div class="testimonial-modern-card">
-                <div class="testimonial-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-                <p class="testimonial-text">"Excelente servicio. Los productos llegaron rápido y en perfecto estado. Muy recomendado."</p>
-                <div class="testimonial-author-modern">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/testimonial.svg" alt="Cliente">
-                    <div>
-                        <strong>María González</strong>
-                        <span>Cliente Verificado</span>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-modern-card">
-                <div class="testimonial-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-                <p class="testimonial-text">"Gran variedad de productos y precios competitivos. El equipo de soporte es muy atento."</p>
-                <div class="testimonial-author-modern">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/user-placeholder.svg" alt="Cliente">
-                    <div>
-                        <strong>Carlos Rodríguez</strong>
-                        <span>Cliente Verificado</span>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-modern-card">
-                <div class="testimonial-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-                <p class="testimonial-text">"Confiable y profesional. Siempre encuentro lo que necesito a buenos precios."</p>
-                <div class="testimonial-author-modern">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/user-placeholder.svg" alt="Cliente">
-                    <div>
-                        <strong>Ana Martínez</strong>
-                        <span>Cliente Verificado</span>
+    </div>
+</section>
+
+<!-- Testimonial Section -->
+<section class="testimonial-section">
+    <div class="container">
+        <h2 class="section-title centered">WHAT IS <span class="highlight-blue">SAYS</span> OUR CLIENTS</h2>
+        <div class="testimonial-card">
+            <p class="testimonial-text">"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be"</p>
+            <div class="testimonial-author">
+                <img src="<?php echo BASE_URL; ?>/assets/images/client-avatar.jpg" alt="Client" class="author-avatar">
+                <div class="author-info">
+                    <h4>Venison Aune</h4>
+                    <p>Customer</p>
+                    <div class="rating-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
                     </div>
                 </div>
             </div>
@@ -355,25 +260,42 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<!-- Newsletter CTA -->
-<section class="newsletter-cta">
+<!-- Request Callback Section -->
+<section class="callback-section">
     <div class="container">
-        <div class="newsletter-content">
-            <div class="newsletter-text">
-                <h2>Mantente Informado</h2>
-                <p>Suscríbete para recibir ofertas exclusivas, noticias de salud y novedades de productos.</p>
+        <div class="callback-grid">
+            <div class="callback-form-wrapper">
+                <h2 class="callback-title">REQUEST A CALL BACK</h2>
+                <form class="callback-form" id="callbackForm">
+                    <input type="text" placeholder="Name" required>
+                    <input type="text" placeholder="Phone Number" required>
+                    <input type="email" placeholder="Email" required>
+                    <textarea placeholder="Message" rows="4" required></textarea>
+                    <button type="submit" class="btn-send">SEND</button>
+                </form>
             </div>
-            <form class="newsletter-form-modern" id="newsletterForm">
-                <input type="email" placeholder="Tu correo electrónico" required>
-                <button type="submit">Suscribirse</button>
-            </form>
+            <div class="callback-banner">
+                <h2>Get Now<br>Medicines</h2>
+                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even</p>
+            </div>
         </div>
     </div>
 </section>
 
 <script>
+// Scroll products carousel
+function scrollProducts(section, direction) {
+    const carousel = document.getElementById(section + '-carousel');
+    const scrollAmount = 300;
+    if (direction === 'left') {
+        carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+}
+
 // Add to cart functionality
-document.querySelectorAll('.btn-add-modern').forEach(button => {
+document.querySelectorAll('.btn-buy-now').forEach(button => {
     button.addEventListener('click', function() {
         const productId = this.dataset.productId;
         const productPrice = this.dataset.productPrice;
@@ -398,23 +320,26 @@ document.querySelectorAll('.btn-add-modern').forEach(button => {
         localStorage.setItem('cart', JSON.stringify(cart));
         
         // Update cart count
-        updateCartCount();
-        
-        // Show notification
-        showNotification('Producto agregado al carrito', 'success');
+        if (typeof updateCartCount === 'function') {
+            updateCartCount();
+        }
         
         // Visual feedback
-        this.innerHTML = '<i class="fas fa-check"></i> <span>Agregado</span>';
+        const originalText = this.textContent;
+        this.textContent = 'Added!';
+        this.style.backgroundColor = '#00d4aa';
+        
         setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-shopping-cart"></i> <span>Agregar al Carrito</span>';
-        }, 2000);
+            this.textContent = originalText;
+            this.style.backgroundColor = '';
+        }, 1500);
     });
 });
 
-// Newsletter form
-document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
+// Callback form
+document.getElementById('callbackForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
-    showNotification('¡Gracias por suscribirte!', 'success');
+    alert('Thank you! We will contact you soon.');
     this.reset();
 });
 </script>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Medicine Store - Preview</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Demo styles for preview */
+        .hero-section {
+            background: linear-gradient(135deg, #00d4d4 0%, #00b8e6 100%);
+            position: relative;
+        }
+        .hero-image img {
+            /* Placeholder for pills image */
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        .product-image {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <a href="tel:+1234567890">
+                    <i class="fas fa-phone"></i> CALL: +1 234 567 890
+                </a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="index.php" class="logo">
+                <span style="font-size: 1.5rem; font-weight: 800; color: #00d4d4;">MEDSTORE</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#">HOME</a></li>
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="#">MEDICINE</a></li>
+                <li><a href="#">ONLINE BUY</a></li>
+                <li><a href="#">NEWS</a></li>
+                <li><a href="#">CONTACT US</a></li>
+            </ul>
+
+            <div class="nav-right">
+                <div class="search-box">
+                    <input type="text" placeholder="SEARCH">
+                    <button type="button"><i class="fas fa-search"></i></button>
+                </div>
+                <a href="#" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <a href="#" class="user-icon">
+                    <i class="fas fa-user"></i> LOGIN
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-text">
+                        <h1 class="hero-title">Welcome to Our<br><span class="highlight">Online Medicine</span></h1>
+                        <p class="hero-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec odio vitae mauris sagittis aliquet. Nam viverra pharetra est, ut vehicula tortor tincidunt vel.</p>
+                        <a href="#" class="btn-shop">Shop Now</a>
+                    </div>
+                    <div class="hero-image">
+                        <div style="width: 400px; height: 400px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                            💊
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3>FAST DELIVERY</h3>
+                    <p>It is a long established fact that a reader will be distracted by</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-medical"></i>
+                    </div>
+                    <h3>ONLINE ORDER</h3>
+                    <p>It is a long established fact that a reader will be distracted by</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>SUPPORT</h3>
+                    <p>It is a long established fact that a reader will be distracted by</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discount Banner -->
+    <section class="discount-banner">
+        <div class="container">
+            <div class="discount-content">
+                <div class="discount-text">
+                    <h2>YOU GET<br>ANY MEDICINE<br>ON <span class="discount-highlight">10% DISCOUNT</span></h2>
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page.</p>
+                    <a href="#" class="btn-get-now">Get Now</a>
+                </div>
+                <div class="discount-image">
+                    <div style="font-size: 10rem; text-align: center;">💊💊💊</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Medicine Products -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">MEDICINE & HEALTH</h2>
+                <div class="section-arrows">
+                    <button class="arrow-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="arrow-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="products-carousel">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <span class="sale-badge">SALE</span>
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">💊</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Medicine Name</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$24.99</span>
+                            <span class="old-price">$34.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <!-- Repeat for more products -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">💉</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Health Product</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$19.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">🩺</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Medical Equipment</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$39.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <span class="sale-badge">SALE</span>
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">🏥</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">First Aid Kit</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$29.99</span>
+                            <span class="old-price">$39.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-center">
+                <a href="#" class="btn-view-all">View All</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vitamins Section -->
+    <section class="products-section vitamins-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">VITAMINS & SUPPLEMENTS</h2>
+                <div class="section-arrows">
+                    <button class="arrow-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="arrow-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="products-carousel">
+                <div class="product-card">
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">🧪</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Vitamin C</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$14.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <span class="sale-badge">SALE</span>
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">💊</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Multivitamin</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$19.99</span>
+                            <span class="old-price">$29.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">⚕️</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Omega-3</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$24.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div style="font-size: 4rem;">🌿</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Herbal Supplement</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">$16.99</span>
+                        </div>
+                        <button class="btn-buy-now">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-center">
+                <a href="#" class="btn-view-all">View All</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title centered">ABOUT US</h2>
+            <div class="about-content">
+                <div class="about-image">
+                    <div style="background: linear-gradient(135deg, #e0e0e0, #f0f0f0); height: 400px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+                        💊🧪
+                    </div>
+                </div>
+                <div class="about-text">
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+                    <a href="#" class="btn-read-more">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="testimonial-section">
+        <div class="container">
+            <h2 class="section-title centered">WHAT IS <span class="highlight-blue">SAYS</span> OUR CLIENTS</h2>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, #00d4d4, #00b8e6); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                        👤
+                    </div>
+                    <div class="author-info">
+                        <h4>Venison Aune</h4>
+                        <p>Customer</p>
+                        <div class="rating-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Callback Section -->
+    <section class="callback-section">
+        <div class="container">
+            <div class="callback-grid">
+                <div class="callback-form-wrapper">
+                    <h2 class="callback-title">REQUEST A CALL BACK</h2>
+                    <form class="callback-form">
+                        <input type="text" placeholder="Name" required>
+                        <input type="text" placeholder="Phone Number" required>
+                        <input type="email" placeholder="Email" required>
+                        <textarea placeholder="Message" rows="4" required></textarea>
+                        <button type="submit" class="btn-send">SEND</button>
+                    </form>
+                </div>
+                <div class="callback-banner">
+                    <h2>Get Now<br>Medicines</h2>
+                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CONTACT</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@medstore.com</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>MENU</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Medicine</a></li>
+                    <li><a href="#">Online Buy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>NEWSLETTER</h3>
+                <p>Get Now Medicines</p>
+                <p style="font-size: 14px; margin-top: 10px; opacity: 0.9;">Subscribe to receive the latest offers and health news</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 All Rights Reserved. Design by MedStore</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
