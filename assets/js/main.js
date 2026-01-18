@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - Main JavaScript
-   Version 5.0
+   Version 5.1
 ============================================ */
 
 // Update cart count on page load
@@ -90,4 +90,4 @@ document.querySelectorAll('.feature-item, .product-card, .testimonial-card').for
     observer.observe(el);
 });
 
-console.log('Online Medicine Store v5.0 - JavaScript loaded');
+console.log('Online Medicine Store v5.1 - JavaScript loaded');
