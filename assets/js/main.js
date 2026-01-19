@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - Main JavaScript
-   Version 5.5 - About Page Fix
+   Version 5.6 - Products Pagination System
 ============================================ */
 
 // Update cart count on page load
@@ -112,4 +112,4 @@ function initializeProductNavigation() {
     });
 }
 
-console.log('Online Medicine Store v5.5 - JavaScript loaded');
+console.log('Online Medicine Store v5.6 - JavaScript loaded');

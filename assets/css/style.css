@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - MODERN UI
-   Version 5.5 - About Page Fix
+   Version 5.6 - Products Pagination System
 ============================================ */
 
 /* ===== RESET & BASE ===== */
@@ -1684,33 +1684,18 @@ footer {
     text-transform: uppercase;
 }
 
+.products-count-info {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
 .category-nav {
-    display: flex;
-    gap: 10px;
+    display: none;
 }
 
 .nav-arrow {
-    width: 45px;
-    height: 45px;
-    background: var(--primary-dark);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-arrow:hover {
-    background: var(--primary-cyan);
-    transform: scale(1.1);
-}
-
-.nav-arrow:active {
-    transform: scale(0.95);
+    display: none;
 }
 
 .products-grid {
@@ -1846,36 +1831,76 @@ footer {
     color: #1a1a1a;
 }
 
-/* See More Section */
-.see-more-section {
-    text-align: center;
-    margin-top: 45px;
-    padding-top: 30px;
+/* Pagination Section */
+.pagination-section {
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid #e5e5e5;
 }
 
-.btn-see-more {
-    padding: 13px 45px;
-    background: #1a1a1a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: capitalize;
-    letter-spacing: 0.5px;
-    cursor: pointer;
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-btn,
+.pagination-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
 
-.btn-see-more:hover {
+.pagination-btn:hover,
+.pagination-number:hover {
     background: var(--primary-cyan);
+    color: white;
+    border-color: var(--primary-cyan);
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 212, 212, 0.3);
 }
 
-.btn-see-more:active {
-    transform: translateY(0);
+.pagination-number.active {
+    background: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+    cursor: default;
+}
+
+.pagination-number.active:hover {
+    transform: none;
+}
+
+.pagination-dots {
+    color: #999;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0 8px;
+    cursor: default;
+}
+
+.pagination-prev,
+.pagination-next {
+    font-size: 0.85rem;
+}
+
+.pagination-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Responsive */
@@ -1902,17 +1927,21 @@ footer {
     .category-title {
         font-size: 1.3rem;
     }
+    
+    .products-count-info {
+        font-size: 0.85rem;
+    }
 }
 
 @media (max-width: 768px) {
     .category-header {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
         align-items: flex-start;
     }
     
-    .category-nav {
-        align-self: center;
+    .products-count-info {
+        align-self: flex-start;
     }
     
     .products-category-section {
@@ -1927,6 +1956,13 @@ footer {
     .product-placeholder-page i {
         font-size: 2.2rem;
     }
+    
+    .pagination-btn,
+    .pagination-number {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1939,12 +1975,22 @@ footer {
         font-size: 1.2rem;
     }
     
-    .btn-see-more {
-        padding: 12px 35px;
-        font-size: 0.85rem;
-    }
-    
     .product-info-page {
         padding: 12px;
+    }
+    
+    .pagination {
+        gap: 6px;
+    }
+    
+    .pagination-btn,
+    .pagination-number {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .pagination-dots {
+        padding: 0 4px;
     }
 }
