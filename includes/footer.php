@@ -12,8 +12,7 @@
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>/index.php">Home</a></li>
                     <li><a href="<?php echo BASE_URL; ?>/about.php">About</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>/products.php">Medicine</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements">Online Buy</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/products.php">Online Buy</a></li>
                 </ul>
             </div>
 
@@ -33,6 +32,6 @@
         </div>
     </footer>
 
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5.0"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5.7"></script>
 </body>
 </html>
