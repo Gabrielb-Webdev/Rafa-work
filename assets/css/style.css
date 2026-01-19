@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - MODERN UI
-   Version 5.7 - Products Page Layout Fix
+   Version 5.8 - Contact Page Design
 ============================================ */
 
 /* ===== RESET & BASE ===== */
@@ -1648,6 +1648,254 @@ footer {
 }
 
 /* Ready for additional styles */
+
+/* ===== CONTACT PAGE ===== */
+.contact-page-section {
+    padding: 60px 0 80px;
+    background: linear-gradient(180deg, #f8f8f8 0%, #ffffff 100%);
+    min-height: calc(100vh - 200px);
+}
+
+.contact-page-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+    font-size: 1.05rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.contact-page-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Contact Form */
+.contact-form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="tel"],
+.contact-form input[type="email"],
+.contact-form select,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 212, 212, 0.1);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-submit-contact {
+    width: 100%;
+    padding: 14px 30px;
+    background: var(--primary-dark);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-submit-contact:hover {
+    background: var(--primary-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 212, 0.3);
+}
+
+.btn-submit-contact:active {
+    transform: translateY(0);
+}
+
+/* Contact Info */
+.contact-info-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.info-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-description {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 35px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+    background: rgba(0, 212, 212, 0.05);
+    transform: translateX(5px);
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-cyan) 0%, #00b8e6 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.contact-icon i {
+    font-size: 1.3rem;
+    color: white;
+}
+
+.contact-text h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+}
+
+.contact-text p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .contact-page-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-page-section {
+        padding: 40px 0 60px;
+    }
+    
+    .contact-form-container,
+    .contact-info-container {
+        padding: 30px 25px;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .form-title,
+    .info-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-form-container,
+    .contact-info-container {
+        padding: 25px 20px;
+    }
+    
+    .contact-item {
+        padding: 15px;
+    }
+    
+    .contact-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .contact-icon i {
+        font-size: 1.1rem;
+    }
+}
 /* ===== PRODUCTS PAGE ===== */
 .products-page-section {
     padding: 50px 0 70px;
