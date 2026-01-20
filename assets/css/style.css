@@ -674,13 +674,7 @@ header nav {
     border-radius: 10px;
     padding: 20px;
     box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
     position: relative;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
 }
 
 .sale-badge {
@@ -2022,17 +2016,10 @@ footer {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     overflow: hidden;
-    transition: all 0.3s ease;
     position: relative;
     cursor: pointer;
     display: flex;
     flex-direction: column;
-}
-
-.product-card-page:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    border-color: var(--primary-cyan);
 }
 
 .product-badge-page {
@@ -2071,13 +2058,6 @@ footer {
     border-radius: 6px;
     border: 2px dashed #d5d5d5;
     color: #999;
-    transition: all 0.3s ease;
-}
-
-.product-card-page:hover .product-placeholder-page {
-    background: linear-gradient(135deg, rgba(0, 212, 212, 0.08) 0%, rgba(0, 212, 212, 0.03) 100%);
-    border-color: var(--primary-cyan);
-    color: var(--primary-cyan);
 }
 
 .product-placeholder-page i {
