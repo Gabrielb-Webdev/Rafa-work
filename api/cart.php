@@ -86,13 +86,25 @@ switch ($action) {
     case 'remove':
         $productId = intval($_POST['product_id'] ?? 0);
         
-        if ($productId > 0 && isset($_SESSION['cart'][$productId])) {
-            unset($_SESSION['cart'][$productId]);
+        // Depuración: verificar si el producto existe en el carrito
+        $cartKeys = array_keys($_SESSION['cart']);
+        $productExists = false;
+        
+        // Buscar el producto tanto por clave numérica como string
+        foreach ($cartKeys as $key) {
+            if ($key == $productId || intval($key) == $productId) {
+                unset($_SESSION['cart'][$key]);
+                $productExists = true;
+                break;
+            }
+        }
+        
+        if ($productExists) {
             $response['success'] = true;
             $response['message'] = 'Producto eliminado del carrito';
-            $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
+            $response['cartCount'] = empty($_SESSION['cart']) ? 0 : array_sum(array_column($_SESSION['cart'], 'quantity'));
         } else {
-            $response['message'] = 'Producto no encontrado en el carrito';
+            $response['message'] = 'Producto no encontrado en el carrito (ID: ' . $productId . ', Keys: ' . implode(',', $cartKeys) . ')';
         }
         break;
         
