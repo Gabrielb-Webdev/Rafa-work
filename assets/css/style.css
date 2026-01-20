@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - MODERN UI
-   Version 6.2 - Dropdown Centered
+   Version 6.3 - Carousel Scroll Disabled
 ============================================ */
 
 /* ===== RESET & BASE ===== */
@@ -658,25 +658,13 @@ header nav {
 .products-carousel {
     display: flex;
     gap: 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
     scroll-behavior: smooth;
     padding-bottom: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-cyan) var(--bg-light);
 }
 
 .products-carousel::-webkit-scrollbar {
-    height: 8px;
-}
-
-.products-carousel::-webkit-scrollbar-track {
-    background: var(--bg-light);
-    border-radius: 10px;
-}
-
-.products-carousel::-webkit-scrollbar-thumb {
-    background: var(--primary-cyan);
-    border-radius: 10px;
+    display: none;
 }
 
 /* ===== PRODUCT CARD ===== */
