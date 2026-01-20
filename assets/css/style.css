@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - MODERN UI
-   Version 6.0 - Dropdown Hover Restored
+   Version 6.1 - Dropdown Click Toggle
 ============================================ */
 
 /* ===== RESET & BASE ===== */
@@ -290,7 +290,7 @@ header nav {
     transition: transform 0.3s ease;
 }
 
-.dropdown:hover .user-icon::after {
+.dropdown.active .user-icon::after {
     transform: rotate(180deg);
 }
 
@@ -324,7 +324,7 @@ header nav {
     border-top: 1px solid rgba(0, 212, 212, 0.1);
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown.active .dropdown-content {
     display: block;
     opacity: 1;
     transform: translateY(0);
