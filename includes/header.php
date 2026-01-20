@@ -53,15 +53,30 @@
                 </a>
 
                 <?php if (isLoggedIn()): ?>
-                    <div class="user-icon dropdown">
-                        <i class="fas fa-user"></i>
+                    <div class="dropdown">
+                        <div class="user-icon">
+                            <i class="fas fa-user-circle"></i>
+                            <span><?php echo strtoupper(explode(' ', $_SESSION['user_name'] ?? 'Usuario')[0]); ?></span>
+                        </div>
                         <div class="dropdown-content">
                             <?php if (isAdmin()): ?>
-                                <a href="<?php echo BASE_URL; ?>/admin/index.php">Panel Admin</a>
+                                <a href="<?php echo BASE_URL; ?>/admin/index.php">
+                                    <i class="fas fa-user-shield"></i>
+                                    <span>Panel Admin</span>
+                                </a>
                             <?php endif; ?>
-                            <a href="<?php echo BASE_URL; ?>/profile.php">Mi Perfil</a>
-                            <a href="<?php echo BASE_URL; ?>/orders.php">Mis Pedidos</a>
-                            <a href="<?php echo BASE_URL; ?>/logout.php">Cerrar Sesión</a>
+                            <a href="<?php echo BASE_URL; ?>/profile.php">
+                                <i class="fas fa-user"></i>
+                                <span>Mi Perfil</span>
+                            </a>
+                            <a href="<?php echo BASE_URL; ?>/orders.php">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span>Mis Pedidos</span>
+                            </a>
+                            <a href="<?php echo BASE_URL; ?>/logout.php">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
                         </div>
                     </div>
                 <?php else: ?>
