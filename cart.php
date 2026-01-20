@@ -3,8 +3,35 @@ require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Carrito de Compras - Forethink Health';
 
-// Calcular total del carrito
+// Validar productos del carrito contra la base de datos
 $cartItems = $_SESSION['cart'] ?? [];
+$validCartItems = [];
+
+if (!empty($cartItems)) {
+    foreach ($cartItems as $productId => $item) {
+        // Verificar que el producto existe en la base de datos
+        $stmt = executeQuery("SELECT id, name, price, stock, image FROM products WHERE id = ? AND is_active = 1", [$productId]);
+        $product = $stmt->fetch();
+        
+        if ($product) {
+            // Producto válido, actualizar información por si cambió
+            $validCartItems[$productId] = [
+                'id' => $product['id'],
+                'name' => $product['name'],
+                'price' => $product['price'],
+                'quantity' => min($item['quantity'], $product['stock']), // No exceder stock
+                'image' => $product['image']
+            ];
+        }
+        // Si el producto no existe, simplemente no se agrega a validCartItems
+    }
+    
+    // Actualizar sesión con solo productos válidos
+    $_SESSION['cart'] = $validCartItems;
+    $cartItems = $validCartItems;
+}
+
+// Calcular total del carrito
 $subtotal = 0;
 foreach ($cartItems as $item) {
     $subtotal += $item['price'] * $item['quantity'];
@@ -586,7 +613,10 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="cart-content">
             <div class="cart-items">
-                <?php foreach ($cartItems as $productId => $item): ?>
+                <?php foreach ($cartItems as $productId => $item): 
+                    $productId = intval($productId); // Asegurar que es entero
+                    if ($productId <= 0) continue; // Saltar IDs inválidos
+                ?>
                     <div class="cart-item" data-product-id="<?php echo $productId; ?>">
                         <div class="cart-item-image">
                             <?php if (!empty($item['image'])): ?>
@@ -738,6 +768,11 @@ function updateQuantity(productId, change) {
 }
 
 function removeItem(productId) {
+    productId = parseInt(productId);
+    if (!productId || productId <= 0) {
+        showToast('ID de producto inválido', 'error', 'Error');
+        return;
+    }
     productToRemove = productId;
     document.getElementById('confirmModal').classList.add('show');
 }
