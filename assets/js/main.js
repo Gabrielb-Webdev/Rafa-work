@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSearch();
     initializeNewsletterForm();
     initializeProductNavigation();
+    initializeUserDropdown();
 });
 
 // Update cart count
@@ -112,4 +113,33 @@ function initializeProductNavigation() {
     });
 }
 
-console.log('Online Medicine Store v5.8 - JavaScript loaded');
+// Initialize user dropdown with click
+function initializeUserDropdown() {
+    const dropdown = document.querySelector('.dropdown');
+    if (!dropdown) return;
+    
+    const userIcon = dropdown.querySelector('.user-icon');
+    
+    // Toggle dropdown on click
+    userIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+    
+    // Close dropdown when clicking on a link
+    const dropdownLinks = dropdown.querySelectorAll('.dropdown-content a');
+    dropdownLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            dropdown.classList.remove('active');
+        });
+    });
+}
+
+console.log('Online Medicine Store v5.9 - JavaScript loaded');
