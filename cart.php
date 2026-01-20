@@ -759,14 +759,18 @@ function confirmRemove() {
     })
     .then(res => res.json())
     .then(data => {
+        console.log('Response:', data); // Para depuración
         if (data.success) {
             showToast('Producto eliminado del carrito', 'success', '¡Listo!');
             setTimeout(() => location.reload(), 1000);
         } else {
-            showToast('No se pudo eliminar el producto', 'error', 'Error');
+            showToast(data.message || 'No se pudo eliminar el producto', 'error', 'Error');
         }
     })
-    .catch(() => showToast('Error de conexión', 'error', 'Error'));
+    .catch(err => {
+        console.error('Error:', err);
+        showToast('Error de conexión', 'error', 'Error');
+    });
     
     productToRemove = null;
 }
