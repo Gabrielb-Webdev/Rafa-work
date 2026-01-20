@@ -72,14 +72,8 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transition: all 0.4s ease;
     position: relative;
     cursor: pointer;
-}
-
-.product-card-page:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 40px rgba(0,212,212,0.2);
 }
 
 .product-badge-page {
