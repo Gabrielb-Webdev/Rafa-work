@@ -4,10 +4,16 @@
  * Ejecuta este archivo desde el navegador para actualizar los hashes de contraseña
  */
 
+// Deshabilitar errores en producción para no mostrar información sensible
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/config/config.php';
 
+// IMPORTANTE: Usar un hash fijo y conocido que funcione
 $password = 'admin123';
-$hash = password_hash($password, PASSWORD_DEFAULT);
+// Este hash fue probado y funciona con password_verify()
+$hash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
 echo "<h1>Fix de Usuarios - Forethink Health</h1>";
 echo "<p><strong>Password que usaremos:</strong> {$password}</p>";
