@@ -103,11 +103,6 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-.product-card-page:hover .product-image-wrapper-page img {
-    transform: scale(1.1);
 }
 
 .product-placeholder-page {
@@ -140,16 +135,11 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
     color: #2c3e50;
     margin-bottom: 12px;
     cursor: pointer;
-    transition: color 0.3s;
     min-height: 50px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-.product-name:hover {
-    color: #00d4d4;
 }
 
 .product-category-page {
@@ -197,13 +187,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
     cursor: pointer;
     font-size: 14px;
     font-weight: 700;
-    transition: all 0.3s;
     box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-}
-
-.btn-view-details:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
 }
 
 .btn-add-cart {
@@ -216,13 +200,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
     cursor: pointer;
     font-size: 14px;
     font-weight: 700;
-    transition: all 0.3s;
     box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-
-.btn-add-cart:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
 .btn-add-cart:active, .btn-view-details:active {
