@@ -3,34 +3,66 @@ require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Carrito de Compras - Forethink Health';
 
+// Calcular total del carrito
+$cartItems = $_SESSION['cart'] ?? [];
+$subtotal = 0;
+foreach ($cartItems as $item) {
+    $subtotal += $item['price'] * $item['quantity'];
+}
+$shipping = 0; // Envío gratis
+$total = $subtotal + $shipping;
+
 include __DIR__ . '/includes/header.php';
 ?>
 
 <style>
 .cart-container {
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 60px auto;
     padding: 20px;
+}
+
+.cart-header {
+    margin-bottom: 30px;
+}
+
+.cart-header h1 {
+    font-size: 32px;
+    color: #2c3e50;
+    margin-bottom: 10px;
 }
 
 .cart-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 30px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .cart-content {
+        grid-template-columns: 1fr;
+    }
 }
 
 .cart-items {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .cart-item {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 20px;
     padding: 20px 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.cart-item:first-child {
+    padding-top: 0;
 }
 
 .cart-item:last-child {
@@ -40,140 +72,138 @@ include __DIR__ . '/includes/header.php';
 .cart-item-image {
     width: 100px;
     height: 100px;
-    object-fit: contain;
-    margin-right: 20px;
-    background-color: var(--light-bg);
+    object-fit: cover;
     border-radius: 8px;
-    padding: 10px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.cart-item-details {
-    flex: 1;
+.cart-item-image i {
+    font-size: 40px;
+    color: #00d4d4;
 }
 
-.cart-item-details h3 {
-    margin-bottom: 10px;
-    color: var(--text-dark);
+.cart-item-info h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #2c3e50;
 }
 
 .cart-item-price {
     font-size: 20px;
-    font-weight: bold;
-    color: var(--primary-color);
+    font-weight: 700;
+    color: #00d4d4;
+    margin-bottom: 15px;
 }
 
-.quantity-controls {
+.cart-item-quantity {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin: 15px 0;
+    gap: 10px;
 }
 
-.quantity-btn {
-    width: 35px;
-    height: 35px;
-    border: 1px solid var(--border-color);
-    background-color: white;
-    border-radius: 5px;
+.qty-btn {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #00d4d4;
+    background: white;
+    color: #00d4d4;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 600;
     transition: all 0.3s;
 }
 
-.quantity-btn:hover {
-    background-color: var(--primary-color);
+.qty-btn:hover {
+    background: #00d4d4;
     color: white;
-    border-color: var(--primary-color);
 }
 
-.quantity-display {
-    font-size: 18px;
-    font-weight: 600;
-    min-width: 30px;
+.qty-input {
+    width: 60px;
     text-align: center;
+    padding: 8px;
+    border: 2px solid #eee;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.cart-item-actions {
+    text-align: right;
+}
+
+.cart-item-total {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
 }
 
 .btn-remove {
-    background-color: var(--danger-color);
+    background: #dc3545;
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: opacity 0.3s;
+    font-size: 14px;
+    transition: all 0.3s;
 }
 
 .btn-remove:hover {
-    opacity: 0.8;
+    background: #c82333;
 }
 
 .cart-summary {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    height: fit-content;
     position: sticky;
-    top: 20px;
+    top: 100px;
 }
 
-.cart-summary h3 {
+.cart-summary h2 {
+    font-size: 22px;
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color);
+    color: #2c3e50;
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-    font-size: 16px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
 }
 
 .summary-row.total {
+    border-bottom: none;
     font-size: 22px;
-    font-weight: bold;
-    color: var(--primary-color);
-    padding-top: 15px;
-    border-top: 2px solid var(--border-color);
-    margin-top: 15px;
+    font-weight: 700;
+    color: #00d4d4;
+    padding-top: 20px;
 }
 
 .btn-checkout {
     width: 100%;
-    padding: 15px;
-    background-color: var(--primary-color);
+    background: #00d4d4;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    font-weight: 600;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s;
     margin-top: 20px;
+    transition: all 0.3s;
 }
 
 .btn-checkout:hover {
-    background-color: var(--secondary-color);
-}
-
-.btn-continue {
-    width: 100%;
-    padding: 12px;
-    background-color: white;
-    color: var(--text-dark);
-    border: 2px solid var(--border-color);
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 10px;
-}
-
-.btn-continue:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: #00b8b8;
+    transform: translateY(-2px);
 }
 
 .empty-cart {
@@ -183,146 +213,156 @@ include __DIR__ . '/includes/header.php';
 
 .empty-cart i {
     font-size: 80px;
-    color: var(--text-light);
+    color: #dee2e6;
     margin-bottom: 20px;
 }
 
 .empty-cart h2 {
+    font-size: 28px;
+    color: #2c3e50;
     margin-bottom: 15px;
-    color: var(--text-dark);
 }
 
 .empty-cart p {
-    color: var(--text-light);
+    color: #6c757d;
     margin-bottom: 30px;
 }
 
-@media (max-width: 768px) {
-    .cart-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .cart-item {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .cart-item-image {
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
+.btn-continue {
+    background: #00d4d4;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-continue:hover {
+    background: #00b8b8;
 }
 </style>
 
 <div class="cart-container">
-    <h1 style="margin-bottom: 30px;">Carrito de Compras</h1>
-    
-    <div id="cart-content">
-        <!-- El contenido del carrito se cargará dinámicamente con JavaScript -->
+    <div class="cart-header">
+        <h1><i class="fas fa-shopping-cart"></i> Mi Carrito</h1>
+        <p style="color: #6c757d;"><?php echo count($cartItems); ?> productos en tu carrito</p>
     </div>
+
+    <?php if (empty($cartItems)): ?>
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h2>Tu carrito está vacío</h2>
+            <p>Agrega productos para comenzar tu compra</p>
+            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-continue">
+                <i class="fas fa-arrow-left"></i> Continuar comprando
+            </a>
+        </div>
+    <?php else: ?>
+        <div class="cart-content">
+            <div class="cart-items">
+                <?php foreach ($cartItems as $item): ?>
+                    <div class="cart-item" data-product-id="<?php echo $item['id']; ?>">
+                        <div class="cart-item-image">
+                            <?php if (!empty($item['image'])): ?>
+                                <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $item['image']; ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                            <?php else: ?>
+                                <i class="fas fa-pills"></i>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="cart-item-info">
+                            <h3><?php echo htmlspecialchars($item['name']); ?></h3>
+                            <div class="cart-item-price">$<?php echo number_format($item['price'], 2); ?></div>
+                            <div class="cart-item-quantity">
+                                <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $item['id']; ?>, -1)">−</button>
+                                <input type="number" class="qty-input" value="<?php echo $item['quantity']; ?>" min="1" readonly>
+                                <button class="qty-btn qty-plus" onclick="updateQuantity(<?php echo $item['id']; ?>, 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-item-actions">
+                            <div class="cart-item-total">$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></div>
+                            <button class="btn-remove" onclick="removeItem(<?php echo $item['id']; ?>)">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="cart-summary">
+                <h2>Resumen del Pedido</h2>
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>$<?php echo number_format($subtotal, 2); ?></span>
+                </div>
+                <div class="summary-row">
+                    <span>Envío:</span>
+                    <span><?php echo $shipping == 0 ? 'GRATIS' : '$' . number_format($shipping, 2); ?></span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span>$<?php echo number_format($total, 2); ?></span>
+                </div>
+                
+                <?php if (isLoggedIn()): ?>
+                    <a href="<?php echo BASE_URL; ?>/checkout.php" class="btn-checkout">
+                        <i class="fas fa-check-circle"></i> Proceder al Pago
+                    </a>
+                <?php else: ?>
+                    <a href="<?php echo BASE_URL; ?>/login.php?redirect=checkout" class="btn-checkout">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión para Continuar
+                    </a>
+                <?php endif; ?>
+                
+                <a href="<?php echo BASE_URL; ?>/products.php" style="display: block; text-align: center; margin-top: 15px; color: #00d4d4; text-decoration: none;">
+                    <i class="fas fa-arrow-left"></i> Seguir comprando
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
-function loadCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartContent = document.getElementById('cart-content');
+function updateQuantity(productId, change) {
+    const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+    const qtyInput = cartItem.querySelector('.qty-input');
+    let currentQty = parseInt(qtyInput.value);
+    let newQty = currentQty + change;
     
-    if (cart.length === 0) {
-        cartContent.innerHTML = `
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <h2>Tu carrito está vacío</h2>
-                <p>Agrega productos para comenzar tu compra</p>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-primary">Ver Productos</a>
-            </div>
-        `;
-        return;
-    }
+    if (newQty < 1) return;
     
-    let subtotal = 0;
-    let cartItemsHTML = '';
-    
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        subtotal += itemTotal;
-        
-        cartItemsHTML += `
-            <div class="cart-item" data-product-id="${item.id}">
-                <img src="${item.image}" alt="${item.name}" class="cart-item-image" 
-                     onerror="this.src='<?php echo BASE_URL; ?>/assets/images/product-placeholder.svg'">
-                <div class="cart-item-details">
-                    <h3>${item.name}</h3>
-                    <div class="cart-item-price">${formatPrice(item.price)}</div>
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
-                        <span class="quantity-display">${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                        <button class="btn-remove" onclick="removeFromCart(${item.id})">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </div>
-                    <div style="margin-top: 10px; font-weight: 600;">
-                        Subtotal: ${formatPrice(itemTotal)}
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    const shipping = subtotal > 500 ? 0 : 50;
-    const total = subtotal + shipping;
-    
-    cartContent.innerHTML = `
-        <div class="cart-content">
-            <div class="cart-items">
-                <h2 style="margin-bottom: 20px;">Productos (${cart.length})</h2>
-                ${cartItemsHTML}
-            </div>
-            
-            <div class="cart-summary">
-                <h3>Resumen del Pedido</h3>
-                
-                <div class="summary-row">
-                    <span>Subtotal:</span>
-                    <span>${formatPrice(subtotal)}</span>
-                </div>
-                
-                <div class="summary-row">
-                    <span>Envío:</span>
-                    <span>${shipping === 0 ? 'GRATIS' : formatPrice(shipping)}</span>
-                </div>
-                
-                <div class="summary-row total">
-                    <span>Total:</span>
-                    <span>${formatPrice(total)}</span>
-                </div>
-                
-                <button class="btn-checkout" onclick="checkout()">
-                    Proceder al Pago
-                </button>
-                
-                <a href="<?php echo BASE_URL; ?>/products.php">
-                    <button class="btn-continue">Continuar Comprando</button>
-                </a>
-                
-                ${subtotal < 500 ? '<p style="text-align: center; margin-top: 15px; color: var(--text-light); font-size: 14px;">Envío gratis en compras mayores a $500 ARS</p>' : ''}
-            </div>
-        </div>
-    `;
-}
-
-function checkout() {
-    <?php if (isLoggedIn()): ?>
-        window.location.href = '<?php echo BASE_URL; ?>/checkout.php';
-    <?php else: ?>
-        if (confirm('Necesitas iniciar sesión para continuar con la compra. ¿Deseas ir a la página de login?')) {
-            window.location.href = '<?php echo BASE_URL; ?>/login.php';
+    fetch('<?php echo BASE_URL; ?>/api/cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=update&product_id=${productId}&quantity=${newQty}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message);
         }
-    <?php endif; ?>
+    });
 }
 
-// Cargar el carrito al cargar la página
-document.addEventListener('DOMContentLoaded', loadCart);
+function removeItem(productId) {
+    if (!confirm('¿Eliminar este producto del carrito?')) return;
+    
+    fetch('<?php echo BASE_URL; ?>/api/cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=remove&product_id=${productId}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

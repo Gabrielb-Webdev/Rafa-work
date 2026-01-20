@@ -5,34 +5,18 @@ $pageTitle = 'Products - Online Medicine Store';
 
 include __DIR__ . '/includes/header.php';
 
-// All products combined
-$allProducts = [
-    ['id' => 1, 'name' => 'Pain Relief Medicine', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-1.png'],
-    ['id' => 2, 'name' => 'Vitamin C Tablets', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-2.png'],
-    ['id' => 3, 'name' => 'B12 Supplement', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-3.png'],
-    ['id' => 4, 'name' => 'Multivitamin Complex', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'bottle-4.png'],
-    ['id' => 5, 'name' => 'Pain Relief Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-1.png'],
-    ['id' => 6, 'name' => 'Antibiotic Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-2.png'],
-    ['id' => 7, 'name' => 'Vitamin D Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-3.png'],
-    ['id' => 8, 'name' => 'Omega-3 Capsules', 'price' => 30, 'rating' => 4, 'category' => 'HEALTH', 'image' => 'capsule-4.png'],
-    ['id' => 9, 'name' => 'Vitamin C 1000mg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-1.png'],
-    ['id' => 10, 'name' => 'B-Complex Vitamins', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-2.png'],
-    ['id' => 11, 'name' => 'Calcium + D3', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-3.png'],
-    ['id' => 12, 'name' => 'Iron Supplement', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-4.png'],
-    ['id' => 13, 'name' => 'Zinc Tablets', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-5.png'],
-    ['id' => 14, 'name' => 'Magnesium Citrate', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-6.png'],
-    ['id' => 15, 'name' => 'Biotin 5000mcg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-7.png'],
-    ['id' => 16, 'name' => 'Folic Acid 400mcg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-8.png'],
-    ['id' => 17, 'name' => 'CoQ10 100mg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-9.png'],
-    ['id' => 18, 'name' => 'Probiotic Complex', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-10.png'],
-    ['id' => 19, 'name' => 'Turmeric Curcumin', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-11.png'],
-    ['id' => 20, 'name' => 'Fish Oil 1200mg', 'price' => 30, 'rating' => 4, 'category' => 'MEDICINE', 'image' => 'vitamin-12.png'],
-];
+// Obtener productos de la base de datos
+try {
+    $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC");
+    $allProducts = $stmt->fetchAll();
+} catch (Exception $e) {
+    $allProducts = [];
+}
 
 // Pagination settings
 $productsPerPage = 12;
 $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$currentPage = max(1, $currentPage); // Ensure page is at least 1
+$currentPage = max(1, $currentPage);
 
 $totalProducts = count($allProducts);
 $totalPages = ceil($totalProducts / $productsPerPage);
@@ -58,26 +42,32 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
             
             <div class="products-grid">
                 <?php foreach ($productsToDisplay as $product): ?>
-                    <div class="product-card-page">
-                        <div class="product-badge-page">Buy Now</div>
-                        <div class="product-image-wrapper-page">
-                            <div class="product-placeholder-page">
-                                <i class="fas <?php echo $product['category'] === 'HEALTH' ? 'fa-pills' : 'fa-capsules'; ?>"></i>
-                                <span>Product Image</span>
-                            </div>
+                    <div class="product-card-page" style="cursor: pointer;">
+                        <div class="product-badge-page">Disponible</div>
+                        <div class="product-image-wrapper-page" onclick='showProductModal(<?php echo json_encode($product); ?>)'>
+                            <?php if (!empty($product['image'])): ?>
+                                <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width: 100%; height: 200px; object-fit: cover;">
+                            <?php else: ?>
+                                <div class="product-placeholder-page">
+                                    <i class="fas fa-pills"></i>
+                                    <span>Sin Imagen</span>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="product-info-page">
-                            <div class="product-rating-page">
-                                <div class="stars">
-                                    <?php for ($i = 0; $i < 5; $i++): ?>
-                                        <i class="<?php echo $i < $product['rating'] ? 'fas' : 'far'; ?> fa-star"></i>
-                                    <?php endfor; ?>
-                                </div>
-                            </div>
-                            <div class="product-category-page"><?php echo $product['category']; ?></div>
+                            <h3 class="product-name" onclick='showProductModal(<?php echo json_encode($product); ?>)' style="cursor: pointer; font-size: 16px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;"><?php echo htmlspecialchars($product['name']); ?></h3>
+                            <div class="product-category-page"><?php echo htmlspecialchars($product['category'] ?? 'Sin categoría'); ?></div>
                             <div class="product-price-page">
                                 <span class="price-symbol">$</span>
-                                <span class="price-amount"><?php echo $product['price']; ?></span>
+                                <span class="price-amount"><?php echo number_format($product['price'], 2); ?></span>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button onclick='showProductModal(<?php echo json_encode($product); ?>)' class="btn-view-details" style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-eye"></i> Ver detalles
+                                </button>
+                                <button onclick="addToCart(<?php echo $product['id']; ?>)" class="btn-add-cart" style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-cart-plus"></i> Agregar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -131,5 +121,103 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
         <?php endif; ?>
     </div>
 </section>
+
+<!-- Modal de Producto -->
+<div id="productModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative;">
+        <button onclick="closeModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 28px; cursor: pointer; color: #6c757d;">&times;</button>
+        <div style="padding: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div id="modalImage" style="width: 100%; height: 400px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                <div>
+                    <h2 id="modalName" style="font-size: 28px; margin-bottom: 15px; color: #2c3e50;"></h2>
+                    <div id="modalCategory" style="display: inline-block; background: #00d4d4; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px;"></div>
+                    <div id="modalPrice" style="font-size: 36px; font-weight: 700; color: #00d4d4; margin-bottom: 20px;"></div>
+                    <div id="modalDescription" style="color: #6c757d; line-height: 1.6; margin-bottom: 20px;"></div>
+                    <div id="modalStock" style="margin-bottom: 20px; padding: 12px; background: #e7f9f9; border-radius: 8px;"></div>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+                        <label style="font-weight: 600;">Cantidad:</label>
+                        <button onclick="changeQty(-1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">−</button>
+                        <input type="number" id="modalQuantity" value="1" min="1" readonly style="width: 80px; text-align: center; padding: 10px; border: 2px solid #eee; border-radius: 6px; font-size: 18px;">
+                        <button onclick="changeQty(1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">+</button>
+                    </div>
+                    <button onclick="addToCartFromModal()" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer;">
+                        <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentProduct = null;
+
+function showProductModal(product) {
+    currentProduct = product;
+    const modal = document.getElementById('productModal');
+    
+    // Imagen
+    const imgDiv = document.getElementById('modalImage');
+    if (product.image) {
+        imgDiv.innerHTML = `<img src="<?php echo BASE_URL; ?>/uploads/products/${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+    } else {
+        imgDiv.innerHTML = '<i class="fas fa-pills" style="font-size: 80px; color: #00d4d4;"></i>';
+    }
+    
+    document.getElementById('modalName').textContent = product.name;
+    document.getElementById('modalCategory').textContent = product.category || 'Sin categoría';
+    document.getElementById('modalPrice').textContent = '$' + parseFloat(product.price).toFixed(2);
+    document.getElementById('modalDescription').textContent = product.description || 'Sin descripción disponible';
+    document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Stock disponible: <strong>${product.stock}</strong> unidades`;
+    document.getElementById('modalQuantity').value = 1;
+    document.getElementById('modalQuantity').max = product.stock;
+    
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('productModal').style.display = 'none';
+}
+
+function changeQty(change) {
+    const input = document.getElementById('modalQuantity');
+    let value = parseInt(input.value) + change;
+    if (value < 1) value = 1;
+    if (value > currentProduct.stock) value = currentProduct.stock;
+    input.value = value;
+}
+
+function addToCart(productId, quantity = 1) {
+    fetch('<?php echo BASE_URL; ?>/api/cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=add&product_id=${productId}&quantity=${quantity}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('✓ Producto agregado al carrito');
+            // Actualizar contador del carrito en el header si existe
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge) cartBadge.textContent = data.cartCount;
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(() => alert('Error al agregar al carrito'));
+}
+
+function addToCartFromModal() {
+    const quantity = parseInt(document.getElementById('modalQuantity').value);
+    addToCart(currentProduct.id, quantity);
+    closeModal();
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('productModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
