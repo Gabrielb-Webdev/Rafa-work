@@ -91,6 +91,8 @@ switch ($action) {
             $response['success'] = true;
             $response['message'] = 'Producto eliminado del carrito';
             $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
+        } else {
+            $response['message'] = 'Producto no encontrado en el carrito';
         }
         break;
         
