@@ -143,22 +143,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_order_status']
 }
 
 // ====== OBTENER DATOS ======
+// Inicializar variables por defecto
+$totalProducts = $totalOrders = $totalUsers = $totalSales = $pendingOrders = 0;
+$recentOrders = $products = $categories = $allOrders = [];
+$prod_stats = ['total' => 0, 'active' => 0, 'low_stock' => 0, 'total_value' => 0];
+$order_stats = ['pending' => 0, 'processing' => 0, 'shipped' => 0, 'delivered' => 0, 'total_revenue' => 0];
+
 try {
     // Dashboard stats
     $stmt = executeQuery("SELECT COUNT(*) as total FROM products WHERE is_active = 1");
-    $totalProducts = $stmt->fetch()['total'];
+    $result = $stmt->fetch();
+    $totalProducts = $result ? $result['total'] : 0;
     
     $stmt = executeQuery("SELECT COUNT(*) as total FROM orders");
-    $totalOrders = $stmt->fetch()['total'];
+    $result = $stmt->fetch();
+    $totalOrders = $result ? $result['total'] : 0;
     
     $stmt = executeQuery("SELECT COUNT(*) as total FROM users WHERE role = 'customer'");
-    $totalUsers = $stmt->fetch()['total'];
+    $result = $stmt->fetch();
+    $totalUsers = $result ? $result['total'] : 0;
     
     $stmt = executeQuery("SELECT SUM(total) as total FROM orders WHERE status != 'cancelled'");
-    $totalSales = $stmt->fetch()['total'] ?? 0;
+    $result = $stmt->fetch();
+    $totalSales = $result && $result['total'] ? $result['total'] : 0;
     
     $stmt = executeQuery("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
-    $pendingOrders = $stmt->fetch()['total'];
+    $result = $stmt->fetch();
+    $pendingOrders = $result ? $result['total'] : 0;
     
     $stmt = executeQuery("SELECT o.*, u.full_name, u.email FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC LIMIT 10");
     $recentOrders = $stmt->fetchAll();
@@ -173,7 +184,15 @@ try {
         SUM(CASE WHEN stock < 10 THEN 1 ELSE 0 END) as low_stock,
         SUM(price * stock) as total_value
         FROM products");
-    $prod_stats = $stmt_prod_stats->fetch();
+    $result = $stmt_prod_stats->fetch();
+    if ($result) {
+        $prod_stats = [
+            'total' => $result['total'] ?? 0,
+            'active' => $result['active'] ?? 0,
+            'low_stock' => $result['low_stock'] ?? 0,
+            'total_value' => $result['total_value'] ?? 0
+        ];
+    }
     
     // Categorías
     $stmt = executeQuery("SELECT c.*, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON c.name = p.category GROUP BY c.id ORDER BY c.name ASC");
@@ -188,21 +207,18 @@ try {
     $allOrders = $stmt->fetchAll();
     
     $stmt_order_stats = executeQuery("SELECT status, COUNT(*) as count, SUM(total) as revenue FROM orders GROUP BY status");
-    $order_stats = ['pending' => 0, 'processing' => 0, 'shipped' => 0, 'delivered' => 0, 'total_revenue' => 0];
     while ($row = $stmt_order_stats->fetch()) {
         if (isset($order_stats[$row['status']])) {
             $order_stats[$row['status']] = $row['count'];
         }
         if ($row['status'] !== 'cancelled') {
-            $order_stats['total_revenue'] += $row['revenue'];
+            $order_stats['total_revenue'] += $row['revenue'] ?? 0;
         }
     }
     
 } catch (Exception $e) {
-    $totalProducts = $totalOrders = $totalUsers = $totalSales = $pendingOrders = 0;
-    $recentOrders = $products = $categories = $allOrders = [];
-    $prod_stats = ['total' => 0, 'active' => 0, 'low_stock' => 0, 'total_value' => 0];
-    $order_stats = ['pending' => 0, 'processing' => 0, 'shipped' => 0, 'delivered' => 0, 'total_revenue' => 0];
+    // Mantener valores por defecto ya inicializados
+    error_log("Error en admin panel: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -211,7 +227,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
-    <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -338,7 +354,7 @@ try {
             background: white;
             padding: 0 30px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
+            display: none; /* OCULTO */
             gap: 5px;
             overflow-x: auto;
         }
@@ -354,7 +370,7 @@ try {
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
             white-space: nowrap;
-            display: flex;
+            display: none; /* OCULTO */
             align-items: center;
             gap: 8px;
         }
@@ -683,7 +699,7 @@ try {
     <div class="admin-layout">
         <aside class="admin-sidebar">
             <div class="sidebar-header">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="Logo">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo">
                 <h2>Panel Admin</h2>
             </div>
             
@@ -715,21 +731,6 @@ try {
                 <div>
                     <span style="color: var(--text-light); font-size: 14px;"><?php echo date('d/m/Y'); ?> - <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                 </div>
-            </div>
-            
-            <div class="tabs-navigation">
-                <button class="tab-button active" data-tab="dashboard">
-                    <i class="fas fa-dashboard"></i> Dashboard
-                </button>
-                <button class="tab-button" data-tab="products">
-                    <i class="fas fa-pills"></i> Productos
-                </button>
-                <button class="tab-button" data-tab="categories">
-                    <i class="fas fa-tags"></i> Categorías
-                </button>
-                <button class="tab-button" data-tab="orders">
-                    <i class="fas fa-shopping-bag"></i> Pedidos
-                </button>
             </div>
             
             <?php if ($success): ?>
@@ -1064,11 +1065,11 @@ try {
         // Sistema de Tabs
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-button, .menu-link').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.menu-link').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(tabName).classList.add('active');
-            document.querySelector(`[data-tab="${tabName}"].tab-button`).classList.add('active');
-            document.querySelector(`[data-tab="${tabName}"].menu-link`).classList.add('active');
+            const menuLink = document.querySelector(`[data-tab="${tabName}"].menu-link`);
+            if (menuLink) menuLink.classList.add('active');
             
             const titles = {
                 'dashboard': 'Dashboard',
@@ -1079,7 +1080,7 @@ try {
             document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
         }
         
-        document.querySelectorAll('.tab-button, .menu-link').forEach(btn => {
+        document.querySelectorAll('.menu-link').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tabName = btn.getAttribute('data-tab');
                 if (tabName) {
