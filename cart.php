@@ -361,6 +361,211 @@ include __DIR__ . '/includes/header.php';
 .continue-shopping i {
     margin-right: 8px;
 }
+
+/* Toast Notifications */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 18px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-notification.success {
+    border-left: 4px solid #28a745;
+}
+
+.toast-notification.error {
+    border-left: 4px solid #dc3545;
+}
+
+.toast-notification.warning {
+    border-left: 4px solid #ffc107;
+}
+
+.toast-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.toast-notification.success .toast-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.toast-notification.error .toast-icon {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.toast-notification.warning .toast-icon {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.toast-message {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.toast-close {
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 20px;
+    transition: color 0.3s;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #495057;
+}
+
+/* Modal de Confirmación */
+.confirm-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.confirm-modal.show {
+    display: flex;
+}
+
+.confirm-modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 35px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: modalBounceIn 0.4s ease;
+}
+
+@keyframes modalBounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.confirm-modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.confirm-modal-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+.confirm-modal-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.confirm-modal-message {
+    color: #6c757d;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.confirm-modal-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.confirm-modal-btn.cancel {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.confirm-modal-btn.cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.confirm-modal-btn.confirm {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.confirm-modal-btn.confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
 </style>
 
 <div class="cart-container">
@@ -444,7 +649,70 @@ include __DIR__ . '/includes/header.php';
     <?php endif; ?>
 </div>
 
+<!-- Modal de Confirmación -->
+<div id="confirmModal" class="confirm-modal">
+    <div class="confirm-modal-content">
+        <div class="confirm-modal-header">
+            <div class="confirm-modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirm-modal-title">¿Estás seguro?</h3>
+            <p class="confirm-modal-message">Este producto será eliminado de tu carrito</p>
+        </div>
+        <div class="confirm-modal-actions">
+            <button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Cancelar</button>
+            <button class="confirm-modal-btn confirm" onclick="confirmRemove()">Eliminar</button>
+        </div>
+    </div>
+</div>
+
 <script>
+let productToRemove = null;
+
+// Sistema de notificaciones toast
+function showToast(message, type = 'success', title = '') {
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle'
+    };
+    
+    const titles = {
+        success: '¡Éxito!',
+        error: 'Error',
+        warning: 'Advertencia'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="fas ${icons[type]}"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">${title || titles[type]}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <div class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+}
+
 function updateQuantity(productId, change) {
     const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
     const qtyInput = cartItem.querySelector('.qty-input');
@@ -463,26 +731,50 @@ function updateQuantity(productId, change) {
         if (data.success) {
             location.reload();
         } else {
-            alert(data.message);
+            showToast(data.message, 'error', 'Error');
         }
-    });
+    })
+    .catch(() => showToast('No se pudo actualizar la cantidad', 'error', 'Error de conexión'));
 }
 
 function removeItem(productId) {
-    if (!confirm('¿Eliminar este producto del carrito?')) return;
+    productToRemove = productId;
+    document.getElementById('confirmModal').classList.add('show');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('show');
+    productToRemove = null;
+}
+
+function confirmRemove() {
+    if (!productToRemove) return;
+    
+    closeConfirmModal();
     
     fetch('<?php echo BASE_URL; ?>/api/cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `action=remove&product_id=${productId}`
+        body: `action=remove&product_id=${productToRemove}`
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            showToast('Producto eliminado del carrito', 'success', '¡Listo!');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast('No se pudo eliminar el producto', 'error', 'Error');
         }
-    });
+    })
+    .catch(() => showToast('Error de conexión', 'error', 'Error'));
+    
+    productToRemove = null;
 }
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirmModal();
+});
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
