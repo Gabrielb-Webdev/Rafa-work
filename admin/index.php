@@ -171,33 +171,94 @@ try {
         .admin-content {
             margin-left: 260px;
             flex: 1;
-            padding: 30px;
+            padding: 0;
             background: var(--bg-light);
         }
         
-        .admin-header {
+        .admin-top-bar {
             background: white;
-            padding: 25px 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-sm);
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .admin-header h1 {
-            font-size: 28px;
+        .admin-top-bar h1 {
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 5px;
+            margin: 0;
         }
         
-        .admin-header p {
+        .admin-top-bar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .admin-top-bar .user-info span {
             color: var(--text-light);
             font-size: 14px;
         }
         
-        .admin-header span {
+        .tabs-navigation {
+            background: white;
+            padding: 0 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+        }
+        
+        .tabs-navigation::-webkit-scrollbar {
+            height: 3px;
+        }
+        
+        .tabs-navigation::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+        
+        .tabs-navigation::-webkit-scrollbar-thumb {
+            background: var(--primary-cyan);
+        }
+        
+        .tab-button {
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
             color: var(--text-light);
             font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab-button:hover {
+            color: var(--primary-cyan);
+            background: rgba(0, 212, 212, 0.05);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-cyan);
+            border-bottom-color: var(--primary-cyan);
+        }
+        
+        .tab-content {
+            padding: 30px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .stats-grid {
@@ -399,28 +460,28 @@ try {
             </div>
             
             <ul class="admin-menu">
-                <li><a href="<?php echo BASE_URL; ?>/admin/index.php" class="active">
+                <li><a href="#dashboard" class="menu-link active" data-tab="dashboard">
                     <i class="fas fa-dashboard"></i> <span>Dashboard</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/products.php">
+                <li><a href="#products" class="menu-link" data-tab="products">
                     <i class="fas fa-pills"></i> <span>Productos</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/categories.php">
+                <li><a href="#categories" class="menu-link" data-tab="categories">
                     <i class="fas fa-tags"></i> <span>Categorías</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/orders.php">
+                <li><a href="#orders" class="menu-link" data-tab="orders">
                     <i class="fas fa-shopping-bag"></i> <span>Pedidos</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/users.php">
+                <li><a href="#users" class="menu-link" data-tab="users">
                     <i class="fas fa-users"></i> <span>Usuarios</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/contacts.php">
+                <li><a href="#contacts" class="menu-link" data-tab="contacts">
                     <i class="fas fa-envelope"></i> <span>Contactos</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/newsletter.php">
+                <li><a href="#newsletter" class="menu-link" data-tab="newsletter">
                     <i class="fas fa-newspaper"></i> <span>Newsletter</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/index.php">
+                <li><a href="<?php echo BASE_URL; ?>/index.php" target="_blank">
                     <i class="fas fa-globe"></i> <span>Ver Sitio</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/logout.php">
@@ -430,86 +491,184 @@ try {
         </aside>
         
         <main class="admin-content">
-            <div class="admin-header">
-                <div>
-                    <h1>Dashboard</h1>
-                    <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['user_name']); ?></p>
-                </div>
-                <div>
+            <div class="admin-top-bar">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="user-info">
                     <span><?php echo date('l, F j, Y'); ?></span>
+                    <span>Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong></span>
                 </div>
             </div>
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <i class="fas fa-pills"></i>
-                    <h3>Total Productos</h3>
-                    <div class="stat-value"><?php echo $totalProducts; ?></div>
-                </div>
-                
-                <div class="stat-card">
-                    <i class="fas fa-shopping-bag"></i>
-                    <h3>Total Pedidos</h3>
-                    <div class="stat-value"><?php echo $totalOrders; ?></div>
-                </div>
-                
-                <div class="stat-card">
-                    <i class="fas fa-clock"></i>
-                    <h3>Pedidos Pendientes</h3>
-                    <div class="stat-value" style="color: #ff9800;"><?php echo $pendingOrders; ?></div>
-                </div>
-                
-                <div class="stat-card">
-                    <i class="fas fa-users"></i>
-                    <h3>Total Usuarios</h3>
-                    <div class="stat-value"><?php echo $totalUsers; ?></div>
-                </div>
-                
-                <div class="stat-card">
-                    <i class="fas fa-dollar-sign"></i>
-                    <h3>Ventas Totales</h3>
-                    <div class="stat-value">$<?php echo number_format($totalSales, 2); ?></div>
-                    <small style="color: var(--text-light);">ARS</small>
-                </div>
+            <div class="tabs-navigation">
+                <button class="tab-button active" data-tab="dashboard">
+                    <i class="fas fa-dashboard"></i> Dashboard
+                </button>
+                <button class="tab-button" data-tab="products">
+                    <i class="fas fa-pills"></i> Productos
+                </button>
+                <button class="tab-button" data-tab="categories">
+                    <i class="fas fa-tags"></i> Categorías
+                </button>
+                <button class="tab-button" data-tab="orders">
+                    <i class="fas fa-shopping-bag"></i> Pedidos
+                </button>
+                <button class="tab-button" data-tab="users">
+                    <i class="fas fa-users"></i> Usuarios
+                </button>
+                <button class="tab-button" data-tab="contacts">
+                    <i class="fas fa-envelope"></i> Contactos
+                </button>
+                <button class="tab-button" data-tab="newsletter">
+                    <i class="fas fa-newspaper"></i> Newsletter
+                </button>
             </div>
             
-            <div class="data-table">
-                <h3><i class="fas fa-shopping-bag"></i> Pedidos Recientes</h3>
-                <?php if (!empty($recentOrders)): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nº Pedido</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recentOrders as $order): ?>
+            <!-- TAB: Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-pills"></i>
+                        <h3>Total Productos</h3>
+                        <div class="stat-value"><?php echo $totalProducts; ?></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>Total Pedidos</h3>
+                        <div class="stat-value"><?php echo $totalOrders; ?></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Pedidos Pendientes</h3>
+                        <div class="stat-value" style="color: #ff9800;"><?php echo $pendingOrders; ?></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Total Usuarios</h3>
+                        <div class="stat-value"><?php echo $totalUsers; ?></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Ventas Totales</h3>
+                        <div class="stat-value">$<?php echo number_format($totalSales, 2); ?></div>
+                        <small style="color: var(--text-light);">ARS</small>
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <h3><i class="fas fa-shopping-bag"></i> Pedidos Recientes</h3>
+                    <?php if (!empty($recentOrders)): ?>
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
-                                    <td><?php echo htmlspecialchars($order['full_name']); ?></td>
-                                    <td>$<?php echo number_format($order['total'], 2); ?> ARS</td>
-                                    <td><span class="status-badge status-<?php echo $order['status']; ?>">
-                                        <?php echo ucfirst($order['status']); ?>
-                                    </span></td>
-                                    <td><?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></td>
-                                    <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/orders.php" class="btn-action btn-view">Ver Todos</a>
-                                    </td>
+                                    <th>Nº Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p style="text-align: center; padding: 40px; color: var(--text-light);">
-                        <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3;"></i><br>
-                        No hay pedidos todavía. Los pedidos de los clientes aparecerán aquí.
-                    </p>
-                <?php endif; ?>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($recentOrders as $order): ?>
+                                    <tr>
+                                        <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
+                                        <td><?php echo htmlspecialchars($order['full_name']); ?></td>
+                                        <td>$<?php echo number_format($order['total'], 2); ?> ARS</td>
+                                        <td><span class="status-badge status-<?php echo $order['status']; ?>">
+                                            <?php echo ucfirst($order['status']); ?>
+                                        </span></td>
+                                        <td><?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></td>
+                                        <td>
+                                            <a href="#" class="btn-action btn-view" onclick="switchTab('orders'); return false;">Ver Todos</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No hay pedidos todavía</h3>
+                            <p>Los pedidos de los clientes aparecerán aquí.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- TAB: Productos -->
+            <div id="products" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-pills" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Gestión de Productos</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Agrega, edita y administra tu catálogo de productos</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/products.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Gestión de Productos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- TAB: Categorías -->
+            <div id="categories" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-tags" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Gestión de Categorías</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Organiza tus productos en categorías</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/categories.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Gestión de Categorías
+                    </a>
+                </div>
+            </div>
+            
+            <!-- TAB: Pedidos -->
+            <div id="orders" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-shopping-bag" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Gestión de Pedidos</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Administra todos los pedidos de tus clientes</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/orders.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Gestión de Pedidos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- TAB: Usuarios -->
+            <div id="users" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-users" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Gestión de Usuarios</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Administra clientes y administradores</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/users.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Gestión de Usuarios
+                    </a>
+                </div>
+            </div>
+            
+            <!-- TAB: Contactos -->
+            <div id="contacts" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-envelope" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Mensajes de Contacto</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Lee y responde mensajes de tus clientes</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/contacts.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Mensajes de Contacto
+                    </a>
+                </div>
+            </div>
+            
+            <!-- TAB: Newsletter -->
+            <div id="newsletter" class="tab-content">
+                <div style="text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-newspaper" style="font-size: 64px; color: var(--primary-cyan); opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3>Suscriptores Newsletter</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Gestiona tu lista de suscriptores</p>
+                    <a href="<?php echo BASE_URL; ?>/admin/newsletter.php" class="btn-action btn-view" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fas fa-external-link-alt"></i> Ir a Newsletter
+                    </a>
+                </div>
             </div>
             
             
@@ -517,5 +676,77 @@ try {
     </div>
     
     <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5.9"></script>
+    <script>
+        // Sistema de Tabs
+        function switchTab(tabName) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Activar el tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"].tab-button`).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"].menu-link`).classList.add('active');
+            
+            // Actualizar título
+            const titles = {
+                'dashboard': 'Dashboard',
+                'products': 'Gestión de Productos',
+                'categories': 'Gestión de Categorías',
+                'orders': 'Gestión de Pedidos',
+                'users': 'Gestión de Usuarios',
+                'contacts': 'Mensajes de Contacto',
+                'newsletter': 'Newsletter - Suscriptores'
+            };
+            document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
+            
+            // Actualizar URL sin recargar
+            history.pushState({tab: tabName}, '', `#${tabName}`);
+        }
+        
+        // Event listeners para los botones de tabs
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
+        
+        // Event listeners para el menú lateral
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const tabName = link.getAttribute('data-tab');
+                if (tabName) {
+                    e.preventDefault();
+                    switchTab(tabName);
+                }
+            });
+        });
+        
+        // Cargar tab desde URL al iniciar
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1);
+            if (hash && document.getElementById(hash)) {
+                switchTab(hash);
+            }
+        });
+        
+        // Manejar navegación con botones del navegador
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.tab) {
+                switchTab(e.state.tab);
+            }
+        });
+    </script>
 </body>
 </html>
