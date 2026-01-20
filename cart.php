@@ -269,9 +269,8 @@ function loadCart() {
         `;
     });
     
-    const tax = subtotal * 0.16; // 16% IVA
-    const shipping = subtotal > 100 ? 0 : 10;
-    const total = subtotal + tax + shipping;
+    const shipping = subtotal > 500 ? 0 : 50;
+    const total = subtotal + shipping;
     
     cartContent.innerHTML = `
         <div class="cart-content">
@@ -286,11 +285,6 @@ function loadCart() {
                 <div class="summary-row">
                     <span>Subtotal:</span>
                     <span>${formatPrice(subtotal)}</span>
-                </div>
-                
-                <div class="summary-row">
-                    <span>Impuestos (16%):</span>
-                    <span>${formatPrice(tax)}</span>
                 </div>
                 
                 <div class="summary-row">
@@ -311,7 +305,7 @@ function loadCart() {
                     <button class="btn-continue">Continuar Comprando</button>
                 </a>
                 
-                ${subtotal < 100 ? '<p style="text-align: center; margin-top: 15px; color: var(--text-light); font-size: 14px;">Envío gratis en compras mayores a $100</p>' : ''}
+                ${subtotal < 500 ? '<p style="text-align: center; margin-top: 15px; color: var(--text-light); font-size: 14px;">Envío gratis en compras mayores a $500 ARS</p>' : ''}
             </div>
         </div>
     `;

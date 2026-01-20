@@ -8,36 +8,31 @@ if (!isLoggedIn()) {
 
 $pageTitle = 'Mis Pedidos - Forethink Health';
 
-// Obtener pedidos del usuario (simulados por ahora)
-$orders = [
-    [
-        'id' => 1,
-        'date' => '2026-01-15',
-        'total' => 450.00,
-        'status' => 'delivered',
-        'items' => 3,
-        'tracking' => 'FTH-001-2026'
-    ],
-    [
-        'id' => 2,
-        'date' => '2026-01-10',
-        'total' => 280.50,
-        'status' => 'shipped',
-        'items' => 2,
-        'tracking' => 'FTH-002-2026'
-    ],
-    [
-        'id' => 3,
-        'date' => '2026-01-05',
-        'total' => 620.00,
-        'status' => 'processing',
-        'items' => 5,
-        'tracking' => 'FTH-003-2026'
-    ],
-];
+// Obtener pedidos reales del usuario desde la base de datos
+try {
+    $stmt = executeQuery(
+        "SELECT o.*, COUNT(oi.id) as items 
+         FROM orders o 
+         LEFT JOIN order_items oi ON o.id = oi.order_id 
+         WHERE o.user_id = ? 
+         GROUP BY o.id 
+         ORDER BY o.created_at DESC",
+        [$_SESSION['user_id']]
+    );
+    $orders = $stmt->fetchAll();
+    
+    // Transformar para compatibilidad
+    foreach ($orders as &$order) {
+        $order['tracking'] = $order['order_number'];
+        $order['date'] = $order['created_at'];
+    }
+} catch (Exception $e) {
+    $orders = [];
+}
 
 function getStatusText($status) {
     $statuses = [
+        'pending' => 'Pendiente',
         'processing' => 'En Proceso',
         'shipped' => 'Enviado',
         'delivered' => 'Entregado',
@@ -48,6 +43,7 @@ function getStatusText($status) {
 
 function getStatusColor($status) {
     $colors = [
+        'pending' => '#ff9800',
         'processing' => '#ffc107',
         'shipped' => '#17a2b8',
         'delivered' => '#28a745',
@@ -58,6 +54,7 @@ function getStatusColor($status) {
 
 function getStatusIcon($status) {
     $icons = [
+        'pending' => 'fa-hourglass-half',
         'processing' => 'fa-clock',
         'shipped' => 'fa-truck',
         'delivered' => 'fa-check-circle',
@@ -461,7 +458,7 @@ include __DIR__ . '/includes/header.php';
                         
                         <div class="order-footer">
                             <div class="order-total">
-                                $<?php echo number_format($order['total'], 2); ?> MXN
+                                $<?php echo number_format($order['total'], 2); ?> ARS
                             </div>
                             <div class="order-actions">
                                 <button class="btn btn-primary">

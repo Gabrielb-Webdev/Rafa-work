@@ -210,7 +210,7 @@ include __DIR__ . '/includes/header.php';
             <div class="order-details">
                 <div class="detail-item">
                     <div class="detail-label">Total del Pedido</div>
-                    <div class="detail-value">$<?php echo number_format($order['total'], 2); ?> MXN</div>
+                    <div class="detail-value">$<?php echo number_format($order['total'], 2); ?> ARS</div>
                 </div>
                 
                 <div class="detail-item">

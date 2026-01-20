@@ -23,7 +23,7 @@ try {
     $totalUsers = $stmt->fetch()['total'];
     
     // Ventas totales
-    $stmt = executeQuery("SELECT SUM(total_amount) as total FROM orders WHERE status != 'cancelled'");
+    $stmt = executeQuery("SELECT SUM(total) as total FROM orders WHERE status != 'cancelled'");
     $totalSales = $stmt->fetch()['total'] ?? 0;
     
     // Órdenes recientes
@@ -36,18 +36,13 @@ try {
     ");
     $recentOrders = $stmt->fetchAll();
     
-    // Productos con bajo stock
-    $stmt = executeQuery("
-        SELECT * FROM products 
-        WHERE stock < 10 AND is_active = 1
-        ORDER BY stock ASC
-        LIMIT 5
-    ");
-    $lowStockProducts = $stmt->fetchAll();
+    // Pedidos pendientes
+    $stmt = executeQuery("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
+    $pendingOrders = $stmt->fetch()['total'];
     
 } catch (Exception $e) {
-    $totalProducts = $totalOrders = $totalUsers = $totalSales = 0;
-    $recentOrders = $lowStockProducts = [];
+    $totalProducts = $totalOrders = $totalUsers = $totalSales = $pendingOrders = 0;
+    $recentOrders = [];
 }
 ?>
 
@@ -277,9 +272,15 @@ try {
                 </div>
                 
                 <div class="stat-card">
-                    <i class="fas fa-shopping-cart"></i>
+                    <i class="fas fa-shopping-bag"></i>
                     <h3>Total Pedidos</h3>
                     <div class="stat-value"><?php echo $totalOrders; ?></div>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Pedidos Pendientes</h3>
+                    <div class="stat-value" style="color: #ff9800;"><?php echo $pendingOrders; ?></div>
                 </div>
                 
                 <div class="stat-card">
@@ -291,7 +292,8 @@ try {
                 <div class="stat-card">
                     <i class="fas fa-dollar-sign"></i>
                     <h3>Ventas Totales</h3>
-                    <div class="stat-value"><?php echo formatPrice($totalSales); ?></div>
+                    <div class="stat-value">$<?php echo number_format($totalSales, 2); ?></div>
+                    <small style="color: var(--text-light);">ARS</small>
                 </div>
             </div>
             
@@ -312,62 +314,32 @@ try {
                         <tbody>
                             <?php foreach ($recentOrders as $order): ?>
                                 <tr>
-                                    <td>#<?php echo $order['order_number']; ?></td>
+                                    <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
                                     <td><?php echo htmlspecialchars($order['full_name']); ?></td>
-                                    <td><?php echo formatPrice($order['total_amount']); ?></td>
+                                    <td>$<?php echo number_format($order['total'], 2); ?> ARS</td>
                                     <td><span class="status-badge status-<?php echo $order['status']; ?>">
                                         <?php echo ucfirst($order['status']); ?>
                                     </span></td>
-                                    <td><?php echo date('d/m/Y', strtotime($order['created_at'])); ?></td>
+                                    <td><?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></td>
                                     <td>
-                                        <button class="btn-action btn-view">Ver</button>
-                                        <button class="btn-action btn-edit">Editar</button>
+                                        <a href="<?php echo BASE_URL; ?>/admin/orders.php" class="btn-action btn-view">Ver Todos</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 <?php else: ?>
-                    <p>No hay pedidos recientes.</p>
+                    <p style="text-align: center; padding: 40px; color: var(--text-light);">
+                        <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3;"></i><br>
+                        No hay pedidos todavía. Los pedidos de los clientes aparecerán aquí.
+                    </p>
                 <?php endif; ?>
             </div>
             
-            <div class="data-table">
-                <h3>Productos con Bajo Stock</h3>
-                <?php if (!empty($lowStockProducts)): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Categoría</th>
-                                <th>Stock</th>
-                                <th>Precio</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($lowStockProducts as $product): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($product['name']); ?></td>
-                                    <td>-</td>
-                                    <td><span style="color: <?php echo $product['stock'] < 5 ? 'red' : 'orange'; ?>; font-weight: bold;">
-                                        <?php echo $product['stock']; ?>
-                                    </span></td>
-                                    <td><?php echo formatPrice($product['price']); ?></td>
-                                    <td>
-                                        <button class="btn-action btn-edit">Actualizar Stock</button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p>Todos los productos tienen stock suficiente.</p>
-                <?php endif; ?>
-            </div>
+            
         </main>
     </div>
     
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=4"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5.9"></script>
 </body>
 </html>
