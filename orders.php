@@ -1,0 +1,484 @@
+<?php
+require_once __DIR__ . '/config/config.php';
+
+// Verificar si está logueado
+if (!isLoggedIn()) {
+    redirect('/login.php');
+}
+
+$pageTitle = 'Mis Pedidos - Forethink Health';
+
+// Obtener pedidos del usuario (simulados por ahora)
+$orders = [
+    [
+        'id' => 1,
+        'date' => '2026-01-15',
+        'total' => 450.00,
+        'status' => 'delivered',
+        'items' => 3,
+        'tracking' => 'FTH-001-2026'
+    ],
+    [
+        'id' => 2,
+        'date' => '2026-01-10',
+        'total' => 280.50,
+        'status' => 'shipped',
+        'items' => 2,
+        'tracking' => 'FTH-002-2026'
+    ],
+    [
+        'id' => 3,
+        'date' => '2026-01-05',
+        'total' => 620.00,
+        'status' => 'processing',
+        'items' => 5,
+        'tracking' => 'FTH-003-2026'
+    ],
+];
+
+function getStatusText($status) {
+    $statuses = [
+        'processing' => 'En Proceso',
+        'shipped' => 'Enviado',
+        'delivered' => 'Entregado',
+        'cancelled' => 'Cancelado'
+    ];
+    return $statuses[$status] ?? 'Desconocido';
+}
+
+function getStatusColor($status) {
+    $colors = [
+        'processing' => '#ffc107',
+        'shipped' => '#17a2b8',
+        'delivered' => '#28a745',
+        'cancelled' => '#dc3545'
+    ];
+    return $colors[$status] ?? '#666';
+}
+
+function getStatusIcon($status) {
+    $icons = [
+        'processing' => 'fa-clock',
+        'shipped' => 'fa-truck',
+        'delivered' => 'fa-check-circle',
+        'cancelled' => 'fa-times-circle'
+    ];
+    return $icons[$status] ?? 'fa-question';
+}
+
+include __DIR__ . '/includes/header.php';
+?>
+
+<style>
+.orders-page {
+    background: var(--bg-light);
+    min-height: calc(100vh - 200px);
+    padding: 60px 0;
+}
+
+.orders-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.orders-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.orders-header h1 {
+    font-size: 36px;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.orders-header p {
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+.orders-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+
+.stat-icon.cyan {
+    background: linear-gradient(135deg, var(--primary-cyan), #00b8e6);
+}
+
+.stat-icon.green {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.stat-icon.orange {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+}
+
+.stat-info h3 {
+    font-size: 28px;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.stat-info p {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.orders-filter {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--border-color);
+    background: var(--white);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--primary-cyan);
+    background: var(--primary-cyan);
+    color: white;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--bg-light);
+}
+
+.order-number {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.order-date {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.order-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.order-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-info-label {
+    color: var(--text-light);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-info-value {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 2px solid var(--bg-light);
+}
+
+.order-total {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-cyan);
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-cyan);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #00bfbf;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 212, 212, 0.3);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+}
+
+.btn-outline:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-state i {
+    font-size: 80px;
+    color: var(--primary-cyan);
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    font-size: 24px;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .order-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .order-actions {
+        width: 100%;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+</style>
+
+<section class="orders-page">
+    <div class="orders-container">
+        <div class="orders-header">
+            <h1>Mis Pedidos</h1>
+            <p>Revisa el estado y detalles de todos tus pedidos</p>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="orders-stats">
+            <div class="stat-card">
+                <div class="stat-icon cyan">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><?php echo count($orders); ?></h3>
+                    <p>Total de Pedidos</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>1</h3>
+                    <p>Pedidos Entregados</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>2</h3>
+                    <p>En Camino</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="orders-filter">
+            <button class="filter-btn active">Todos</button>
+            <button class="filter-btn">En Proceso</button>
+            <button class="filter-btn">Enviados</button>
+            <button class="filter-btn">Entregados</button>
+        </div>
+        
+        <!-- Lista de Pedidos -->
+        <?php if (empty($orders)): ?>
+            <div class="empty-state">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>No tienes pedidos aún</h3>
+                <p>Explora nuestro catálogo y realiza tu primera compra</p>
+                <a href="<?php echo BASE_URL; ?>/products.php" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Ver Productos
+                </a>
+            </div>
+        <?php else: ?>
+            <div class="orders-list">
+                <?php foreach ($orders as $order): ?>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-number">Pedido #<?php echo str_pad($order['id'], 6, '0', STR_PAD_LEFT); ?></div>
+                                <div class="order-date">
+                                    <i class="fas fa-calendar"></i>
+                                    <?php echo date('d/m/Y', strtotime($order['date'])); ?>
+                                </div>
+                            </div>
+                            <div class="order-status" style="background: <?php echo getStatusColor($order['status']); ?>20; color: <?php echo getStatusColor($order['status']); ?>;">
+                                <i class="fas <?php echo getStatusIcon($order['status']); ?>"></i>
+                                <?php echo getStatusText($order['status']); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="order-body">
+                            <div class="order-info-item">
+                                <span class="order-info-label">Productos</span>
+                                <span class="order-info-value"><?php echo $order['items']; ?> artículos</span>
+                            </div>
+                            
+                            <div class="order-info-item">
+                                <span class="order-info-label">Número de Seguimiento</span>
+                                <span class="order-info-value"><?php echo $order['tracking']; ?></span>
+                            </div>
+                            
+                            <div class="order-info-item">
+                                <span class="order-info-label">Método de Pago</span>
+                                <span class="order-info-value">
+                                    <i class="fas fa-credit-card"></i> Tarjeta
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="order-footer">
+                            <div class="order-total">
+                                $<?php echo number_format($order['total'], 2); ?> MXN
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-eye"></i> Ver Detalles
+                                </button>
+                                <?php if ($order['status'] === 'shipped'): ?>
+                                    <button class="btn btn-outline">
+                                        <i class="fas fa-map-marker-alt"></i> Rastrear
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
