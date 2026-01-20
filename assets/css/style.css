@@ -266,7 +266,11 @@ header nav {
     padding: 8px 12px;
     border-radius: 8px;
     position: relative;
-    user-select: none;
+}
+
+.user-icon:hover {
+    color: var(--primary-cyan);
+    background: rgba(0, 212, 212, 0.05);
 }
 
 .user-icon i {
@@ -286,20 +290,14 @@ header nav {
     transition: transform 0.3s ease;
 }
 
-.dropdown.active .user-icon {
-    color: var(--primary-cyan);
-    background: rgba(0, 212, 212, 0.05);
-}
-
-.dropdown.active .user-icon::after {
+.dropdown:hover .user-icon::after {
     transform: rotate(180deg);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
+    right: 0;
     top: calc(100% + 8px);
     background: var(--white);
     min-width: 220px;
@@ -308,29 +306,28 @@ header nav {
     overflow: hidden;
     z-index: 1000;
     opacity: 0;
+    transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(0, 212, 212, 0.1);
-    pointer-events: none;
 }
 
 .dropdown-content::before {
     content: '';
     position: absolute;
     top: -6px;
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
+    right: 20px;
     width: 12px;
     height: 12px;
     background: var(--white);
+    transform: rotate(45deg);
     border-left: 1px solid rgba(0, 212, 212, 0.1);
     border-top: 1px solid rgba(0, 212, 212, 0.1);
 }
 
-.dropdown.active .dropdown-content {
+.dropdown:hover .dropdown-content {
     display: block;
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: all;
+    transform: translateY(0);
 }
 
 .dropdown-content a {
