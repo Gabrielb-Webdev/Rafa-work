@@ -54,117 +54,233 @@ try {
     <title><?php echo $pageTitle; ?></title>
     <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
     <link rel="apple-touch-icon" href="<?php echo BASE_URL; ?>/assets/images/logo.jpeg">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=4">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6.3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-cyan: #00d4d4;
+            --primary-dark: #1a1a1a;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+        }
+        
         .admin-layout {
             display: flex;
             min-height: 100vh;
         }
         
         .admin-sidebar {
-            width: 250px;
-            background-color: var(--dark-bg);
+            width: 260px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
             color: white;
-            padding: 20px;
+            padding: 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
         
-        .admin-sidebar h2 {
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            font-size: 20px;
+        .admin-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-cyan);
+            border-radius: 3px;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-header img {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-header h2 {
+            color: var(--primary-cyan);
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
         }
         
         .admin-menu {
             list-style: none;
+            padding: 15px 10px;
         }
         
         .admin-menu li {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         
         .admin-menu a {
-            color: white;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             display: flex;
             align-items: center;
-            padding: 12px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            padding: 14px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
         }
         
-        .admin-menu a:hover,
+        .admin-menu a:hover {
+            background: rgba(0, 212, 212, 0.15);
+            color: var(--primary-cyan);
+            transform: translateX(5px);
+        }
+        
         .admin-menu a.active {
-            background-color: var(--primary-color);
+            background: var(--primary-cyan);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 212, 212, 0.3);
         }
         
         .admin-menu i {
-            margin-right: 10px;
+            margin-right: 12px;
             width: 20px;
+            text-align: center;
+            font-size: 16px;
         }
         
         .admin-content {
-            margin-left: 250px;
+            margin-left: 260px;
             flex: 1;
             padding: 30px;
-            background-color: #f5f5f5;
+            background: var(--bg-light);
         }
         
         .admin-header {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
             margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .admin-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .admin-header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .admin-header span {
+            color: var(--text-light);
+            font-size: 14px;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         
         .stat-card {
-            background-color: white;
+            background: white;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-cyan);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
         
         .stat-card h3 {
             color: var(--text-light);
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .stat-card .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .stat-card small {
+            color: var(--text-light);
+            font-size: 12px;
         }
         
         .stat-card i {
+            position: absolute;
+            right: 20px;
+            top: 20px;
             font-size: 40px;
-            color: var(--primary-color);
-            opacity: 0.3;
-            float: right;
+            color: var(--primary-cyan);
+            opacity: 0.2;
         }
         
         .data-table {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
         }
         
         .data-table h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .data-table h3 i {
+            color: var(--primary-cyan);
         }
         
         table {
@@ -173,26 +289,39 @@ try {
         }
         
         table th {
-            background-color: var(--light-bg);
-            padding: 12px;
+            background: var(--bg-light);
+            padding: 15px;
             text-align: left;
             font-weight: 600;
+            font-size: 13px;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
         }
         
         table td {
-            padding: 12px;
+            padding: 15px;
             border-bottom: 1px solid var(--border-color);
+            color: var(--text-dark);
+            font-size: 14px;
         }
         
         table tr:hover {
-            background-color: var(--light-bg);
+            background: var(--bg-light);
+        }
+        
+        table tr:last-child td {
+            border-bottom: none;
         }
         
         .status-badge {
-            padding: 4px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .status-pending { background-color: #fff3cd; color: #856404; }
@@ -202,53 +331,100 @@ try {
         .status-cancelled { background-color: #f8d7da; color: #721c24; }
         
         .btn-action {
-            padding: 6px 12px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
             margin-right: 5px;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
         }
         
-        .btn-view { background-color: #007bff; color: white; }
-        .btn-edit { background-color: #28a745; color: white; }
-        .btn-delete { background-color: #dc3545; color: white; }
+        .btn-view { 
+            background: #17a2b8;
+        }
+        
+        .btn-view:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            color: var(--primary-cyan);
+            opacity: 0.3;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state h3 {
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 70px;
+            }
+            
+            .admin-sidebar .sidebar-header h2,
+            .admin-menu a span {
+                display: none;
+            }
+            
+            .admin-content {
+                margin-left: 70px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="<?php echo SITE_NAME; ?>" style="max-width: 150px; height: auto;">
+            <div class="sidebar-header">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="<?php echo SITE_NAME; ?>">
+                <h2>Panel Admin</h2>
             </div>
             
             <ul class="admin-menu">
                 <li><a href="<?php echo BASE_URL; ?>/admin/index.php" class="active">
-                    <i class="fas fa-dashboard"></i> Dashboard
+                    <i class="fas fa-dashboard"></i> <span>Dashboard</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/products.php">
-                    <i class="fas fa-pills"></i> Productos
+                    <i class="fas fa-pills"></i> <span>Productos</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/categories.php">
-                    <i class="fas fa-tags"></i> Categorías
+                    <i class="fas fa-tags"></i> <span>Categorías</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/orders.php">
-                    <i class="fas fa-shopping-bag"></i> Pedidos
+                    <i class="fas fa-shopping-bag"></i> <span>Pedidos</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/users.php">
-                    <i class="fas fa-users"></i> Usuarios
+                    <i class="fas fa-users"></i> <span>Usuarios</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/contacts.php">
-                    <i class="fas fa-envelope"></i> Contactos
+                    <i class="fas fa-envelope"></i> <span>Contactos</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/newsletter.php">
-                    <i class="fas fa-newspaper"></i> Newsletter
+                    <i class="fas fa-newspaper"></i> <span>Newsletter</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/index.php">
-                    <i class="fas fa-globe"></i> Ver Sitio
+                    <i class="fas fa-globe"></i> <span>Ver Sitio</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/logout.php">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
                 </a></li>
             </ul>
         </aside>
@@ -298,7 +474,7 @@ try {
             </div>
             
             <div class="data-table">
-                <h3>Pedidos Recientes</h3>
+                <h3><i class="fas fa-shopping-bag"></i> Pedidos Recientes</h3>
                 <?php if (!empty($recentOrders)): ?>
                     <table>
                         <thead>
