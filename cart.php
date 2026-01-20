@@ -586,8 +586,8 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="cart-content">
             <div class="cart-items">
-                <?php foreach ($cartItems as $item): ?>
-                    <div class="cart-item" data-product-id="<?php echo $item['id']; ?>">
+                <?php foreach ($cartItems as $productId => $item): ?>
+                    <div class="cart-item" data-product-id="<?php echo $productId; ?>">
                         <div class="cart-item-image">
                             <?php if (!empty($item['image'])): ?>
                                 <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $item['image']; ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
@@ -600,15 +600,15 @@ include __DIR__ . '/includes/header.php';
                             <h3><?php echo htmlspecialchars($item['name']); ?></h3>
                             <div class="cart-item-price">$<?php echo number_format($item['price'], 2); ?></div>
                             <div class="cart-item-quantity">
-                                <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $item['id']; ?>, -1)">−</button>
+                                <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $productId; ?>, -1)">−</button>
                                 <input type="number" class="qty-input" value="<?php echo $item['quantity']; ?>" min="1" readonly>
-                                <button class="qty-btn qty-plus" onclick="updateQuantity(<?php echo $item['id']; ?>, 1)">+</button>
+                                <button class="qty-btn qty-plus" onclick="updateQuantity(<?php echo $productId; ?>, 1)">+</button>
                             </div>
                         </div>
                         
                         <div class="cart-item-actions">
                             <div class="cart-item-total">$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></div>
-                            <button class="btn-remove" onclick="removeItem(<?php echo $item['id']; ?>)">
+                            <button class="btn-remove" onclick="removeItem(<?php echo $productId; ?>)">
                                 <i class="fas fa-trash"></i> Eliminar
                             </button>
                         </div>
