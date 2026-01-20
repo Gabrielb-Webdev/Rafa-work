@@ -7,7 +7,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once __DIR__ . '/config/config.php';
+// Cargar configuración de base de datos directamente
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u851317150_fh');
+define('DB_USER', 'u851317150_fh');
+define('DB_PASS', 'Lg030920.');
+define('DB_CHARSET', 'utf8mb4');
 
 $executed = false;
 $results = [];
@@ -16,7 +21,17 @@ if (isset($_POST['reset_users'])) {
     $executed = true;
     
     try {
-        $conn = getDBConnection();
+        // Crear conexión directa a la base de datos
+        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        
+        $conn = new PDO($dsn, DB_USER, DB_PASS, $options);
+        $results[] = "<p style='color: green;'>✅ Conexión a base de datos exitosa</p>";
+        $results[] = "<p>Base de datos: <strong>" . DB_NAME . "</strong></p>";
         
         // Paso 1: Eliminar TODOS los usuarios
         $results[] = "<h3>📋 Paso 1: Eliminando todos los usuarios existentes...</h3>";
@@ -88,7 +103,8 @@ if (isset($_POST['reset_users'])) {
         }
         
         $results[] = "<h3>✅ Paso 4: Verificación final</h3>";
-        $finalStmt = executeQuery("SELECT id, email, full_name, phone, role FROM users ORDER BY id");
+        $finalStmt = $conn->prepare("SELECT id, email, full_name, phone, role FROM users ORDER BY id");
+        $finalStmt->execute();
         $finalUsers = $finalStmt->fetchAll();
         
         $results[] = "<ul style='background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #00d4d4;'>";
