@@ -92,7 +92,8 @@ function getStatusBadge($status) {
     return $badges[$status] ?? $status;
 }
 
-include __DIR__ . '/../includes/header.php';
+$pageTitle = 'Gestión de Pedidos';
+include __DIR__ . '/header.php';
 ?>
 
 <style>
@@ -456,4 +457,4 @@ tr:last-child td {
     </div>
 </section>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>

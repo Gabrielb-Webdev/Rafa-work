@@ -137,7 +137,8 @@ try {
     $error = 'Error al cargar los productos';
 }
 
-include __DIR__ . '/../includes/header.php';
+$pageTitle = 'Gestión de Productos';
+include __DIR__ . '/header.php';
 ?>
 
 <style>
@@ -775,4 +776,4 @@ document.getElementById('productModal').addEventListener('click', function(e) {
 });
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>

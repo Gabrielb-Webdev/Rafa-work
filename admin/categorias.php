@@ -91,7 +91,8 @@ try {
     $error = 'Error al cargar las categorías';
 }
 
-include __DIR__ . '/../includes/header.php';
+$pageTitle = 'Gestión de Categorías';
+include __DIR__ . '/header.php';
 ?>
 
 <style>
@@ -593,4 +594,4 @@ document.getElementById('categoryModal').addEventListener('click', function(e) {
 });
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>
