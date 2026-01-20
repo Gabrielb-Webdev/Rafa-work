@@ -444,6 +444,88 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
 .btn-add-to-cart-modal i {
     margin-right: 10px;
 }
+
+/* Toast Notifications */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 18px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-notification.success {
+    border-left: 4px solid #28a745;
+}
+
+.toast-notification.error {
+    border-left: 4px solid #dc3545;
+}
+
+.toast-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.toast-notification.success .toast-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.toast-notification.error .toast-icon {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.toast-message {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.toast-close {
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 20px;
+    transition: color 0.3s;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #495057;
+}
 </style>
 
 <section class="products-page-section">
@@ -570,6 +652,46 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
 <script>
 let currentProduct = null;
 
+// Sistema de notificaciones toast
+function showToast(message, type = 'success', title = '') {
+    // Remover toast anterior si existe
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Crear nuevo toast
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    const defaultTitle = type === 'success' ? '¡Éxito!' : 'Error';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="fas ${icon}"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">${title || defaultTitle}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <div class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Mostrar con animación
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Auto-remover después de 4 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+}
+
 function showProductModal(product) {
     currentProduct = product;
     const modal = document.getElementById('productModal');
@@ -614,15 +736,15 @@ function addToCart(productId, quantity = 1) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            alert('✓ Producto agregado al carrito');
+            showToast('Producto agregado al carrito exitosamente', 'success', '¡Genial!');
             // Actualizar contador del carrito en el header si existe
             const cartBadge = document.querySelector('.cart-badge');
             if (cartBadge) cartBadge.textContent = data.cartCount;
         } else {
-            alert('Error: ' + data.message);
+            showToast(data.message, 'error', 'Error');
         }
     })
-    .catch(() => alert('Error al agregar al carrito'));
+    .catch(() => showToast('No se pudo conectar con el servidor', 'error', 'Error de conexión'));
 }
 
 function addToCartFromModal() {
