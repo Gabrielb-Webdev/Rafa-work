@@ -10,10 +10,10 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/config/config.php';
 
-// IMPORTANTE: Usar un hash fijo y conocido que funcione
+// IMPORTANTE: Generar hash fresco
 $password = 'admin123';
-// Este hash fue probado y funciona con password_verify()
-$hash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+// Generar un nuevo hash cada vez que se ejecute
+$hash = password_hash($password, PASSWORD_BCRYPT);
 
 echo "<h1>Fix de Usuarios - Forethink Health</h1>";
 echo "<p><strong>Password que usaremos:</strong> {$password}</p>";
@@ -22,6 +22,14 @@ echo "<p><strong>Hash generado:</strong> {$hash}</p>";
 // Verificar que el hash funciona
 $verify = password_verify($password, $hash);
 echo "<p><strong>Verificación:</strong> " . ($verify ? '✅ CORRECTO' : '❌ ERROR') . "</p>";
+
+if (!$verify) {
+    echo "<div style='color: red; padding: 20px; background: #fee; border-radius: 8px;'>";
+    echo "<h2>❌ ERROR en la generación del hash</h2>";
+    echo "<p>El hash no se verificó correctamente. Esto es un problema del servidor.</p>";
+    echo "</div>";
+    exit;
+}
 
 echo "<hr>";
 echo "<h2>Actualizando usuarios...</h2>";
