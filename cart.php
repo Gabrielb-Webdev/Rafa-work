@@ -8,13 +8,21 @@ $cartItems = $_SESSION['cart'] ?? [];
 $validCartItems = [];
 
 if (!empty($cartItems)) {
-    foreach ($cartItems as $productId => $item) {
+    foreach ($cartItems as $key => $item) {
+        // La clave puede ser string o int, asegurar que sea int
+        $productId = intval($key);
+        
+        if ($productId <= 0) {
+            continue; // Saltar claves inválidas
+        }
+        
         // Verificar que el producto existe en la base de datos
         $stmt = executeQuery("SELECT id, name, price, stock, image FROM products WHERE id = ? AND is_active = 1", [$productId]);
         $product = $stmt->fetch();
         
         if ($product) {
             // Producto válido, actualizar información por si cambió
+            // IMPORTANTE: usar el productId como clave explícita
             $validCartItems[$productId] = [
                 'id' => $product['id'],
                 'name' => $product['name'],
@@ -613,8 +621,8 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="cart-content">
             <div class="cart-items">
-                <?php foreach ($cartItems as $productId => $item): 
-                    $productId = intval($productId); // Asegurar que es entero
+                <?php foreach ($cartItems as $key => $item): 
+                    $productId = intval($key); // Convertir clave a entero
                     if ($productId <= 0) continue; // Saltar IDs inválidos
                 ?>
                     <div class="cart-item" data-product-id="<?php echo $productId; ?>">
