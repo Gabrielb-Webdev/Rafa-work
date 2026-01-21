@@ -1,6 +1,6 @@
 /* ============================================
    ONLINE MEDICINE STORE - Main JavaScript
-   Version 5.8 - Contact Page Design
+   Version 6.0 - Database Integration
 ============================================ */
 
 // Update cart count on page load
@@ -12,13 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeUserDropdown();
 });
 
-// Update cart count
+// Update cart count from server (PHP session)
 function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const count = cart.reduce((total, item) => total + (item.quantity || 1), 0);
-    const cartCountElement = document.querySelector('.cart-count');
-    if (cartCountElement) {
-        cartCountElement.textContent = count;
+    // El contador ya viene desde PHP en el header
+    // Esta función está aquí por compatibilidad pero no es necesaria
+    // ya que el badge del carrito se renderiza desde PHP
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge) {
+        // El valor ya está puesto por PHP, no hacer nada
+        console.log('Cart count:', cartBadge.textContent);
     }
 }
 
@@ -142,4 +144,4 @@ function initializeUserDropdown() {
     });
 }
 
-console.log('Online Medicine Store v5.9 - JavaScript loaded');
+console.log('Online Medicine Store v6.0 - JavaScript loaded - Database integration active');

@@ -7,7 +7,7 @@
     <meta name="description" content="Forethink Health - Tu tienda online de medicinas, vitaminas y suplementos de confianza.">
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/logo.png">
     <link rel="apple-touch-icon" href="<?php echo BASE_URL; ?>/assets/images/logo.png">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6.4">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -49,7 +49,15 @@
 
                 <a href="<?php echo BASE_URL; ?>/cart.php" class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
+                    <?php 
+                    $cartCount = 0;
+                    if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+                        foreach ($_SESSION['cart'] as $item) {
+                            $cartCount += isset($item['quantity']) ? intval($item['quantity']) : 0;
+                        }
+                    }
+                    ?>
+                    <span class="cart-count cart-badge"><?php echo $cartCount; ?></span>
                 </a>
 
                 <?php if (isLoggedIn()): ?>
