@@ -24,16 +24,22 @@ switch ($action) {
                 $product = $stmt->fetch();
                 
                 if ($product) {
+                    // Inicializar carrito como array con claves enteras
+                    if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+                        $_SESSION['cart'] = [];
+                    }
+                    
                     // Verificar stock
-                    $currentQty = $_SESSION['cart'][$productId]['quantity'] ?? 0;
+                    $currentQty = isset($_SESSION['cart'][$productId]) ? intval($_SESSION['cart'][$productId]['quantity']) : 0;
                     $newQty = $currentQty + $quantity;
                     
                     if ($newQty <= $product['stock']) {
-                        $_SESSION['cart'][$productId] = [
-                            'id' => $product['id'],
+                        // Asegurar que la clave sea entero explícitamente
+                        $_SESSION['cart'][(int)$productId] = [
+                            'id' => (int)$product['id'],
                             'name' => $product['name'],
-                            'price' => $product['price'],
-                            'quantity' => $newQty,
+                            'price' => (float)$product['price'],
+                            'quantity' => (int)$newQty,
                             'image' => $product['image']
                         ];
                         

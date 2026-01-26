@@ -9,8 +9,8 @@ $validCartItems = [];
 
 if (!empty($cartItems)) {
     foreach ($cartItems as $key => $item) {
-        // La clave puede ser string o int, asegurar que sea int
-        $productId = intval($key);
+        // CRUCIAL: Convertir la clave a entero explícitamente
+        $productId = (int)$key;
         
         if ($productId <= 0) {
             continue; // Saltar claves inválidas
@@ -21,20 +21,18 @@ if (!empty($cartItems)) {
         $product = $stmt->fetch();
         
         if ($product) {
-            // Producto válido, actualizar información por si cambió
-            // IMPORTANTE: usar el productId como clave explícita
-            $validCartItems[$productId] = [
-                'id' => $product['id'],
+            // Producto válido, usar clave entera explícita
+            $validCartItems[(int)$productId] = [
+                'id' => (int)$product['id'],
                 'name' => $product['name'],
-                'price' => $product['price'],
-                'quantity' => min($item['quantity'], $product['stock']), // No exceder stock
+                'price' => (float)$product['price'],
+                'quantity' => (int)min($item['quantity'], $product['stock']),
                 'image' => $product['image']
             ];
         }
-        // Si el producto no existe, simplemente no se agrega a validCartItems
     }
     
-    // Actualizar sesión con solo productos válidos
+    // Actualizar sesión con solo productos válidos Y claves enteras
     $_SESSION['cart'] = $validCartItems;
     $cartItems = $validCartItems;
 }
@@ -622,8 +620,9 @@ include __DIR__ . '/includes/header.php';
         <div class="cart-content">
             <div class="cart-items">
                 <?php foreach ($cartItems as $key => $item): 
-                    $productId = intval($key); // Convertir clave a entero
-                    if ($productId <= 0) continue; // Saltar IDs inválidos
+                    // CRUCIAL: Convertir explícitamente la clave a entero
+                    $productId = (int)$key;
+                    if ($productId <= 0) continue;
                 ?>
                     <div class="cart-item" data-product-id="<?php echo $productId; ?>">
                         <div class="cart-item-image">
