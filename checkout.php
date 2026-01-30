@@ -18,28 +18,31 @@ try {
     $error = 'Error al cargar los datos del usuario.';
 }
 
+// Obtener carrito desde sesión/BD
+$cartItems = $_SESSION['cart'] ?? [];
+
+// Si el carrito está vacío, redirigir
+if (empty($cartItems)) {
+    redirect('/cart.php');
+}
+
 // Procesar el pedido
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $full_name = sanitizeInput($_POST['full_name'] ?? '');
     $phone = sanitizeInput($_POST['phone'] ?? '');
     $address = sanitizeInput($_POST['address'] ?? '');
     $notes = sanitizeInput($_POST['notes'] ?? '');
-    $cart_data = $_POST['cart_data'] ?? '';
     
-    if (empty($full_name) || empty($phone) || empty($address) || empty($cart_data)) {
+    if (empty($full_name) || empty($phone) || empty($address)) {
         $error = 'Por favor completa todos los campos requeridos';
     } else {
         try {
-            $cart = json_decode($cart_data, true);
-            if (empty($cart)) {
-                $error = 'El carrito está vacío';
-            } else {
-                // Calcular totales
-                $subtotal = 0;
-                foreach ($cart as $item) {
-                    $subtotal += $item['price'] * $item['quantity'];
-                }
-                
+            // Calcular totales
+            $subtotal = 0;
+            foreach ($cartItems as $item) {
+                $subtotal += $item['price'] * $item['quantity'];
+            }
+            
                 $shipping = $subtotal > 500 ? 0 : 50;
                 $total = $subtotal + $shipping;
                 
@@ -81,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         "UPDATE products SET stock = stock - ? WHERE id = ?"
                     );
                     
-                    foreach ($cart as $item) {
+                    foreach ($cartItems as $item) {
                         $item_subtotal = $item['price'] * $item['quantity'];
                         $stmt_item->execute([
                             $order_id,
@@ -117,7 +120,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     $conn->rollBack();
                     $error = 'Error al procesar el pedido: ' . $e->getMessage();
                 }
-            }
         } catch (Exception $e) {
             $error = 'Error al procesar el pedido.';
         }
@@ -399,7 +401,6 @@ include __DIR__ . '/includes/header.php';
                         </div>
                     </div>
                     
-                    <input type="hidden" name="cart_data" id="cartData">
                     <button type="submit" name="place_order" class="btn-place-order">
                         <i class="fas fa-check-circle"></i> Realizar Pedido
                     </button>
@@ -408,67 +409,53 @@ include __DIR__ . '/includes/header.php';
             
             <div class="order-summary">
                 <h2 class="summary-title">Resumen del Pedido</h2>
-                <div id="summaryItems"></div>
+                
+                <?php 
+                $subtotal = 0;
+                foreach ($cartItems as $item): 
+                    $itemTotal = $item['price'] * $item['quantity'];
+                    $subtotal += $itemTotal;
+                ?>
+                    <div class="summary-item">
+                        <div class="item-image">
+                            <?php if (!empty($item['image'])): ?>
+                                <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $item['image']; ?>" 
+                                     alt="<?php echo htmlspecialchars($item['name']); ?>"
+                                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                            <?php else: ?>
+                                <i class="fas fa-pills"></i>
+                            <?php endif; ?>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                            <div class="item-qty">Cantidad: <?php echo $item['quantity']; ?></div>
+                        </div>
+                        <div class="item-price">$<?php echo number_format($itemTotal, 2); ?></div>
+                    </div>
+                <?php endforeach; ?>
+                
+                <?php 
+                $shipping = $subtotal > 500 ? 0 : 50;
+                $total = $subtotal + $shipping;
+                ?>
+                
                 <div class="summary-totals">
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span id="summarySubtotal">$0.00</span>
+                        <span>$<?php echo number_format($subtotal, 2); ?></span>
                     </div>
                     <div class="summary-row">
                         <span>Envío</span>
-                        <span id="summaryShipping">$0.00</span>
+                        <span><?php echo $shipping === 0 ? 'GRATIS' : '$' . number_format($shipping, 2); ?></span>
                     </div>
                     <div class="summary-row summary-total">
                         <span>Total</span>
-                        <span id="summaryTotal">$0.00</span>
+                        <span>$<?php echo number_format($total, 2); ?></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    if (cart.length === 0) {
-        window.location.href = '<?php echo BASE_URL; ?>/cart.php';
-        return;
-    }
-    
-    // Guardar cart en el formulario
-    document.getElementById('cartData').value = JSON.stringify(cart);
-    
-    // Mostrar resumen
-    let itemsHTML = '';
-    let subtotal = 0;
-    
-    cart.forEach(item => {
-        subtotal += item.price * item.quantity;
-        itemsHTML += `
-            <div class="summary-item">
-                <div class="item-image">
-                    <i class="fas fa-pills"></i>
-                </div>
-                <div class="item-details">
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-qty">Cantidad: ${item.quantity}</div>
-                </div>
-                <div class="item-price">$${(item.price * item.quantity).toFixed(2)}</div>
-            </div>
-        `;
-    });
-    
-    document.getElementById('summaryItems').innerHTML = itemsHTML;
-    
-    const shipping = subtotal > 500 ? 0 : 50;
-    const total = subtotal + shipping;
-    
-    document.getElementById('summarySubtotal').textContent = '$' + subtotal.toFixed(2);
-    document.getElementById('summaryShipping').textContent = shipping === 0 ? 'GRATIS' : '$' + shipping.toFixed(2);
-    document.getElementById('summaryTotal').textContent = '$' + total.toFixed(2);
-});
-</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

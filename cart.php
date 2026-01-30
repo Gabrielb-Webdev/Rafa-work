@@ -698,7 +698,7 @@ include __DIR__ . '/includes/header.php';
                 
                 <?php if (isLoggedIn()): ?>
                     <a href="<?php echo BASE_URL; ?>/checkout.php" class="btn-checkout">
-                        <i class="fas fa-check-circle"></i> Proceder al Pago
+                        <i class="fas fa-shopping-bag"></i> Finalizar Pedido
                     </a>
                 <?php else: ?>
                     <a href="<?php echo BASE_URL; ?>/login.php?redirect=checkout" class="btn-checkout">
@@ -803,16 +803,12 @@ function updateQuantity(productId, change) {
 }
 
 function removeItem(productId) {
-    console.log('removeItem called with:', productId, 'type:', typeof productId);
     productId = parseInt(productId);
-    console.log('After parseInt:', productId);
     if (!productId || productId <= 0 || isNaN(productId)) {
-        console.error('Invalid product ID:', productId);
         showToast('ID de producto inválido', 'error', 'Error');
         return;
     }
     productToRemove = productId;
-    console.log('productToRemove set to:', productToRemove);
     document.getElementById('confirmModal').classList.add('show');
 }
 
@@ -822,28 +818,19 @@ function closeConfirmModal() {
 }
 
 function confirmRemove() {
-    if (!productToRemove) {
-        console.error('No productToRemove');
-        return;
-    }
+    if (!productToRemove) return;
     
-    const productIdToRemove = productToRemove; // Guardar en variable local
-    console.log('Confirming removal of product:', productIdToRemove);
-    
+    const productIdToRemove = productToRemove;
     closeConfirmModal();
-    productToRemove = null; // Limpiar DESPUÉS de guardar en variable local
-    
-    const formData = `action=remove&product_id=${productIdToRemove}`;
-    console.log('Sending:', formData);
+    productToRemove = null;
     
     fetch('<?php echo BASE_URL; ?>/api/cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formData
+        body: `action=remove&product_id=${productIdToRemove}`
     })
     .then(res => res.json())
     .then(data => {
-        console.log('Response:', data);
         if (data.success) {
             showToast('Producto eliminado del carrito', 'success', '¡Listo!');
             setTimeout(() => location.reload(), 1000);
@@ -852,7 +839,6 @@ function confirmRemove() {
         }
     })
     .catch(err => {
-        console.error('Error:', err);
         showToast('Error de conexión', 'error', 'Error');
     });
 }
