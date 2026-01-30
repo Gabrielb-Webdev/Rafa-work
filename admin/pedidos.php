@@ -435,8 +435,9 @@ tr:last-child td {
                                 <td><?php echo getStatusBadge($order['status']); ?></td>
                                 <td>
                                     <div style="display: flex; gap: 10px; align-items: center;">
-                                        <a href="<?php echo BASE_URL; ?>/admin/ver-pedido.php?id=<?php echo $order['id']; ?>" 
-                                           class="btn-view" title="Ver detalles">
+                                        <a href="ver-pedido.php?id=<?php echo $order['id']; ?>" 
+                                           class="btn-view" 
+                                           title="Ver detalles del pedido">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <form method="POST" style="display: flex; gap: 10px; align-items: center;">

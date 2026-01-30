@@ -458,7 +458,7 @@ include __DIR__ . '/includes/header.php';
                                 <?php endif; ?>
                             </div>
                             <div class="order-actions">
-                                <a href="<?php echo BASE_URL; ?>/order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-primary">
+                                <a href="order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-primary">
                                     <i class="fas fa-eye"></i> Ver Detalles
                                 </a>
                             </div>
