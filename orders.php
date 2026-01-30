@@ -451,17 +451,16 @@ include __DIR__ . '/includes/header.php';
                         
                         <div class="order-footer">
                             <div class="order-total">
-                                $<?php echo number_format($order['total'], 2); ?> ARS
+                                <?php if ($order['total']): ?>
+                                    $<?php echo number_format($order['total'], 2); ?> ARS
+                                <?php else: ?>
+                                    <span style="color: #ffc107;">Pendiente cotización</span>
+                                <?php endif; ?>
                             </div>
                             <div class="order-actions">
-                                <button class="btn btn-primary">
+                                <a href="<?php echo BASE_URL; ?>/order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-primary">
                                     <i class="fas fa-eye"></i> Ver Detalles
-                                </button>
-                                <?php if ($order['status'] === 'shipped'): ?>
-                                    <button class="btn btn-outline">
-                                        <i class="fas fa-map-marker-alt"></i> Rastrear
-                                    </button>
-                                <?php endif; ?>
+                                </a>
                             </div>
                         </div>
                     </div>

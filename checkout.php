@@ -41,17 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         $error = 'Por favor completa todos los campos requeridos';
     } else {
         try {
-            // Calcular totales
-            $subtotal = 0;
-            foreach ($cartItems as $item) {
-                $subtotal += $item['price'] * $item['quantity'];
-            }
+            // No calcular totales - serán establecidos por el admin en la propuesta
+            $subtotal = null;
+            $shipping = null;
+            $total = null;
             
-                $shipping = $subtotal > 500 ? 0 : 50;
-                $total = $subtotal + $shipping;
-                
-                // Generar número de pedido único
-                $order_number = 'FTH-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT) . '-' . date('Y');
+            // Generar número de pedido único
+            $order_number = 'FTH-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT) . '-' . date('Y');
                 
                 // Insertar pedido
                 $conn = getConnection();
@@ -82,31 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     
                     $order_id = $conn->lastInsertId();
                     
-                    // Insertar items del pedido y reducir stock
-                    $stmt_item = $conn->prepare(
-                        "INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) 
-                         VALUES (?, ?, ?, ?, ?, ?)"
-                    );
-                    
-                    $stmt_stock = $conn->prepare(
-                        "UPDATE products SET stock = stock - ? WHERE id = ?"
-                    );
-                    
-                    foreach ($cartItems as $item) {
-                        $item_subtotal = $item['price'] * $item['quantity'];
-                        $stmt_item->execute([
-                            $order_id,
-                            $item['id'],
-                            $item['name'],
-                            $item['price'],
-                            $item['quantity'],
-                            $item_subtotal
-                        ]);
-                        
-                        // Reducir stock
-                        $stmt_stock->execute([
-                            $item['quantity'],
-                            $item['id']
+// Insertar items del pedido (sin precios aún)
+                $stmt_item = $conn->prepare(
+                    "INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) 
+                     VALUES (?, ?, ?, NULL, ?, NULL)"
+                );
+                
+                foreach ($cartItems as $item) {
+                    $stmt_item->execute([
+                        $order_id,
+                        $item['id'],
+                        $item['name'],
+                        $item['quantity']
                         ]);
                     }
                     
@@ -452,14 +435,18 @@ include __DIR__ . '/includes/header.php';
             </div>
             
             <div class="order-summary">
-                <h2 class="summary-title">Resumen del Pedido</h2>
+                <h2 class="summary-title">Tu Pedido</h2>
                 
-                <?php 
-                $subtotal = 0;
-                foreach ($cartItems as $item): 
-                    $itemTotal = $item['price'] * $item['quantity'];
-                    $subtotal += $itemTotal;
-                ?>
+                <div style="padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 700; color: #856404; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-info-circle"></i> Sistema de Cotización
+                    </div>
+                    <div style="font-size: 14px; color: #856404; line-height: 1.6;">
+                        Una vez finalices el pedido, recibirás una <strong>propuesta personalizada</strong> con los precios y disponibilidad.
+                    </div>
+                </div>
+                
+                <?php foreach ($cartItems as $item): ?>
                     <div class="summary-item">
                         <div class="item-image">
                             <?php if (!empty($item['image'])): ?>
@@ -474,27 +461,12 @@ include __DIR__ . '/includes/header.php';
                             <div class="item-name"><?php echo htmlspecialchars($item['name']); ?></div>
                             <div class="item-qty">Cantidad: <?php echo $item['quantity']; ?></div>
                         </div>
-                        <div class="item-price">$<?php echo number_format($itemTotal, 2); ?></div>
                     </div>
                 <?php endforeach; ?>
                 
-                <?php 
-                $shipping = $subtotal > 500 ? 0 : 50;
-                $total = $subtotal + $shipping;
-                ?>
-                
                 <div class="summary-totals">
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>$<?php echo number_format($subtotal, 2); ?></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Envío</span>
-                        <span><?php echo $shipping === 0 ? 'GRATIS' : '$' . number_format($shipping, 2); ?></span>
-                    </div>
-                    <div class="summary-row summary-total">
-                        <span>Total</span>
-                        <span>$<?php echo number_format($total, 2); ?></span>
+                    <div class="summary-row" style="justify-content: center; color: #6c757d; font-size: 14px;">
+                        <span><?php echo count($cartItems); ?> producto(s) en tu pedido</span>
                     </div>
                 </div>
             </div>

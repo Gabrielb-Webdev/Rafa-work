@@ -663,7 +663,7 @@ include __DIR__ . '/includes/header.php';
                         
                         <div class="cart-item-info">
                             <h3><?php echo htmlspecialchars($item['name']); ?></h3>
-                            <div class="cart-item-price">$<?php echo number_format($item['price'], 2); ?></div>
+                            <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">💬 Pendiente de cotización</div>
                             <div class="cart-item-quantity">
                                 <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $productId; ?>, -1)">−</button>
                                 <input type="number" class="qty-input" value="<?php echo $item['quantity']; ?>" min="1" readonly>
@@ -672,7 +672,7 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         
                         <div class="cart-item-actions">
-                            <div class="cart-item-total">$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></div>
+                            <div class="cart-item-total" style="font-size: 16px; color: #6c757d;">Cantidad: <?php echo $item['quantity']; ?></div>
                             <button class="btn-remove" type="button" data-product-id="<?php echo $productId; ?>" onclick="removeItem(this.getAttribute('data-product-id'))">
                                 <i class="fas fa-trash"></i> Eliminar
                             </button>
@@ -682,18 +682,15 @@ include __DIR__ . '/includes/header.php';
             </div>
 
             <div class="cart-summary">
-                <h2>Resumen del Pedido</h2>
-                <div class="summary-row">
-                    <span>Subtotal:</span>
-                    <span>$<?php echo number_format($subtotal, 2); ?></span>
-                </div>
-                <div class="summary-row">
-                    <span>Envío:</span>
-                    <span><?php echo $shipping == 0 ? 'GRATIS' : '$' . number_format($shipping, 2); ?></span>
-                </div>
-                <div class="summary-row total">
-                    <span>Total:</span>
-                    <span>$<?php echo number_format($total, 2); ?></span>
+                <h2>Tu Pedido</h2>
+                <div style="padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 700; color: #856404; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-info-circle"></i> Sistema de Cotización
+                    </div>
+                    <div style="font-size: 14px; color: #856404; line-height: 1.6;">
+                        Has agregado <strong><?php echo count($cartItems); ?> producto(s)</strong> a tu pedido.<br><br>
+                        Una vez finalices el pedido, recibirás una <strong>propuesta personalizada</strong> con los precios y disponibilidad de cada producto.
+                    </div>
                 </div>
                 
                 <?php if (isLoggedIn()): ?>

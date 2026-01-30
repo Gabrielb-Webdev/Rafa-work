@@ -532,9 +532,8 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                         <div class="product-info-page">
                             <h3 class="product-name" onclick='showProductModal(<?php echo json_encode($product); ?>)' style="cursor: pointer; font-size: 16px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;"><?php echo htmlspecialchars($product['name']); ?></h3>
                             <div class="product-category-page"><?php echo htmlspecialchars($product['category'] ?? 'Sin categoría'); ?></div>
-                            <div class="product-price-page">
-                                <span class="price-symbol">$</span>
-                                <span class="price-amount"><?php echo number_format($product['price'], 2); ?></span>
+                            <div style="padding: 10px 0; color: #6c757d; font-size: 14px; font-style: italic;">
+                                💬 Solicita cotización
                             </div>
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
                                 <button onclick='showProductModal(<?php echo json_encode($product); ?>)' class="btn-view-details" style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
@@ -613,7 +612,10 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                 <div>
                     <h2 id="modalName" style="font-size: 28px; margin-bottom: 15px; color: #2c3e50;"></h2>
                     <div id="modalCategory" style="display: inline-block; background: #00d4d4; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px;"></div>
-                    <div id="modalPrice" style="font-size: 36px; font-weight: 700; color: #00d4d4; margin-bottom: 20px;"></div>
+                    <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="font-weight: 700; color: #856404; margin-bottom: 5px;">💬 Precio bajo cotización</div>
+                        <div style="font-size: 14px; color: #856404;">Agrega este producto a tu pedido y recibirás una propuesta personalizada</div>
+                    </div>
                     <div id="modalDescription" style="color: #6c757d; line-height: 1.6; margin-bottom: 20px;"></div>
                     <div id="modalStock" style="margin-bottom: 20px; padding: 12px; background: #e7f9f9; border-radius: 8px;"></div>
                     <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
@@ -688,7 +690,6 @@ function showProductModal(product) {
     
     document.getElementById('modalName').textContent = product.name;
     document.getElementById('modalCategory').textContent = product.category || 'Sin categoría';
-    document.getElementById('modalPrice').textContent = '$' + parseFloat(product.price).toFixed(2);
     document.getElementById('modalDescription').textContent = product.description || 'Sin descripción disponible';
     document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Stock disponible: <strong>${product.stock}</strong> unidades`;
     document.getElementById('modalQuantity').value = 1;
@@ -718,7 +719,7 @@ function addToCart(productId, quantity = 1) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            showToast('Producto agregado al carrito exitosamente', 'success', '¡Genial!');
+            showToast('Producto agregado a tu pedido. Recibirás una propuesta personalizada', 'success', '¡Agregado!');
             // Actualizar contador del carrito en el header si existe
             const cartBadge = document.querySelector('.cart-badge');
             if (cartBadge) cartBadge.textContent = data.cartCount;
