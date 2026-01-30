@@ -434,19 +434,25 @@ tr:last-child td {
                                 <td><strong>$<?php echo number_format($order['total'], 2); ?></strong></td>
                                 <td><?php echo getStatusBadge($order['status']); ?></td>
                                 <td>
-                                    <form method="POST" style="display: flex; gap: 10px; align-items: center;">
-                                        <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
-                                        <select name="status" class="status-select">
-                                            <option value="pending" <?php echo $order['status'] === 'pending' ? 'selected' : ''; ?>>Pendiente</option>
-                                            <option value="processing" <?php echo $order['status'] === 'processing' ? 'selected' : ''; ?>>En Proceso</option>
-                                            <option value="shipped" <?php echo $order['status'] === 'shipped' ? 'selected' : ''; ?>>Enviado</option>
-                                            <option value="delivered" <?php echo $order['status'] === 'delivered' ? 'selected' : ''; ?>>Entregado</option>
-                                            <option value="cancelled" <?php echo $order['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelado</option>
-                                        </select>
-                                        <button type="submit" name="update_status" class="btn-update">
-                                            <i class="fas fa-save"></i>
-                                        </button>
-                                    </form>
+                                    <div style="display: flex; gap: 10px; align-items: center;">
+                                        <a href="<?php echo BASE_URL; ?>/admin/ver-pedido.php?id=<?php echo $order['id']; ?>" 
+                                           class="btn-view" title="Ver detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="POST" style="display: flex; gap: 10px; align-items: center;">
+                                            <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
+                                            <select name="status" class="status-select">
+                                                <option value="pending" <?php echo $order['status'] === 'pending' ? 'selected' : ''; ?>>Pendiente</option>
+                                                <option value="processing" <?php echo $order['status'] === 'processing' ? 'selected' : ''; ?>>En Proceso</option>
+                                                <option value="shipped" <?php echo $order['status'] === 'shipped' ? 'selected' : ''; ?>>Enviado</option>
+                                                <option value="delivered" <?php echo $order['status'] === 'delivered' ? 'selected' : ''; ?>>Entregado</option>
+                                                <option value="cancelled" <?php echo $order['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelado</option>
+                                            </select>
+                                            <button type="submit" name="update_status" class="btn-update">
+                                                <i class="fas fa-save"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
