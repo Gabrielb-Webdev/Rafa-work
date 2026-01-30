@@ -180,6 +180,11 @@ switch ($action) {
     case 'remove':
         $productId = intval($_POST['product_id'] ?? 0);
         
+        // Debug: registrar qué se recibió
+        error_log('REMOVE - POST data: ' . print_r($_POST, true));
+        error_log('REMOVE - productId: ' . $productId);
+        error_log('REMOVE - Session cart keys: ' . print_r(array_keys($_SESSION['cart'] ?? []), true));
+        
         // Depuración: verificar si el producto existe en el carrito
         $cartKeys = array_keys($_SESSION['cart']);
         $productExists = false;

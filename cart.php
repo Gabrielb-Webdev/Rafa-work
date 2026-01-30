@@ -673,7 +673,7 @@ include __DIR__ . '/includes/header.php';
                         
                         <div class="cart-item-actions">
                             <div class="cart-item-total">$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></div>
-                            <button class="btn-remove" onclick="removeItem(<?php echo $productId; ?>)">
+                            <button class="btn-remove" type="button" data-product-id="<?php echo $productId; ?>" onclick="removeItem(this.getAttribute('data-product-id'))">
                                 <i class="fas fa-trash"></i> Eliminar
                             </button>
                         </div>
@@ -803,12 +803,16 @@ function updateQuantity(productId, change) {
 }
 
 function removeItem(productId) {
+    console.log('removeItem called with:', productId, 'type:', typeof productId);
     productId = parseInt(productId);
-    if (!productId || productId <= 0) {
+    console.log('After parseInt:', productId);
+    if (!productId || productId <= 0 || isNaN(productId)) {
+        console.error('Invalid product ID:', productId);
         showToast('ID de producto inválido', 'error', 'Error');
         return;
     }
     productToRemove = productId;
+    console.log('productToRemove set to:', productToRemove);
     document.getElementById('confirmModal').classList.add('show');
 }
 
@@ -818,14 +822,21 @@ function closeConfirmModal() {
 }
 
 function confirmRemove() {
-    if (!productToRemove) return;
+    if (!productToRemove) {
+        console.error('No productToRemove');
+        return;
+    }
     
+    console.log('Confirming removal of product:', productToRemove);
     closeConfirmModal();
+    
+    const formData = `action=remove&product_id=${productToRemove}`;
+    console.log('Sending:', formData);
     
     fetch('<?php echo BASE_URL; ?>/api/cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `action=remove&product_id=${productToRemove}`
+        body: formData
     })
     .then(res => res.json())
     .then(data => {
