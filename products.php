@@ -7,7 +7,7 @@ include __DIR__ . '/includes/header.php';
 
 // Obtener productos de la base de datos
 try {
-    $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC");
+    $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY (stock > 0) DESC, stock DESC, created_at DESC");
     $allProducts = $stmt->fetchAll();
 } catch (Exception $e) {
     $allProducts = [];
@@ -514,7 +514,11 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
             <div class="products-grid">
                 <?php foreach ($productsToDisplay as $product): ?>
                     <div class="product-card-page" style="cursor: pointer;">
-                        <div class="product-badge-page">Disponible</div>
+                        <?php if ($product['stock'] > 0): ?>
+                            <div class="product-badge-page">Disponible</div>
+                        <?php else: ?>
+                            <div class="product-badge-page" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">Sin Stock</div>
+                        <?php endif; ?>
                         <div class="product-image-wrapper-page" onclick='showProductModal(<?php echo json_encode($product); ?>)'>
                             <?php if (!empty($product['image'])): ?>
                                 <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width: 100%; height: 200px; object-fit: cover;">
@@ -536,9 +540,15 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                                 <button onclick='showProductModal(<?php echo json_encode($product); ?>)' class="btn-view-details" style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
                                     <i class="fas fa-eye"></i> Ver detalles
                                 </button>
-                                <button onclick="addToCart(<?php echo $product['id']; ?>)" class="btn-add-cart" style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                                    <i class="fas fa-cart-plus"></i> Agregar
-                                </button>
+                                <?php if ($product['stock'] > 0): ?>
+                                    <button onclick="addToCart(<?php echo $product['id']; ?>)" class="btn-add-cart" style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                        <i class="fas fa-cart-plus"></i> Agregar
+                                    </button>
+                                <?php else: ?>
+                                    <button disabled style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: not-allowed; font-size: 14px; opacity: 0.6;">
+                                        <i class="fas fa-times"></i> Sin Stock
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
