@@ -818,7 +818,7 @@ function removeItem(productId) {
 
 function closeConfirmModal() {
     document.getElementById('confirmModal').classList.remove('show');
-    productToRemove = null;
+    // NO limpiar productToRemove aquí, se limpia después de usarla
 }
 
 function confirmRemove() {
@@ -827,10 +827,13 @@ function confirmRemove() {
         return;
     }
     
-    console.log('Confirming removal of product:', productToRemove);
-    closeConfirmModal();
+    const productIdToRemove = productToRemove; // Guardar en variable local
+    console.log('Confirming removal of product:', productIdToRemove);
     
-    const formData = `action=remove&product_id=${productToRemove}`;
+    closeConfirmModal();
+    productToRemove = null; // Limpiar DESPUÉS de guardar en variable local
+    
+    const formData = `action=remove&product_id=${productIdToRemove}`;
     console.log('Sending:', formData);
     
     fetch('<?php echo BASE_URL; ?>/api/cart.php', {
@@ -840,7 +843,7 @@ function confirmRemove() {
     })
     .then(res => res.json())
     .then(data => {
-        console.log('Response:', data); // Para depuración
+        console.log('Response:', data);
         if (data.success) {
             showToast('Producto eliminado del carrito', 'success', '¡Listo!');
             setTimeout(() => location.reload(), 1000);
@@ -852,8 +855,6 @@ function confirmRemove() {
         console.error('Error:', err);
         showToast('Error de conexión', 'error', 'Error');
     });
-    
-    productToRemove = null;
 }
 
 // Cerrar modal al hacer clic fuera
