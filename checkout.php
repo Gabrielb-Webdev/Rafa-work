@@ -399,7 +399,10 @@ include __DIR__ . '/includes/header.php';
                             <div class="form-group">
                                 <label for="street_number">Número *</label>
                                 <input type="text" id="street_number" name="street_number" required 
-                                       placeholder="Núm.">
+                                       placeholder="Núm." pattern="[0-9]+" 
+                                       title="Solo se permiten números"
+                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             
                             <div class="form-group">
@@ -419,7 +422,11 @@ include __DIR__ . '/includes/header.php';
                             <div class="form-group">
                                 <label for="postal_code">Código Postal *</label>
                                 <input type="text" id="postal_code" name="postal_code" required 
-                                       placeholder="C.P.">
+                                       placeholder="C.P." pattern="[0-9]+" 
+                                       title="Solo se permiten números"
+                                       maxlength="5"
+                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                         </div>
                     </div>
