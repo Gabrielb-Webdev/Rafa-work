@@ -30,10 +30,14 @@ if (empty($cartItems)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $full_name = sanitizeInput($_POST['full_name'] ?? '');
     $phone = sanitizeInput($_POST['phone'] ?? '');
-    $address = sanitizeInput($_POST['address'] ?? '');
+    $street = sanitizeInput($_POST['street'] ?? '');
+    $street_number = sanitizeInput($_POST['street_number'] ?? '');
+    $neighborhood = sanitizeInput($_POST['neighborhood'] ?? '');
+    $city = sanitizeInput($_POST['city'] ?? '');
+    $postal_code = sanitizeInput($_POST['postal_code'] ?? '');
     $notes = sanitizeInput($_POST['notes'] ?? '');
     
-    if (empty($full_name) || empty($phone) || empty($address)) {
+    if (empty($full_name) || empty($phone) || empty($street) || empty($city) || empty($postal_code)) {
         $error = 'Por favor completa todos los campos requeridos';
     } else {
         try {
@@ -55,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 
                 try {
                     $stmt = $conn->prepare(
-                        "INSERT INTO orders (user_id, order_number, full_name, email, phone, address, subtotal, shipping, total, status, notes, created_at) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())"
+                        "INSERT INTO orders (user_id, order_number, full_name, email, phone, street, street_number, neighborhood, city, postal_code, subtotal, shipping, total, status, notes, created_at) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())"
                     );
                     
                     $stmt->execute([
@@ -65,7 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         $full_name,
                         $user['email'],
                         $phone,
-                        $address,
+                        $street,
+                        $street_number,
+                        $neighborhood,
+                        $city,
+                        $postal_code,
                         $subtotal,
                         $shipping,
                         $total,
@@ -382,9 +390,37 @@ include __DIR__ . '/includes/header.php';
                         </h2>
                         
                         <div class="form-group">
-                            <label for="address">Dirección Completa *</label>
-                            <textarea id="address" name="address" required 
-                                      placeholder="Calle, número, colonia, ciudad, código postal"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+                            <label for="street">Calle *</label>
+                            <input type="text" id="street" name="street" required 
+                                   placeholder="Nombre de la calle">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px;">
+                            <div class="form-group">
+                                <label for="street_number">Número *</label>
+                                <input type="text" id="street_number" name="street_number" required 
+                                       placeholder="Núm.">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="neighborhood">Colonia</label>
+                                <input type="text" id="neighborhood" name="neighborhood" 
+                                       placeholder="Colonia o barrio">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label for="city">Ciudad *</label>
+                                <input type="text" id="city" name="city" required 
+                                       placeholder="Ciudad">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postal_code">Código Postal *</label>
+                                <input type="text" id="postal_code" name="postal_code" required 
+                                       placeholder="C.P.">
+                            </div>
                         </div>
                     </div>
                     
