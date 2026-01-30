@@ -31,7 +31,7 @@
     <header>
         <nav>
             <a href="<?php echo BASE_URL; ?>/index.php" class="logo">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?>" style="width: 125px; height: auto; opacity: 0.75;" />
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?>" />
             </a>
 
             <ul class="nav-links">
