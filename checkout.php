@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 $order_number = 'FTH-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT) . '-' . date('Y');
                 
                 // Insertar pedido
-                $conn = getDBConnection();
+                $conn = getConnection();
                 $conn->beginTransaction();
                 
                 try {
@@ -71,10 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     
                     $order_id = $conn->lastInsertId();
                     
-                    // Insertar items del pedido
+                    // Insertar items del pedido y reducir stock
                     $stmt_item = $conn->prepare(
                         "INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal) 
                          VALUES (?, ?, ?, ?, ?)"
+                    );
+                    
+                    $stmt_stock = $conn->prepare(
+                        "UPDATE products SET stock = stock - ? WHERE id = ?"
                     );
                     
                     foreach ($cart as $item) {
@@ -86,16 +90,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             $item['quantity'],
                             $item_subtotal
                         ]);
+                        
+                        // Reducir stock
+                        $stmt_stock->execute([
+                            $item['quantity'],
+                            $item['id']
+                        ]);
                     }
                     
                     $conn->commit();
                     
-                    // Limpiar carrito y redirigir
-                    echo '<script>
-                        localStorage.removeItem("cart");
-                        window.location.href = "' . BASE_URL . '/order-confirmation.php?order=' . $order_number . '";
-                    </script>';
-                    exit;
+                    // Limpiar carrito de sesión
+                    $_SESSION['cart'] = [];
+                    
+                    // Limpiar carrito de BD
+                    try {
+                        executeQuery("DELETE FROM cart WHERE user_id = ?", [$_SESSION['user_id']]);
+                    } catch (Exception $e) {
+                        // Continuar aunque falle
+                    }
+                    
+                    // Redirigir
+                    redirect('/order-confirmation.php?order=' . $order_number);
                     
                 } catch (Exception $e) {
                     $conn->rollBack();

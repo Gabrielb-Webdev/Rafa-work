@@ -3,6 +3,34 @@ require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Carrito de Compras - Forethink Health';
 
+// Si está logueado, cargar carrito desde BD
+if (isLoggedIn()) {
+    $userId = intval($_SESSION['user_id']);
+    try {
+        $stmt = executeQuery(
+            "SELECT c.*, p.name, p.price, p.stock, p.image, p.is_active 
+             FROM cart c 
+             JOIN products p ON c.product_id = p.id 
+             WHERE c.user_id = ? AND p.is_active = 1",
+            [$userId]
+        );
+        $items = $stmt->fetchAll();
+        
+        $_SESSION['cart'] = [];
+        foreach ($items as $item) {
+            $_SESSION['cart'][(int)$item['product_id']] = [
+                'id' => (int)$item['product_id'],
+                'name' => $item['name'],
+                'price' => (float)$item['price'],
+                'quantity' => min((int)$item['quantity'], (int)$item['stock']),
+                'image' => $item['image']
+            ];
+        }
+    } catch (Exception $e) {
+        // Continuar con el carrito de sesión si hay error
+    }
+}
+
 // Validar productos del carrito contra la base de datos
 $cartItems = $_SESSION['cart'] ?? [];
 $validCartItems = [];

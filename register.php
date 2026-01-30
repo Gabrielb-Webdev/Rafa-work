@@ -51,6 +51,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
                 
+                // Sincronizar carrito de sesión con BD
+                if (!empty($_SESSION['cart'])) {
+                    try {
+                        foreach ($_SESSION['cart'] as $productId => $item) {
+                            executeQuery(
+                                "INSERT INTO cart (user_id, product_id, quantity, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
+                                [$user['id'], $productId, $item['quantity']]
+                            );
+                        }
+                    } catch (Exception $e) {
+                        // Continuar aunque falle la sincronización
+                    }
+                }
+                
+                // Marcar carrito como cargado
+                $_SESSION['cart_loaded'] = true;
+                
                 // Redirigir después de 2 segundos
                 header("refresh:2;url=" . BASE_URL . "/index.php");
             }

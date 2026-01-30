@@ -52,3 +52,39 @@ function sanitizeInput($data) {
 function formatPrice($price) {
     return '$' . number_format($price, 2);
 }
+
+// Función para cargar el carrito del usuario desde BD
+function loadCartFromDB() {
+    if (isLoggedIn()) {
+        $userId = intval($_SESSION['user_id']);
+        try {
+            $stmt = executeQuery(
+                "SELECT c.*, p.name, p.price, p.stock, p.image, p.is_active 
+                 FROM cart c 
+                 JOIN products p ON c.product_id = p.id 
+                 WHERE c.user_id = ? AND p.is_active = 1",
+                [$userId]
+            );
+            $items = $stmt->fetchAll();
+            
+            $_SESSION['cart'] = [];
+            foreach ($items as $item) {
+                $_SESSION['cart'][(int)$item['product_id']] = [
+                    'id' => (int)$item['product_id'],
+                    'name' => $item['name'],
+                    'price' => (float)$item['price'],
+                    'quantity' => min((int)$item['quantity'], (int)$item['stock']),
+                    'image' => $item['image']
+                ];
+            }
+        } catch (Exception $e) {
+            // Mantener carrito de sesión si hay error
+        }
+    }
+}
+
+// Cargar carrito al iniciar (solo si está logueado)
+if (isLoggedIn() && !isset($_SESSION['cart_loaded'])) {
+    loadCartFromDB();
+    $_SESSION['cart_loaded'] = true;
+}

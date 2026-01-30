@@ -27,6 +27,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
                 
+                // Sincronizar carrito de sesión con BD
+                if (!empty($_SESSION['cart'])) {
+                    try {
+                        foreach ($_SESSION['cart'] as $productId => $item) {
+                            // Verificar si ya existe en BD
+                            $stmt = executeQuery(
+                                "SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?", 
+                                [$user['id'], $productId]
+                            );
+                            $existing = $stmt->fetch();
+                            
+                            if ($existing) {
+                                // Sumar cantidades
+                                $newQty = $existing['quantity'] + $item['quantity'];
+                                executeQuery(
+                                    "UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ?", 
+                                    [$newQty, $existing['id']]
+                                );
+                            } else {
+                                // Insertar nuevo
+                                executeQuery(
+                                    "INSERT INTO cart (user_id, product_id, quantity, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
+                                    [$user['id'], $productId, $item['quantity']]
+                                );
+                            }
+                        }
+                    } catch (Exception $e) {
+                        // Continuar aunque falle la sincronización
+                    }
+                }
+                
+                // Cargar carrito desde BD
+                try {
+                    $stmt = executeQuery(
+                        "SELECT c.*, p.name, p.price, p.stock, p.image 
+                         FROM cart c 
+                         JOIN products p ON c.product_id = p.id 
+                         WHERE c.user_id = ? AND p.is_active = 1",
+                        [$user['id']]
+                    );
+                    $items = $stmt->fetchAll();
+                    
+                    $_SESSION['cart'] = [];
+                    foreach ($items as $item) {
+                        $_SESSION['cart'][(int)$item['product_id']] = [
+                            'id' => (int)$item['product_id'],
+                            'name' => $item['name'],
+                            'price' => (float)$item['price'],
+                            'quantity' => (int)$item['quantity'],
+                            'image' => $item['image']
+                        ];
+                    }
+                } catch (Exception $e) {
+                    // Mantener carrito de sesión si hay error
+                }
+                
+                // Marcar carrito como cargado
+                $_SESSION['cart_loaded'] = true;
+                
                 // Redirigir según el rol
                 if ($user['role'] === 'admin') {
                     redirect('/admin/index.php');
