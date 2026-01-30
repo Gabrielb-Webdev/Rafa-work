@@ -77,6 +77,21 @@ foreach ($itemsColumns as $column => $definition) {
     }
 }
 
+// 4. Modificar columnas existentes de order_items para permitir NULL
+try {
+    $conn->exec("ALTER TABLE order_items MODIFY COLUMN price DECIMAL(10,2) NULL");
+    $results[] = ['status' => 'success', 'message' => "Columna order_items.price ahora permite NULL"];
+} catch (PDOException $e) {
+    $results[] = ['status' => 'info', 'message' => "order_items.price: " . $e->getMessage()];
+}
+
+try {
+    $conn->exec("ALTER TABLE order_items MODIFY COLUMN subtotal DECIMAL(10,2) NULL");
+    $results[] = ['status' => 'success', 'message' => "Columna order_items.subtotal ahora permite NULL"];
+} catch (PDOException $e) {
+    $results[] = ['status' => 'info', 'message' => "order_items.subtotal: " . $e->getMessage()];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

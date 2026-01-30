@@ -78,10 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     
                     $order_id = $conn->lastInsertId();
                     
-// Insertar items del pedido (sin precios aún)
+// Insertar items del pedido (sin precios aún - se establecerán cuando admin envíe propuesta)
                 $stmt_item = $conn->prepare(
                     "INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) 
-                     VALUES (?, ?, ?, NULL, ?, NULL)"
+                     VALUES (?, ?, ?, 0, ?, 0)"
                 );
                 
                 foreach ($cartItems as $item) {
@@ -90,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         $item['id'],
                         $item['name'],
                         $item['quantity']
-                        ]);
-                    }
+                    ]);
+                }
                     
                     $conn->commit();
                     

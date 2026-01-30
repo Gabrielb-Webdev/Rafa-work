@@ -25,3 +25,8 @@ ADD COLUMN IF NOT EXISTS proposal_accepted_date DATETIME NULL;
 ALTER TABLE order_items
 ADD COLUMN IF NOT EXISTS proposed_price DECIMAL(10,2) NULL,
 ADD COLUMN IF NOT EXISTS proposed_subtotal DECIMAL(10,2) NULL;
+
+-- Modificar columnas existentes para permitir NULL (necesario para sistema de cotización)
+ALTER TABLE order_items
+MODIFY COLUMN price DECIMAL(10,2) NULL,
+MODIFY COLUMN subtotal DECIMAL(10,2) NULL;
