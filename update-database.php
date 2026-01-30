@@ -15,46 +15,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_database'])) {
     try {
         $conn = getConnection();
         
-        // 1. Verificar si las columnas ya existen
-        $stmt = $conn->query("SHOW COLUMNS FROM orders LIKE 'street'");
-        $columnExists = $stmt->fetch();
+        // 1. Obtener columnas actuales
+        $stmt = $conn->query("SHOW COLUMNS FROM orders");
+        $currentColumns = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $currentColumns[] = $row['Field'];
+        }
         
-        if ($columnExists) {
+        // 2. Verificar si ya está actualizado
+        $stmt = $conn->query("SHOW COLUMNS FROM orders LIKE 'street'");
+        $alreadyUpdated = $stmt->fetch();
+        
+        if ($alreadyUpdated) {
             $errors[] = 'Las columnas ya existen en la base de datos. No es necesario actualizar.';
         } else {
-            // 2. Agregar las nuevas columnas
-            $sql = "ALTER TABLE `orders` 
-                    ADD COLUMN `street` VARCHAR(255) AFTER `phone`,
-                    ADD COLUMN `street_number` VARCHAR(50) AFTER `street`,
-                    ADD COLUMN `neighborhood` VARCHAR(255) AFTER `street_number`,
-                    ADD COLUMN `city` VARCHAR(255) AFTER `neighborhood`,
-                    ADD COLUMN `postal_code` VARCHAR(20) AFTER `city`";
+            $updates = [];
             
-            $conn->exec($sql);
-            $results[] = '✓ Columnas agregadas exitosamente: street, street_number, neighborhood, city, postal_code';
-            
-            // 3. Verificar la estructura actualizada
-            $stmt = $conn->query("DESCRIBE orders");
-            $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            
-            $requiredColumns = ['street', 'street_number', 'neighborhood', 'city', 'postal_code'];
-            $allPresent = true;
-            foreach ($requiredColumns as $col) {
-                if (!in_array($col, $columns)) {
-                    $allPresent = false;
-                    $errors[] = "✗ Columna '$col' no se encontró";
-                }
+            // 3. Agregar columnas que faltan
+            if (!in_array('full_name', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `full_name` VARCHAR(255) AFTER `order_number`");
+                $updates[] = '✓ Agregada columna: full_name';
             }
             
-            if ($allPresent) {
-                $results[] = '✓ Todas las columnas fueron verificadas correctamente';
-                $success = true;
+            if (!in_array('email', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `email` VARCHAR(255) AFTER `full_name`");
+                $updates[] = '✓ Agregada columna: email';
             }
             
-            // 4. Opcional: Verificar si existe la columna antigua 'address'
-            if (in_array('address', $columns)) {
-                $results[] = 'ℹ Nota: La columna antigua "address" aún existe. Puedes eliminarla manualmente si ya no la necesitas.';
+            if (!in_array('phone', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `phone` VARCHAR(50) AFTER `email`");
+                $updates[] = '✓ Agregada columna: phone';
             }
+            
+            // 4. Agregar columnas de dirección separada
+            $conn->exec("ALTER TABLE `orders` ADD COLUMN `street` VARCHAR(255) AFTER `phone`");
+            $updates[] = '✓ Agregada columna: street';
+            
+            $conn->exec("ALTER TABLE `orders` ADD COLUMN `street_number` VARCHAR(50) AFTER `street`");
+            $updates[] = '✓ Agregada columna: street_number';
+            
+            $conn->exec("ALTER TABLE `orders` ADD COLUMN `neighborhood` VARCHAR(255) AFTER `street_number`");
+            $updates[] = '✓ Agregada columna: neighborhood';
+            
+            $conn->exec("ALTER TABLE `orders` ADD COLUMN `city` VARCHAR(255) AFTER `neighborhood`");
+            $updates[] = '✓ Agregada columna: city';
+            
+            $conn->exec("ALTER TABLE `orders` ADD COLUMN `postal_code` VARCHAR(20) AFTER `city`");
+            $updates[] = '✓ Agregada columna: postal_code';
+            
+            // 5. Agregar columnas de montos si no existen
+            if (!in_array('subtotal', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `subtotal` DECIMAL(10,2) AFTER `postal_code`");
+                $updates[] = '✓ Agregada columna: subtotal';
+            }
+            
+            if (!in_array('shipping', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `shipping` DECIMAL(10,2) AFTER `subtotal`");
+                $updates[] = '✓ Agregada columna: shipping';
+            }
+            
+            if (!in_array('total', $currentColumns)) {
+                $conn->exec("ALTER TABLE `orders` ADD COLUMN `total` DECIMAL(10,2) AFTER `shipping`");
+                $updates[] = '✓ Agregada columna: total';
+            }
+            
+            $results = $updates;
+            
+            // 6. Notas sobre columnas antiguas
+            if (in_array('shipping_address', $currentColumns)) {
+                $results[] = 'ℹ Columna antigua "shipping_address" detectada (ahora se usan campos separados)';
+            }
+            if (in_array('shipping_phone', $currentColumns)) {
+                $results[] = 'ℹ Columna antigua "shipping_phone" detectada (ahora se usa "phone")';
+            }
+            if (in_array('total_amount', $currentColumns)) {
+                $results[] = 'ℹ Columna antigua "total_amount" detectada (ahora se usa "total")';
+            }
+            
+            $success = true;
         }
         
     } catch (PDOException $e) {
@@ -336,13 +374,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_database'])) {
             
             <?php if (!$success && empty($errors)): ?>
                 <div class="info-box">
-                    <h3>Esta actualización agregará los siguientes campos:</h3>
+                    <h3>Esta actualización agregará/actualizará los siguientes campos:</h3>
                     <ul>
+                        <li><i class="fas fa-plus"></i> <strong>full_name</strong> - Nombre completo del cliente</li>
+                        <li><i class="fas fa-plus"></i> <strong>email</strong> - Email del cliente</li>
+                        <li><i class="fas fa-plus"></i> <strong>phone</strong> - Teléfono</li>
                         <li><i class="fas fa-plus"></i> <strong>street</strong> - Calle</li>
                         <li><i class="fas fa-plus"></i> <strong>street_number</strong> - Número</li>
                         <li><i class="fas fa-plus"></i> <strong>neighborhood</strong> - Colonia</li>
                         <li><i class="fas fa-plus"></i> <strong>city</strong> - Ciudad</li>
                         <li><i class="fas fa-plus"></i> <strong>postal_code</strong> - Código Postal</li>
+                        <li><i class="fas fa-plus"></i> <strong>subtotal</strong> - Subtotal del pedido</li>
+                        <li><i class="fas fa-plus"></i> <strong>shipping</strong> - Costo de envío</li>
+                        <li><i class="fas fa-plus"></i> <strong>total</strong> - Total del pedido</li>
                     </ul>
                 </div>
                 
