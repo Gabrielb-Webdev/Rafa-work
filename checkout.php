@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     
                     // Insertar items del pedido y reducir stock
                     $stmt_item = $conn->prepare(
-                        "INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal) 
+                        "INSERT INTO order_items (order_id, product_name, price, quantity, subtotal) 
                          VALUES (?, ?, ?, ?, ?)"
                     );
                     
