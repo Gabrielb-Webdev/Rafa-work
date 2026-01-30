@@ -447,13 +447,6 @@ include __DIR__ . '/includes/header.php';
                                 <span class="order-info-label">Número de Seguimiento</span>
                                 <span class="order-info-value"><?php echo $order['tracking']; ?></span>
                             </div>
-                            
-                            <div class="order-info-item">
-                                <span class="order-info-label">Método de Pago</span>
-                                <span class="order-info-value">
-                                    <i class="fas fa-credit-card"></i> Tarjeta
-                                </span>
-                            </div>
                         </div>
                         
                         <div class="order-footer">
