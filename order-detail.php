@@ -659,42 +659,54 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Enviar mensaje de chat
     chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const messageInput = document.getElementById('messageInput');
-    const message = messageInput.value.trim();
-    
-    if (!message) return;
-    
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
-    try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
-        });
+        e.preventDefault();
+        console.log('Formulario enviado');
         
-        const data = await response.json();
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
         
-        if (data.success) {
-            messageInput.value = '';
-            // Recargar mensajes inmediatamente
-            await loadMessages();
-        } else {
-            showNotification('error', 'Error', data.message);
+        console.log('Mensaje:', message);
+        
+        if (!message) {
+            console.log('Mensaje vacío, no se envía');
+            return;
         }
-    } catch (error) {
-        showNotification('error', 'Error de Conexión', 'Por favor intenta de nuevo más tarde.');
-    }
-    
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
+        
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            console.log('Enviando mensaje a API...');
+            const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
+            });
+            
+            console.log('Respuesta recibida:', response.status);
+            const data = await response.json();
+            console.log('Datos:', data);
+            
+            if (data.success) {
+                messageInput.value = '';
+                console.log('Mensaje enviado exitosamente');
+                // Recargar mensajes inmediatamente
+                await loadMessages();
+            } else {
+                console.error('Error en respuesta:', data);
+                showNotification('error', 'Error', data.message || 'No se pudo enviar el mensaje');
+            }
+        } catch (error) {
+            console.error('Error al enviar mensaje:', error);
+            showNotification('error', 'Error de Conexión', 'Por favor intenta de nuevo más tarde. Error: ' + error.message);
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     });
 });
 
