@@ -15,7 +15,7 @@ $userId = $isLoggedIn ? intval($_SESSION['user_id']) : null;
 function getCartFromDB($userId) {
     try {
         $stmt = executeQuery(
-            "SELECT c.*, p.name, p.price, p.stock, p.image, p.is_active 
+            "SELECT c.*, p.name, p.price, p.image, p.is_active 
              FROM cart c 
              JOIN products p ON c.product_id = p.id 
              WHERE c.user_id = ? AND p.is_active = 1",
@@ -29,7 +29,7 @@ function getCartFromDB($userId) {
                 'id' => (int)$item['product_id'],
                 'name' => $item['name'],
                 'price' => (float)$item['price'],
-                'quantity' => min((int)$item['quantity'], (int)$item['stock']),
+                'quantity' => (int)$item['quantity'], // Sin límite de stock
                 'image' => $item['image']
             ];
         }
@@ -100,31 +100,27 @@ switch ($action) {
                         $_SESSION['cart'] = [];
                     }
                     
-                    // Verificar stock
+                    // Agregar sin verificar stock (sistema de cotización)
                     $currentQty = isset($_SESSION['cart'][$productId]) ? intval($_SESSION['cart'][$productId]['quantity']) : 0;
                     $newQty = $currentQty + $quantity;
                     
-                    if ($newQty <= $product['stock']) {
-                        // Asegurar que la clave sea entero explícitamente
-                        $_SESSION['cart'][(int)$productId] = [
-                            'id' => (int)$product['id'],
-                            'name' => $product['name'],
-                            'price' => (float)$product['price'],
-                            'quantity' => (int)$newQty,
-                            'image' => $product['image']
-                        ];
-                        
-                        // Si está logueado, guardar también en BD
-                        if ($isLoggedIn) {
-                            saveCartItemToDB($userId, $productId, $newQty);
-                        }
-                        
-                        $response['success'] = true;
-                        $response['message'] = 'Producto agregado al carrito';
-                        $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
-                    } else {
-                        $response['message'] = 'No hay suficiente stock disponible';
+                    // Asegurar que la clave sea entero explícitamente
+                    $_SESSION['cart'][(int)$productId] = [
+                        'id' => (int)$product['id'],
+                        'name' => $product['name'],
+                        'price' => (float)$product['price'],
+                        'quantity' => (int)$newQty,
+                        'image' => $product['image']
+                    ];
+                    
+                    // Si está logueado, guardar también en BD
+                    if ($isLoggedIn) {
+                        saveCartItemToDB($userId, $productId, $newQty);
                     }
+                    
+                    $response['success'] = true;
+                    $response['message'] = 'Producto agregado al carrito';
+                    $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
                 } else {
                     $response['message'] = 'Producto no encontrado';
                 }
@@ -140,28 +136,17 @@ switch ($action) {
         
         if ($productId > 0 && isset($_SESSION['cart'][$productId])) {
             if ($quantity > 0) {
-                try {
-                    // Verificar stock
-                    $stmt = executeQuery("SELECT stock FROM products WHERE id = ?", [$productId]);
-                    $product = $stmt->fetch();
-                    
-                    if ($product && $quantity <= $product['stock']) {
-                        $_SESSION['cart'][$productId]['quantity'] = $quantity;
-                        
-                        // Si está logueado, actualizar también en BD
-                        if ($isLoggedIn) {
-                            saveCartItemToDB($userId, $productId, $quantity);
-                        }
-                        
-                        $response['success'] = true;
-                        $response['message'] = 'Cantidad actualizada';
-                        $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
-                    } else {
-                        $response['message'] = 'No hay suficiente stock';
-                    }
-                } catch (Exception $e) {
-                    $response['message'] = 'Error al actualizar';
+                // Actualizar sin verificar stock
+                $_SESSION['cart'][$productId]['quantity'] = $quantity;
+                
+                // Si está logueado, actualizar también en BD
+                if ($isLoggedIn) {
+                    saveCartItemToDB($userId, $productId, $quantity);
                 }
+                
+                $response['success'] = true;
+                $response['message'] = 'Cantidad actualizada';
+                $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
             } else {
                 unset($_SESSION['cart'][$productId]);
                 

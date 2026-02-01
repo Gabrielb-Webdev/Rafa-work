@@ -8,7 +8,7 @@ if (isLoggedIn()) {
     $userId = intval($_SESSION['user_id']);
     try {
         $stmt = executeQuery(
-            "SELECT c.*, p.name, p.price, p.stock, p.image, p.is_active 
+            "SELECT c.*, p.name, p.price, p.image, p.is_active 
              FROM cart c 
              JOIN products p ON c.product_id = p.id 
              WHERE c.user_id = ? AND p.is_active = 1",
@@ -22,7 +22,7 @@ if (isLoggedIn()) {
                 'id' => (int)$item['product_id'],
                 'name' => $item['name'],
                 'price' => (float)$item['price'],
-                'quantity' => min((int)$item['quantity'], (int)$item['stock']),
+                'quantity' => (int)$item['quantity'], // Sin límite de stock
                 'image' => $item['image']
             ];
         }
@@ -45,16 +45,16 @@ if (!empty($cartItems)) {
         }
         
         // Verificar que el producto existe en la base de datos
-        $stmt = executeQuery("SELECT id, name, price, stock, image FROM products WHERE id = ? AND is_active = 1", [$productId]);
+        $stmt = executeQuery("SELECT id, name, price, image FROM products WHERE id = ? AND is_active = 1", [$productId]);
         $product = $stmt->fetch();
         
         if ($product) {
-            // Producto válido, usar clave entera explícita
+            // Producto válido, usar clave entera explícita - SIN LIMITAR CANTIDAD
             $validCartItems[(int)$productId] = [
                 'id' => (int)$product['id'],
                 'name' => $product['name'],
                 'price' => (float)$product['price'],
-                'quantity' => (int)min($item['quantity'], $product['stock']),
+                'quantity' => (int)$item['quantity'], // Sin límite de stock
                 'image' => $product['image']
             ];
         }
