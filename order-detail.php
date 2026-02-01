@@ -339,11 +339,11 @@ require_once 'includes/header.php';
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px 15px;
+    padding: 15px 12px;
     background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* Scrollbar personalizado */
@@ -371,7 +371,7 @@ require_once 'includes/header.php';
     display: flex;
     flex-direction: column;
     animation: slideUpFade 0.4s ease-out;
-    max-width: 75%;
+    max-width: 80%;
 }
 
 @keyframes slideUpFade {
@@ -394,9 +394,9 @@ require_once 'includes/header.php';
 .chat-message.user-message > div:nth-child(2) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 10px 16px;
-    border-radius: 18px 18px 4px 18px;
-    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25);
+    padding: 8px 14px;
+    border-radius: 16px 16px 4px 16px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
     position: relative;
 }
 
@@ -431,9 +431,9 @@ require_once 'includes/header.php';
 .chat-message.admin-message > div:nth-child(2) {
     background: white;
     color: #2c3e50;
-    padding: 10px 16px;
-    border-radius: 18px 18px 18px 4px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    padding: 8px 14px;
+    border-radius: 16px 16px 16px 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border: 2px solid #e9ecef;
     position: relative;
 }
@@ -465,12 +465,12 @@ require_once 'includes/header.php';
 
 /* Nombre del remitente */
 .chat-message > div:first-child {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-    padding: 0 6px;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+    padding: 0 4px;
 }
 
 .chat-message.user-message > div:first-child {
@@ -483,16 +483,16 @@ require_once 'includes/header.php';
 
 /* Contenido del mensaje */
 .chat-message > div:nth-child(2) {
-    line-height: 1.6;
-    font-size: 14px;
+    line-height: 1.4;
+    font-size: 13px;
     word-wrap: break-word;
 }
 
 /* Hora del mensaje */
 .chat-message > div:last-child {
     font-size: 9px;
-    margin-top: 4px;
-    padding: 0 6px;
+    margin-top: 2px;
+    padding: 0 4px;
 }
 
 .chat-message.user-message > div:last-child {
