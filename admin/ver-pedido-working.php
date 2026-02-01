@@ -1,920 +1,915 @@
 <?php
-/**
- * Ver Detalle de Pedido - DISEÑO ULTRA MODERNO
- * Version: 3.0 - COMPLETAMENTE REDISEÑADO
- */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 require_once __DIR__ . '/../config/config.php';
 
+// Verificar que sea administrador
 if (!isLoggedIn() || !isAdmin()) {
-    header('Location: ../login.php');
-    exit;
+    redirect('/login.php');
 }
 
 $order_id = $_GET['id'] ?? 0;
+$success = '';
+$error = '';
+
 if (!$order_id) {
-    header('Location: pedidos.php');
-    exit;
+    redirect('/admin/pedidos.php');
 }
 
-// Cargar pedido
-$stmt = executeQuery(
-    "SELECT o.*, 
-     COALESCE(o.first_name, u.first_name) as first_name,
-     COALESCE(o.last_name, u.last_name) as last_name,
-     COALESCE(o.email, u.email) as email,
-     COALESCE(o.phone, u.phone) as phone,
-     COALESCE(o.address, u.address) as address,
-     COALESCE(o.city, u.city) as city,
-     COALESCE(o.state, u.state) as state,
-     COALESCE(o.zip_code, u.zip_code) as zip_code
-     FROM orders o 
-     JOIN users u ON o.user_id = u.id 
-     WHERE o.id = ?",
-    [$order_id]
-);
-$order = $stmt->fetch();
-
-if (!$order) {
-    die('Pedido no encontrado');
-}
-
-// Cargar productos
-$stmt = executeQuery(
-    "SELECT oi.*, p.name as product_name, p.image, p.price as current_price
-     FROM order_items oi 
-     LEFT JOIN products p ON oi.product_id = p.id 
-     WHERE oi.order_id = ?",
-    [$order_id]
-);
-$items = $stmt->fetchAll();
-
-// Cargar mensajes del chat
-$messages = [];
+// Obtener información del pedido
 try {
     $stmt = executeQuery(
-        "SELECT om.*, u.full_name as sender_name, 
-         CASE WHEN u.user_role = 'admin' THEN 'admin' ELSE 'client' END as sender_type
-         FROM order_messages om 
+        "SELECT o.*, u.full_name as user_name, u.email as user_email, u.id as user_id
+         FROM orders o 
+         JOIN users u ON o.user_id = u.id 
+         WHERE o.id = ?",
+        [$order_id]
+    );
+    $order = $stmt->fetch();
+    
+    if (!$order) {
+        redirect('/admin/pedidos.php');
+    }
+    
+    // Obtener items del pedido
+    $stmt = executeQuery(
+        "SELECT oi.*, p.image, p.price as current_price
+         FROM order_items oi 
+         LEFT JOIN products p ON oi.product_id = p.id 
+         WHERE oi.order_id = ?",
+        [$order_id]
+    );
+    $items = $stmt->fetchAll();
+    
+    // Obtener mensajes del chat
+    $stmt = executeQuery(
+        "SELECT om.*, u.full_name as sender_name, u.user_role
+         FROM order_messages om
          JOIN users u ON om.user_id = u.id
-         WHERE om.order_id = ? 
+         WHERE om.order_id = ?
          ORDER BY om.created_at ASC",
         [$order_id]
     );
     $messages = $stmt->fetchAll();
+    
 } catch (Exception $e) {
-    // Tabla no existe
+    redirect('/admin/pedidos.php');
 }
 
-$pageTitle = "Pedido #" . $order['order_number'];
-require_once 'header.php';
+function getStatusBadge($status) {
+    $badges = [
+        'pending' => '<span style="background: #ff9800; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
+        'processing' => '<span style="background: #ffc107; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-clock"></i> EN PROCESO</span>',
+        'shipped' => '<span style="background: #17a2b8; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-truck"></i> ENVIADO</span>',
+        'delivered' => '<span style="background: #28a745; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
+        'cancelled' => '<span style="background: #dc3545; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+    ];
+    return $badges[$status] ?? $status;
+}
+
+$pageTitle = 'Detalle del Pedido - Admin';
+include __DIR__ . '/header.php';
 ?>
 
 <style>
-/* ===============================================
-   DISEÑO COMPLETAMENTE NUEVO Y ULTRA MODERNO
-   =============================================== */
-
-body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-    min-height: 100vh;
-    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif !important;
+.order-detail-page {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: calc(100vh - 200px);
+    padding: 40px 0;
 }
 
-/* Hero Header con Gradiente Espectacular */
-.hero-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 50px;
-    border-radius: 30px;
-    margin-bottom: 40px;
-    box-shadow: 0 30px 80px rgba(102, 126, 234, 0.5);
-    position: relative;
-    overflow: hidden;
-    animation: fadeInDown 0.6s ease;
+.detail-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-.hero-header::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
-}
-
-.hero-header::after {
-    content: "";
-    position: absolute;
-    bottom: -30%;
-    left: -5%;
-    width: 300px;
-    height: 300px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50%;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-    color: white;
-}
-
-.hero-title {
-    font-size: 52px;
-    font-weight: 900;
-    margin: 0 0 15px 0;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    letter-spacing: -1px;
-}
-
-.hero-subtitle {
-    font-size: 18px;
-    opacity: 0.95;
-    font-weight: 500;
-}
-
-.status-pill {
+.back-link {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 15px 30px;
-    border-radius: 100px;
-    font-size: 15px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    margin-top: 25px;
-    margin-right: 15px;
-}
-
-.status-pending { 
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-}
-.status-processing { 
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-}
-.status-shipped { 
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    color: white;
-}
-.status-delivered { 
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    color: white;
-}
-
-.proposal-pill {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    color: white !important;
-}
-
-/* Botón Back Moderno */
-.btn-back-modern {
-    background: white;
-    color: #667eea;
-    padding: 14px 35px;
-    border-radius: 100px;
+    gap: 8px;
+    color: #6c757d;
     text-decoration: none;
-    font-weight: 800;
-    font-size: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    padding: 12px 25px;
+    background: white;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.btn-back-modern:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    color: #667eea;
-}
-
-/* Cards Modernas con Efecto Glass */
-.glass-card {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 25px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.8);
-    margin-bottom: 35px;
-    overflow: hidden;
-    animation: fadeInUp 0.6s ease;
-    transition: all 0.4s ease;
-}
-
-.glass-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 70px rgba(0,0,0,0.15);
-}
-
-.glass-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 28px 35px;
+.back-link:hover {
     color: white;
-    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.glass-card-title {
-    font-size: 26px;
+.detail-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.detail-header h1 {
+    font-size: 36px;
+    color: white;
+    margin-bottom: 15px;
     font-weight: 900;
-    margin: 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.order-meta {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.meta-item {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    color: rgba(255,255,255,0.95);
+    font-weight: 600;
 }
 
-.glass-card-title i {
-    font-size: 32px;
+.meta-item i {
+    color: #ffd700;
+    font-size: 20px;
 }
 
-.glass-card-body {
-    padding: 35px;
-}
-
-/* Grid de Información Ultra Moderna */
-.info-grid {
+.detail-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
+    grid-template-columns: 1fr 500px;
+    gap: 30px;
 }
 
-.info-box {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    padding: 25px;
+@media (max-width: 1200px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.detail-section {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
     border-radius: 20px;
-    border-left: 5px solid #667eea;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    padding: 35px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    border: 1px solid rgba(255,255,255,0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.info-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100px;
-    height: 100px;
-    background: rgba(102, 126, 234, 0.05);
-    border-radius: 50%;
-    transform: translate(30%, -30%);
+.detail-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.12);
 }
 
-.info-box:hover {
-    transform: translateX(8px);
-    background: linear-gradient(135deg, #e8f4ff 0%, #d6e9ff 100%);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+.section-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #667eea;
+}
+
+.section-title i {
+    color: #667eea;
+    font-size: 28px;
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .info-label {
-    font-size: 13px;
-    text-transform: uppercase;
+    font-weight: 700;
     color: #6c757d;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.info-label i {
-    color: #667eea;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
 }
 
 .info-value {
-    font-size: 20px;
-    font-weight: 800;
     color: #2c3e50;
-}
-
-.info-value a {
-    color: #667eea;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.info-value a:hover {
-    color: #764ba2;
-    text-decoration: underline;
-}
-
-/* Productos con Diseño Espectacular */
-.product-card {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    border: 2px solid transparent;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-.product-card:hover {
-    border-color: #667eea;
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-    transform: scale(1.03);
-}
-
-.product-img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.product-details {
-    flex: 1;
-}
-
-.product-name {
-    font-size: 22px;
-    font-weight: 800;
-    color: #2c3e50;
-    margin-bottom: 10px;
-}
-
-.quantity-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 10px 25px;
-    border-radius: 100px;
-    font-weight: 800;
-    font-size: 17px;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.product-price {
-    font-size: 30px;
-    font-weight: 900;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Total Display Épico */
-.total-showcase {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    padding: 40px;
-    border-radius: 25px;
-    text-align: center;
-    margin-top: 30px;
-    box-shadow: 0 20px 60px rgba(40, 167, 69, 0.4);
-    position: relative;
-    overflow: hidden;
-}
-
-.total-showcase::before {
-    content: '💰';
-    font-size: 100px;
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    opacity: 0.1;
-}
-
-.total-label {
-    color: white;
-    font-size: 20px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    opacity: 0.9;
-}
-
-.total-amount {
-    font-size: 64px;
-    font-weight: 900;
-    color: white;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    letter-spacing: -2px;
-}
-
-/* Formulario de Propuesta Épico */
-.proposal-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 45px;
-    border-radius: 25px;
-    color: white;
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
-    position: sticky;
-    top: 20px;
-}
-
-.proposal-title {
-    font-size: 28px;
-    font-weight: 900;
-    margin-bottom: 10px;
-}
-
-.proposal-subtitle {
-    opacity: 0.9;
-    margin-bottom: 30px;
-}
-
-.form-group-modern {
-    margin-bottom: 25px;
-}
-
-.form-label-modern {
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.form-control-modern {
-    background: white;
-    border: none;
-    border-radius: 15px;
-    padding: 18px 22px;
-    font-size: 17px;
     font-weight: 600;
-    color: #2c3e50;
-    width: 100%;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    font-size: 16px;
 }
 
-.form-control-modern:focus {
-    outline: none;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-    transform: scale(1.02);
-}
-
-.btn-send-proposal {
-    background: white;
-    color: #667eea;
-    border: none;
-    padding: 20px 45px;
-    border-radius: 100px;
-    font-size: 19px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-    width: 100%;
-}
-
-.btn-send-proposal:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-}
-
-/* Chat Moderno Ultra */
-.chat-container {
-    background: white;
-    border-radius: 25px;
-    overflow: hidden;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
-    position: sticky;
-    top: 20px;
-}
-
-.chat-header {
+/* Formulario de propuesta */
+.proposal-form {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 28px 30px;
+    border: none;
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
     color: white;
+}
+
+.proposal-form h3 {
+    color: white;
+    margin-bottom: 25px;
     display: flex;
     align-items: center;
-    gap: 15px;
-}
-
-.chat-title {
+    gap: 12px;
     font-size: 24px;
     font-weight: 900;
-    margin: 0;
 }
 
-.chat-messages {
-    height: 550px;
-    overflow-y: auto;
-    padding: 30px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+.product-proposal {
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.message-bubble {
-    max-width: 75%;
-    padding: 18px 24px;
-    border-radius: 25px;
-    margin-bottom: 18px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    animation: slideUp 0.4s ease;
-    position: relative;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.message-admin {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    margin-left: auto;
-    border-bottom-right-radius: 8px;
-}
-
-.message-client {
-    background: white;
-    color: #2c3e50;
-    border-bottom-left-radius: 8px;
-}
-
-.message-sender {
+.product-proposal-header {
     font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 17px;
+}
+
+.price-input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.price-input-group label {
+    display: block;
     font-size: 13px;
+    color: #2c3e50;
     margin-bottom: 6px;
-    opacity: 0.85;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.message-text {
+.price-input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid rgba(255,255,255,0.9);
+    border-radius: 10px;
     font-size: 16px;
-    line-height: 1.5;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.price-input-group input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+.proposal-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: 20px;
+    border-top: 3px solid rgba(255,255,255,0.3);
+    font-size: 22px;
+    font-weight: 900;
+    color: white;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.btn-send-proposal {
+    width: 100%;
+    padding: 18px;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.btn-send-proposal:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+
+.btn-send-proposal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Chat */
+.chat-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}
+
+.chat-header {
+    padding: 20px 30px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.chat-header h3 {
+    font-size: 20px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.message {
+    display: flex;
+    gap: 12px;
+    max-width: 85%;
+}
+
+.message.user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.message.admin .message-avatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.message.user .message-avatar {
+    background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%);
+}
+
+.message-content {
+    flex: 1;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.message-sender {
+    font-weight: 700;
+    font-size: 14px;
+    color: #2c3e50;
 }
 
 .message-time {
     font-size: 12px;
-    opacity: 0.65;
-    margin-top: 8px;
-    font-weight: 600;
+    color: #6c757d;
+}
+
+.message-bubble {
+    padding: 12px 16px;
+    border-radius: 12px;
+    line-height: 1.5;
+}
+
+.message.admin .message-bubble {
+    background: #f0f0f0;
+    color: #2c3e50;
+    border-bottom-left-radius: 4px;
+}
+
+.message.user .message-bubble {
+    background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.proposal-message {
+    background: #fff3cd !important;
+    border: 2px solid #ffc107;
+    color: #856404 !important;
+    padding: 20px;
 }
 
 .chat-input-area {
-    padding: 25px;
-    background: white;
-    border-top: 2px solid #f0f2f5;
+    padding: 20px 30px;
+    border-top: 2px solid #f0f0f0;
+    background: #fafafa;
+    border-radius: 0 0 15px 15px;
 }
 
-.chat-form {
+.chat-input-form {
     display: flex;
-    gap: 15px;
+    gap: 12px;
 }
 
 .chat-input {
     flex: 1;
-    background: #f5f7fa;
-    border: 2px solid #e8ecf1;
-    border-radius: 100px;
-    padding: 15px 25px;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    padding: 12px 20px;
+    border: 2px solid #eee;
+    border-radius: 25px;
+    font-size: 14px;
+    transition: border-color 0.3s;
 }
 
 .chat-input:focus {
     outline: none;
     border-color: #667eea;
-    background: white;
 }
 
-.btn-send-msg {
+.chat-send-btn {
+    padding: 12px 30px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 15px 35px;
-    border-radius: 100px;
-    font-weight: 800;
+    border-radius: 25px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    transition: transform 0.2s;
 }
 
-.btn-send-msg:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+.chat-send-btn:hover {
+    transform: translateY(-2px);
 }
 
-/* Scrollbar Moderna */
-.chat-messages::-webkit-scrollbar {
-    width: 10px;
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-.chat-messages::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+.alert-success {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
 }
 
-.chat-messages::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
-}
-
-/* Animations */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 36px;
-    }
-    
-    .product-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .total-amount {
-        font-size: 48px;
-    }
+.alert-danger {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
 }
 </style>
 
-<div class="container-fluid px-4 py-4">
-    <!-- Hero Header -->
-    <div class="hero-header">
-        <div class="hero-content">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h1 class="hero-title">🛍️ <?php echo htmlspecialchars($order['order_number']); ?></h1>
-                    <div class="hero-subtitle">
-                        📅 Recibido el <?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?>
-                    </div>
-                </div>
-                <a href="pedidos.php" class="btn-back-modern">
-                    ← Volver
-                </a>
+<section class="order-detail-page">
+    <div class="detail-container">
+        <a href="<?php echo BASE_URL; ?>/admin/pedidos.php" class="back-link">
+            <i class="fas fa-arrow-left"></i> Volver a Pedidos
+        </a>
+        
+        <?php if ($success): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <?php echo $success; ?>
             </div>
-            
-            <div>
-                <span class="status-pill status-<?php echo $order['status']; ?>">
-                    <?php
-                    $status_text = [
-                        'pending' => '⏳ Pendiente',
-                        'processing' => '⚙️ En Proceso',
-                        'shipped' => '🚚 Enviado',
-                        'delivered' => '✅ Entregado'
-                    ];
-                    echo $status_text[$order['status']] ?? '📦 ' . $order['status'];
-                    ?>
-                </span>
+        <?php endif; ?>
+        
+        <?php if ($error): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
+        
+        <div class="detail-header">
+            <h1>Pedido #<?php echo $order['order_number']; ?></h1>
+            <div class="order-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span><?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-user"></i>
+                    <span><?php echo htmlspecialchars($order['user_name']); ?></span>
+                </div>
+                <div class="meta-item">
+                    <?php echo getStatusBadge($order['status']); ?>
+                </div>
                 <?php if ($order['proposal_sent']): ?>
-                <span class="status-pill proposal-pill">
-                    ✓ Propuesta Enviada
-                </span>
+                    <div class="meta-item">
+                        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                        <span style="color: #28a745; font-weight: 700;">Propuesta Enviada</span>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <!-- Columna Principal -->
-        <div class="col-lg-8">
-            
-            <!-- Información del Cliente -->
-            <div class="glass-card">
-                <div class="glass-card-header">
-                    <h5 class="glass-card-title">
-                        <i class="fas fa-user-circle"></i>
-                        Información del Cliente
-                    </h5>
-                </div>
-                <div class="glass-card-body">
-                    <div class="info-grid">
-                        <div class="info-box">
-                            <div class="info-label">
-                                <i class="fas fa-user"></i> NOMBRE
+        
+        <div class="detail-grid">
+            <div>
+                <?php if (!$order['proposal_sent']): ?>
+                    <div class="proposal-form">
+                        <h3>
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Crear Propuesta de Cotización
+                        </h3>
+                        <p style="color: #856404; margin-bottom: 20px;">
+                            Ingresa el precio propuesto para cada producto y envía la cotización al cliente
+                        </p>
+                        
+                        <form id="proposalForm">
+                            <?php foreach ($items as $index => $item): ?>
+                                <div class="product-proposal">
+                                    <div class="product-proposal-header">
+                                        <?php echo htmlspecialchars($item['product_name']); ?>
+                                        <small style="color: #6c757d; font-weight: normal;">(Cantidad: <?php echo $item['quantity']; ?>)</small>
+                                    </div>
+                                    <div class="price-input-group">
+                                        <div>
+                                            <label>Precio Unitario:</label>
+                                            <input type="number" 
+                                                   name="price_<?php echo $item['id']; ?>" 
+                                                   class="item-price" 
+                                                   data-item-id="<?php echo $item['id']; ?>"
+                                                   data-quantity="<?php echo $item['quantity']; ?>"
+                                                   step="0.01" 
+                                                   min="0"
+                                                   placeholder="0.00"
+                                                   value="<?php echo $item['current_price'] ?? ''; ?>"
+                                                   required>
+                                        </div>
+                                        <div>
+                                            <label>Subtotal:</label>
+                                            <input type="number" 
+                                                   name="subtotal_<?php echo $item['id']; ?>" 
+                                                   class="item-subtotal" 
+                                                   data-item-id="<?php echo $item['id']; ?>"
+                                                   step="0.01" 
+                                                   readonly 
+                                                   placeholder="0.00"
+                                                   style="background: #f8f9fa;">
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            
+                            <div class="product-proposal" style="background: #f8f9fa;">
+                                <div class="price-input-group">
+                                    <div>
+                                        <label>Costo de Envío:</label>
+                                        <input type="number" 
+                                               name="shipping" 
+                                               id="shipping" 
+                                               step="0.01" 
+                                               min="0" 
+                                               placeholder="0.00"
+                                               value="0">
+                                    </div>
+                                    <div>
+                                        <label>Descuento:</label>
+                                        <input type="number" 
+                                               name="discount" 
+                                               id="discount" 
+                                               step="0.01" 
+                                               min="0" 
+                                               placeholder="0.00"
+                                               value="0">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="info-value">
-                                <?php echo htmlspecialchars($order['first_name'] . ' ' . $order['last_name']); ?>
+                            
+                            <div class="proposal-total-row">
+                                <span>Total de la Propuesta:</span>
+                                <span id="proposalTotal">$0.00</span>
                             </div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">
-                                <i class="fas fa-envelope"></i> EMAIL
+                            
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; color: #856404; font-weight: 600; margin-bottom: 8px;">
+                                    Mensaje para el cliente:
+                                </label>
+                                <textarea name="proposal_message" 
+                                          id="proposalMessage" 
+                                          rows="4" 
+                                          style="width: 100%; padding: 12px; border: 1px solid #ffc107; border-radius: 8px; font-size: 14px;"
+                                          placeholder="Escribe un mensaje personalizado para acompañar la propuesta..."></textarea>
                             </div>
-                            <div class="info-value">
-                                <a href="mailto:<?php echo htmlspecialchars($order['email']); ?>">
-                                    <?php echo htmlspecialchars($order['email']); ?>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">
-                                <i class="fas fa-phone"></i> TELÉFONO
-                            </div>
-                            <div class="info-value">
-                                <?php echo htmlspecialchars($order['phone'] ?: 'No proporcionado'); ?>
-                            </div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">
-                                <i class="fas fa-map-marker-alt"></i> DIRECCIÓN
-                            </div>
-                            <div class="info-value">
-                                <?php 
-                                $full_address = trim(
-                                    implode(', ', array_filter([
-                                        $order['address'],
-                                        $order['city'],
-                                        $order['state'],
-                                        $order['zip_code']
-                                    ]))
-                                );
-                                echo htmlspecialchars($full_address ?: 'No proporcionada');
-                                ?>
-                            </div>
-                        </div>
+                            
+                            <button type="submit" class="btn-send-proposal" id="sendProposalBtn">
+                                <i class="fas fa-paper-plane"></i> Enviar Propuesta al Cliente
+                            </button>
+                        </form>
                     </div>
-                </div>
-            </div>
-
-            <!-- Productos Solicitados -->
-            <div class="glass-card">
-                <div class="glass-card-header">
-                    <h5 class="glass-card-title">
-                        <i class="fas fa-shopping-cart"></i>
-                        Productos Solicitados (<?php echo count($items); ?>)
-                    </h5>
-                </div>
-                <div class="glass-card-body">
-                    <?php foreach ($items as $item): ?>
-                    <div class="product-card">
-                        <?php if ($item['image']): ?>
-                        <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                             alt="" class="product-img">
-                        <?php endif; ?>
-                        <div class="product-details">
-                            <div class="product-name">
-                                <?php echo htmlspecialchars($item['product_name']); ?>
-                            </div>
-                            <span class="quantity-badge">
-                                <?php echo $item['quantity']; ?> unidades
-                            </span>
-                        </div>
-                        <div class="product-price">
-                            <?php if ($item['proposed_price']): ?>
-                                $<?php echo number_format($item['proposed_price'], 2); ?>
-                            <?php else: ?>
-                                <span style="color: #dc3545;">Sin Precio</span>
-                            <?php endif; ?>
-                        </div>
+                <?php else: ?>
+                    <div style="padding: 20px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; margin-bottom: 30px;">
+                        <strong style="color: #155724; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-check-circle"></i> Propuesta ya enviada
+                        </strong>
+                        <p style="color: #155724; margin: 10px 0 0 0;">
+                            La propuesta fue enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?>
+                        </p>
                     </div>
-                    <?php endforeach; ?>
-
-                    <div class="total-showcase">
-                        <div class="total-label">TOTAL DEL PEDIDO</div>
-                        <div class="total-amount">$<?php echo number_format($order['total'], 2); ?></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Columna Derecha -->
-        <div class="col-lg-4">
-            
-            <!-- Formulario de Propuesta -->
-            <?php if (!$order['proposal_sent']): ?>
-            <div class="proposal-section">
-                <h3 class="proposal-title">💼 Enviar Propuesta</h3>
-                <p class="proposal-subtitle">Configura los precios y envía la propuesta al cliente</p>
+                <?php endif; ?>
                 
-                <form method="post" action="../api/send-proposal.php">
-                    <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                <div class="detail-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-box"></i> Productos Solicitados
+                    </h2>
                     
                     <?php foreach ($items as $item): ?>
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">
-                            <?php echo htmlspecialchars($item['product_name']); ?>
-                            (<?php echo $item['quantity']; ?>x)
-                        </label>
-                        <input type="number" 
-                               name="prices[<?php echo $item['id']; ?>]" 
-                               class="form-control-modern"
-                               placeholder="Precio unitario"
-                               step="0.01"
-                               value="<?php echo $item['proposed_price'] ?? ''; ?>"
-                               required>
-                    </div>
-                    <?php endforeach; ?>
-                    
-                    <button type="submit" class="btn-send-proposal">
-                        🚀 Enviar Propuesta
-                    </button>
-                </form>
-            </div>
-            <?php endif; ?>
-
-            <!-- Chat -->
-            <div class="chat-container mt-4">
-                <div class="chat-header">
-                    <i class="fas fa-comments"></i>
-                    <h5 class="chat-title">Chat del Pedido</h5>
-                </div>
-                <div class="chat-messages" id="chatMessages">
-                    <?php if (empty($messages)): ?>
-                    <p style="text-align: center; color: #6c757d; padding: 40px;">
-                        No hay mensajes aún. ¡Inicia la conversación!
-                    </p>
-                    <?php else: ?>
-                        <?php foreach ($messages as $msg): ?>
-                        <div class="message-bubble message-<?php echo $msg['sender_type']; ?>">
-                            <div class="message-sender">
-                                <?php echo htmlspecialchars($msg['sender_name']); ?>
+                        <div style="display: flex; gap: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="width: 60px; height: 60px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <?php if (!empty($item['image'])): ?>
+                                    <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $item['image']; ?>" 
+                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                                <?php else: ?>
+                                    <i class="fas fa-pills" style="color: #00d4d4; font-size: 24px;"></i>
+                                <?php endif; ?>
                             </div>
-                            <div class="message-text">
-                                <?php echo nl2br(htmlspecialchars($msg['message'])); ?>
-                            </div>
-                            <div class="message-time">
-                                <?php echo date('d/m/Y H:i', strtotime($msg['created_at'])); ?>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; color: #2c3e50;"><?php echo htmlspecialchars($item['product_name']); ?></div>
+                                <div style="color: #6c757d; font-size: 14px;">Cantidad: <?php echo $item['quantity']; ?></div>
+                                <?php if ($item['proposed_price'] !== null): ?>
+                                    <div style="color: #00d4d4; font-weight: 600; margin-top: 5px;">
+                                        $<?php echo number_format($item['proposed_price'], 2); ?> c/u = $<?php echo number_format($item['proposed_subtotal'], 2); ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div style="color: #ffc107; font-style: italic; margin-top: 5px;">Pendiente de cotización</div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    
+                    <?php if ($order['proposal_total']): ?>
+                        <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); border-radius: 12px; color: white;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 18px; font-weight: 600;">Total Propuesta:</span>
+                                <span style="font-size: 32px; font-weight: 700;">$<?php echo number_format($order['proposal_total'], 2); ?></span>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
-                <div class="chat-input-area">
-                    <form class="chat-form" id="chatForm">
-                        <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
-                        <input type="text" 
-                               name="message" 
-                               class="chat-input" 
-                               placeholder="Escribe un mensaje..."
-                               required>
-                        <button type="submit" class="btn-send-msg">
-                            <i class="fas fa-paper-plane"></i> Enviar
-                        </button>
-                    </form>
+                
+                <div class="detail-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-user"></i> Información de Contacto
+                    </h2>
+                    <div class="info-row">
+                        <div class="info-label">Nombre:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['full_name']); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['email']); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Teléfono:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['phone']); ?></div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-map-marker-alt"></i> Dirección de Envío
+                    </h2>
+                    <div class="info-row">
+                        <div class="info-label">Calle:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['street']); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Número:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['street_number']); ?></div>
+                    </div>
+                    <?php if ($order['neighborhood']): ?>
+                        <div class="info-row">
+                            <div class="info-label">Colonia:</div>
+                            <div class="info-value"><?php echo htmlspecialchars($order['neighborhood']); ?></div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="info-row">
+                        <div class="info-label">Ciudad:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['city']); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Código Postal:</div>
+                        <div class="info-value"><?php echo htmlspecialchars($order['postal_code']); ?></div>
+                    </div>
+                    <?php if ($order['notes']): ?>
+                        <div class="info-row">
+                            <div class="info-label">Notas:</div>
+                            <div class="info-value"><?php echo nl2br(htmlspecialchars($order['notes'])); ?></div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
-
+            
+            <div>
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h3>
+                            <i class="fas fa-comments"></i>
+                            Chat del Pedido
+                        </h3>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <?php if (empty($messages)): ?>
+                            <div style="text-align: center; color: #6c757d; padding: 40px;">
+                                <i class="fas fa-comments" style="font-size: 60px; color: #dee2e6; margin-bottom: 15px;"></i>
+                                <p>Aún no hay mensajes</p>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($messages as $msg): ?>
+                                <div class="message <?php echo $msg['user_role'] === 'admin' ? 'admin' : 'user'; ?>">
+                                    <div class="message-avatar">
+                                        <?php echo strtoupper(substr($msg['sender_name'], 0, 1)); ?>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-header">
+                                            <span class="message-sender"><?php echo htmlspecialchars($msg['sender_name']); ?></span>
+                                            <span class="message-time"><?php echo date('d/m/Y H:i', strtotime($msg['created_at'])); ?></span>
+                                        </div>
+                                        <?php if ($msg['is_proposal']): ?>
+                                            <div class="message-bubble proposal-message">
+                                                <strong style="display: block; margin-bottom: 10px;">
+                                                    <i class="fas fa-file-invoice-dollar"></i> Propuesta de Cotización
+                                                </strong>
+                                                <?php echo nl2br(htmlspecialchars($msg['message'])); ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="message-bubble">
+                                                <?php echo nl2br(htmlspecialchars($msg['message'])); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <form class="chat-input-form" id="chatForm">
+                            <input type="text" 
+                                   class="chat-input" 
+                                   id="messageInput" 
+                                   placeholder="Escribe un mensaje..."
+                                   required>
+                            <button type="submit" class="chat-send-btn" id="sendChatBtn">
+                                <i class="fas fa-paper-plane"></i> Enviar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 <script>
-// Auto-scroll chat to bottom
-const chatMessages = document.getElementById('chatMessages');
-if (chatMessages) {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+const orderId = <?php echo $order_id; ?>;
+const orderData = <?php echo json_encode($order); ?>;
+const itemsData = <?php echo json_encode($items); ?>;
+
+// Calcular subtotales automáticamente
+document.querySelectorAll('.item-price').forEach(input => {
+    input.addEventListener('input', function() {
+        const quantity = parseFloat(this.dataset.quantity);
+        const price = parseFloat(this.value) || 0;
+        const subtotal = (price * quantity).toFixed(2);
+        
+        const itemId = this.dataset.itemId;
+        document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`).value = subtotal;
+        
+        calculateTotal();
+    });
+    
+    // Trigger inicial
+    input.dispatchEvent(new Event('input'));
+});
+
+document.getElementById('shipping').addEventListener('input', calculateTotal);
+document.getElementById('discount').addEventListener('input', calculateTotal);
+
+function calculateTotal() {
+    let subtotal = 0;
+    
+    document.querySelectorAll('.item-subtotal').forEach(input => {
+        subtotal += parseFloat(input.value) || 0;
+    });
+    
+    const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+    const discount = parseFloat(document.getElementById('discount').value) || 0;
+    const total = subtotal + shipping - discount;
+    
+    document.getElementById('proposalTotal').textContent = '$' + total.toFixed(2);
 }
 
-// Submit chat message
-document.getElementById('chatForm')?.addEventListener('submit', async function(e) {
+// Enviar propuesta
+document.getElementById('proposalForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData(this);
+    
+    const btn = document.getElementById('sendProposalBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando propuesta...';
+    
+    const formData = new FormData(e.target);
+    formData.append('action', 'send_proposal');
+    formData.append('order_id', orderId);
+    
+    // Agregar datos de items
+    itemsData.forEach(item => {
+        const price = document.querySelector(`[name="price_${item.id}"]`).value;
+        const subtotal = document.querySelector(`[name="subtotal_${item.id}"]`).value;
+        formData.append(`items[${item.id}][price]`, price);
+        formData.append(`items[${item.id}][subtotal]`, subtotal);
+    });
     
     try {
-        const response = await fetch('../api/order-messages.php', {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/send-proposal.php', {
             method: 'POST',
             body: formData
         });
         
-        const result = await response.json();
-        if (result.success) {
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Propuesta enviada exitosamente. Se ha notificado al cliente por email.');
             location.reload();
         } else {
-            alert('Error al enviar mensaje');
+            alert('❌ Error: ' + data.message);
         }
     } catch (error) {
-        alert('Error de conexión');
+        alert('❌ Error de conexión al enviar la propuesta');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Propuesta al Cliente';
+    }
+});
+
+// Chat
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+const messageInput = document.getElementById('messageInput');
+
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+scrollToBottom();
+
+chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const message = messageInput.value.trim();
+    if (!message) return;
+    
+    const btn = document.getElementById('sendChatBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=send&order_id=${orderId}&message=${encodeURIComponent(message)}`
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            messageInput.value = '';
+            location.reload();
+        } else {
+            alert('Error al enviar el mensaje: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error de conexión al enviar el mensaje');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
     }
 });
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>
