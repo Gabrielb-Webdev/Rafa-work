@@ -14,23 +14,21 @@ if (!isLoggedIn()) {
     exit;
 }
 
-$action = $_POST['action'] ?? '';
-
-switch ($action) {
-    case 'send':
-        $order_id = (int)($_POST['order_id'] ?? 0);
-        $message = trim($_POST['message'] ?? '');
-        
-        if (!$order_id || !$message) {
-            echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
-            exit;
-        }
-        
-        try {
-            // Verificar que el pedido pertenezca al usuario o que sea admin
-            if (!isAdmin()) {
-                $stmt = executeQuery(
-                    "SELECT id FROM orders WHERE id = ? AND user_id = ?",
+// Si es POST, enviar mensaje
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $order_id = (int)($_POST['order_id'] ?? 0);
+    $message = trim($_POST['message'] ?? '');
+    
+    if (!$order_id || !$message) {
+        echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
+        exit;
+    }
+    
+    try {
+        // Verificar que el pedido pertenezca al usuario o que sea admin
+        if (!isAdmin()) {
+            $stmt = executeQuery(
+                "SELECT id FROM orders WHERE id = ? AND user_id = ?",
                     [$order_id, $_SESSION['user_id']]
                 );
                 $order = $stmt->fetch();
@@ -59,9 +57,11 @@ switch ($action) {
                 'message' => 'Error al enviar el mensaje: ' . $e->getMessage()
             ]);
         }
-        break;
-        
-    case 'get':
+        exit;
+    }
+    
+    // Si es GET, obtener mensajes
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $order_id = (int)($_GET['order_id'] ?? 0);
         
         if (!$order_id) {
@@ -106,9 +106,6 @@ switch ($action) {
                 'message' => 'Error al obtener mensajes: ' . $e->getMessage()
             ]);
         }
-        break;
-        
-    default:
-        echo json_encode(['success' => false, 'message' => 'Acción no válida']);
-}
+        exit;
+    }
 ?>
