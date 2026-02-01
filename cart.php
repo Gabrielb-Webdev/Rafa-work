@@ -1,9 +1,9 @@
 <?php
 /**
  * Carrito de Compras - Forethink Health
- * Version: 2.0 - Sistema de Cotización sin Límite de Stock
+ * Version: 2.1 - Actualización Automática con Debounce
  * Fecha: 31/01/2026
- * Cambios: Eliminadas restricciones de stock, permite cantidades ilimitadas
+ * Cambios: Actualización rápida de cantidad sin límites, con debounce automático
  */
 require_once __DIR__ . '/config/config.php';
 
@@ -246,6 +246,35 @@ include __DIR__ . '/includes/header.php';
     font-size: 18px;
     font-weight: 700;
     color: #2c3e50;
+    transition: all 0.3s ease;
+}
+
+.qty-input:focus {
+    outline: none;
+    border-color: #00d4d4;
+    box-shadow: 0 0 0 3px rgba(0, 212, 212, 0.1);
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100px);
+        opacity: 0;
+    }
 }
 
 .cart-item-actions {
@@ -672,13 +701,19 @@ include __DIR__ . '/includes/header.php';
                             <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">💬 Pendiente de cotización</div>
                             <div class="cart-item-quantity">
                                 <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $productId; ?>, -1)">−</button>
-                                <input type="number" class="qty-input" value="<?php echo $item['quantity']; ?>" min="1" readonly>
+                                <input type="number" 
+                                       class="qty-input" 
+                                       value="<?php echo $item['quantity']; ?>" 
+                                       min="1" 
+                                       data-product-id="<?php echo $productId; ?>"
+                                       onchange="updateQuantityDirect(<?php echo $productId; ?>, this.value)"
+                                       oninput="scheduleUpdate(<?php echo $productId; ?>, this.value)">
                                 <button class="qty-btn qty-plus" onclick="updateQuantity(<?php echo $productId; ?>, 1)">+</button>
                             </div>
                         </div>
                         
                         <div class="cart-item-actions">
-                            <div class="cart-item-total" style="font-size: 16px; color: #6c757d;">Cantidad: <?php echo $item['quantity']; ?></div>
+                            <div class="cart-item-total" style="font-size: 16px; color: #6c757d;">Cantidad: <span class="quantity-display-<?php echo $productId; ?>"><?php echo $item['quantity']; ?></span></div>
                             <button class="btn-remove" type="button" data-product-id="<?php echo $productId; ?>" onclick="removeItem(this.getAttribute('data-product-id'))">
                                 <i class="fas fa-trash"></i> Eliminar
                             </button>
@@ -781,28 +816,128 @@ function showToast(message, type = 'success', title = '') {
     }, 4000);
 }
 
+// Sistema de actualización con debounce
+let updateTimers = {};
+let isUpdating = {};
+
 function updateQuantity(productId, change) {
     const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
     const qtyInput = cartItem.querySelector('.qty-input');
-    let currentQty = parseInt(qtyInput.value);
+    let currentQty = parseInt(qtyInput.value) || 1;
     let newQty = currentQty + change;
     
-    if (newQty < 1) return;
+    if (newQty < 1) newQty = 1;
+    
+    // Actualizar visualmente de inmediato
+    qtyInput.value = newQty;
+    updateDisplayQuantity(productId, newQty);
+    
+    // Programar actualización en servidor con debounce
+    scheduleUpdate(productId, newQty);
+}
+
+function updateQuantityDirect(productId, value) {
+    let newQty = parseInt(value) || 1;
+    if (newQty < 1) newQty = 1;
+    
+    updateDisplayQuantity(productId, newQty);
+    scheduleUpdate(productId, newQty);
+}
+
+function scheduleUpdate(productId, quantity) {
+    // Cancelar timer anterior si existe
+    if (updateTimers[productId]) {
+        clearTimeout(updateTimers[productId]);
+    }
+    
+    // Programar nueva actualización después de 800ms de inactividad
+    updateTimers[productId] = setTimeout(() => {
+        executeUpdate(productId, quantity);
+    }, 800);
+}
+
+function executeUpdate(productId, quantity) {
+    if (isUpdating[productId]) return;
+    
+    isUpdating[productId] = true;
+    
+    // Mostrar indicador visual
+    const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+    if (cartItem) {
+        cartItem.style.opacity = '0.6';
+    }
     
     fetch('<?php echo BASE_URL; ?>/api/cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `action=update&product_id=${productId}&quantity=${newQty}`
+        body: `action=update&product_id=${productId}&quantity=${quantity}`
     })
     .then(res => res.json())
     .then(data => {
+        isUpdating[productId] = false;
+        if (cartItem) {
+            cartItem.style.opacity = '1';
+        }
+        
         if (data.success) {
-            location.reload();
+            // Actualizar contador del carrito
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge && data.cartCount) {
+                cartBadge.textContent = data.cartCount;
+            }
+            
+            // Mostrar toast pequeño
+            showMiniToast('✓ Actualizado');
         } else {
             showToast(data.message, 'error', 'Error');
+            // Recargar para corregir el estado
+            setTimeout(() => location.reload(), 1500);
         }
     })
-    .catch(() => showToast('No se pudo actualizar la cantidad', 'error', 'Error de conexión'));
+    .catch(() => {
+        isUpdating[productId] = false;
+        if (cartItem) {
+            cartItem.style.opacity = '1';
+        }
+        showToast('Error al actualizar cantidad', 'error', 'Error');
+    });
+}
+
+function updateDisplayQuantity(productId, quantity) {
+    const displayElements = document.querySelectorAll(`.quantity-display-${productId}`);
+    displayElements.forEach(el => {
+        el.textContent = quantity;
+    });
+}
+
+function showMiniToast(message) {
+    const existingMini = document.querySelector('.mini-toast');
+    if (existingMini) existingMini.remove();
+    
+    const miniToast = document.createElement('div');
+    miniToast.className = 'mini-toast';
+    miniToast.textContent = message;
+    miniToast.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #28a745;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInUp 0.3s ease;
+    `;
+    
+    document.body.appendChild(miniToast);
+    
+    setTimeout(() => {
+        miniToast.style.animation = 'slideOutDown 0.3s ease';
+        setTimeout(() => miniToast.remove(), 300);
+    }, 1500);
 }
 
 function removeItem(productId) {
