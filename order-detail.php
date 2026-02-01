@@ -395,31 +395,8 @@ require_once 'includes/header.php';
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 8px 14px;
-    border-radius: 16px 16px 4px 16px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
-    position: relative;
-}
-
-.chat-message.user-message > div:nth-child(2)::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -8px;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-bottom-left-radius: 16px;
-}
-
-.chat-message.user-message > div:nth-child(2)::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -10px;
-    width: 10px;
-    height: 20px;
-    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-    border-bottom-left-radius: 10px;
 }
 
 /* Mensajes del admin - Alineados a la izquierda */
@@ -432,35 +409,9 @@ require_once 'includes/header.php';
     background: white;
     color: #2c3e50;
     padding: 8px 14px;
-    border-radius: 16px 16px 16px 4px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border: 2px solid #e9ecef;
-    position: relative;
-}
-
-.chat-message.admin-message > div:nth-child(2)::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -8px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-top: none;
-    border-right: none;
-    border-bottom-right-radius: 16px;
-}
-
-.chat-message.admin-message > div:nth-child(2)::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -10px;
-    width: 10px;
-    height: 20px;
-    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-    border-bottom-right-radius: 10px;
 }
 
 /* Nombre del remitente */
