@@ -663,6 +663,71 @@ tr:last-child td {
     color: var(--text-light);
     font-weight: 600;
 }
+
+/* Input de archivo personalizado */
+.custom-file-upload {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    border: 3px dashed var(--primary-cyan);
+    border-radius: 15px;
+    background: linear-gradient(135deg, rgba(0, 212, 212, 0.05) 0%, rgba(0, 191, 191, 0.1) 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.custom-file-upload:hover {
+    border-color: #00bfbf;
+    background: linear-gradient(135deg, rgba(0, 212, 212, 0.1) 0%, rgba(0, 191, 191, 0.15) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 212, 0.2);
+}
+
+.custom-file-upload input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-upload-icon {
+    font-size: 48px;
+    color: var(--primary-cyan);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.file-upload-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.file-upload-hint {
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.file-name-display {
+    margin-top: 12px;
+    padding: 10px 15px;
+    background: #e8f9f9;
+    border-radius: 8px;
+    color: var(--primary-cyan);
+    font-weight: 600;
+    font-size: 14px;
+    display: none;
+}
+
+.file-name-display.show {
+    display: block;
+}
 </style>
 
 <section class="admin-page">
@@ -832,7 +897,15 @@ tr:last-child td {
             
             <div class="form-group">
                 <label>Imagen del Producto</label>
-                <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
+                <label class="custom-file-upload">
+                    <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
+                    <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                    <div class="file-upload-text">Haz clic o arrastra una imagen aquí</div>
+                    <div class="file-upload-hint">PNG, JPG o JPEG (Máx. 5MB)</div>
+                </label>
+                <div id="fileNameDisplay" class="file-name-display">
+                    <i class="fas fa-file-image"></i> <span id="fileName"></span>
+                </div>
                 <div id="imagePreviewContainer" class="image-preview-container">
                     <img id="imagePreview" class="image-preview" src="" alt="Preview">
                     <div class="image-preview-label">Vista previa de la imagen</div>
@@ -901,8 +974,15 @@ function previewImage(event) {
     const file = event.target.files[0];
     const previewContainer = document.getElementById('imagePreviewContainer');
     const preview = document.getElementById('imagePreview');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileName = document.getElementById('fileName');
     
     if (file) {
+        // Mostrar nombre del archivo
+        fileName.textContent = file.name;
+        fileNameDisplay.classList.add('show');
+        
+        // Mostrar preview
         const reader = new FileReader();
         
         reader.onload = function(e) {
@@ -912,8 +992,10 @@ function previewImage(event) {
         
         reader.readAsDataURL(file);
     } else {
+        fileNameDisplay.classList.remove('show');
         previewContainer.classList.remove('show');
         preview.src = '';
+        fileName.textContent = '';
     }
 }
 
@@ -927,8 +1009,13 @@ function openAddModal() {
     // Limpiar preview de imagen
     const previewContainer = document.getElementById('imagePreviewContainer');
     const preview = document.getElementById('imagePreview');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileName = document.getElementById('fileName');
+    
     previewContainer.classList.remove('show');
+    fileNameDisplay.classList.remove('show');
     preview.src = '';
+    fileName.textContent = '';
     
     document.getElementById('productModal').classList.add('show');
 }
@@ -945,13 +1032,19 @@ function editProduct(product) {
     // Mostrar imagen actual si existe
     const previewContainer = document.getElementById('imagePreviewContainer');
     const preview = document.getElementById('imagePreview');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileName = document.getElementById('fileName');
     
     if (product.image) {
         preview.src = '<?php echo BASE_URL; ?>/uploads/products/' + product.image;
         previewContainer.classList.add('show');
+        fileName.textContent = product.image;
+        fileNameDisplay.classList.add('show');
     } else {
         previewContainer.classList.remove('show');
+        fileNameDisplay.classList.remove('show');
         preview.src = '';
+        fileName.textContent = '';
     }
     
     document.getElementById('productModal').classList.add('show');
