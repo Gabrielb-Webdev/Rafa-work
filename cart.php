@@ -1,4 +1,10 @@
 <?php
+/**
+ * Carrito de Compras - Forethink Health
+ * Version: 2.0 - Sistema de Cotización sin Límite de Stock
+ * Fecha: 31/01/2026
+ * Cambios: Eliminadas restricciones de stock, permite cantidades ilimitadas
+ */
 require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Carrito de Compras - Forethink Health';

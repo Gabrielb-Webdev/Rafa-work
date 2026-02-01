@@ -1,4 +1,10 @@
 <?php
+/**
+ * Mis Pedidos - Forethink Health
+ * Version: 2.0 - Estados Dinámicos y Filtros Funcionales
+ * Fecha: 31/01/2026
+ * Cambios: Estadísticas calculadas desde BD, filtros funcionales por estado
+ */
 require_once __DIR__ . '/config/config.php';
 
 // Verificar si está logueado

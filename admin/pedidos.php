@@ -1,4 +1,10 @@
 <?php
+/**
+ * Gestión de Pedidos - Panel Administrativo
+ * Version: 1.1 - Corrección de Consultas SQL
+ * Fecha: 31/01/2026
+ * Cambios: Corregida consulta de estadísticas con COALESCE para totales
+ */
 require_once __DIR__ . '/../config/config.php';
 
 // Verificar que sea administrador

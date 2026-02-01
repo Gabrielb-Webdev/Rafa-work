@@ -1,4 +1,10 @@
 <?php
+/**
+ * API del Carrito de Compras
+ * Version: 2.0 - Sistema de Cotización sin Límite de Stock
+ * Fecha: 31/01/2026
+ * Cambios: Eliminadas todas las verificaciones de stock para permitir cantidades ilimitadas
+ */
 session_start();
 header('Content-Type: application/json');
 
