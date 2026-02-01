@@ -59,30 +59,32 @@ try {
     
     foreach ($items as $item_id => $item_data) {
         $price = (float)($item_data['price'] ?? 0);
+        $quantity = (int)($item_data['quantity'] ?? 0);
         $item_subtotal = (float)($item_data['subtotal'] ?? 0);
         
-        if ($price <= 0) {
-            throw new Exception('Todos los productos deben tener un precio válido');
+        if ($price <= 0 || $quantity <= 0) {
+            throw new Exception('Todos los productos deben tener precio y cantidad válidos');
         }
         
-        // Actualizar order_items con precios propuestos
+        // Actualizar order_items con precios y cantidades propuestas
         $stmt = $conn->prepare(
             "UPDATE order_items 
-             SET proposed_price = ?, proposed_subtotal = ?
+             SET proposed_price = ?, proposed_quantity = ?, proposed_subtotal = ?
              WHERE id = ? AND order_id = ?"
         );
-        $stmt->execute([$price, $item_subtotal, $item_id, $order_id]);
+        $stmt->execute([$price, $quantity, $item_subtotal, $item_id, $order_id]);
         
         $subtotal += $item_subtotal;
         
-        // Obtener nombre del producto para el email
+        // Obtener nombre del producto y cantidad original para el email
         $stmt_prod = $conn->prepare("SELECT product_name, quantity FROM order_items WHERE id = ?");
         $stmt_prod->execute([$item_id]);
         $prod = $stmt_prod->fetch();
         if ($prod) {
             $proposal_details[] = [
                 'name' => $prod['product_name'],
-                'quantity' => $prod['quantity'],
+                'quantity_requested' => $prod['quantity'],
+                'quantity_proposed' => $quantity,
                 'price' => $price,
                 'subtotal' => $item_subtotal
             ];
@@ -105,7 +107,7 @@ try {
     $stmt->execute([$total, $subtotal, $shipping, $total, $order_id]);
     
     // Crear mensaje en el chat con la propuesta
-    $proposal_text = "📋 PROPUESTA DE COTIZACIÓN\n\n";
+    $proposal_text = "📋 PROPUESTA DE COTIZACIÓN (USD)\n\n";
     
     if ($proposal_message) {
         $proposal_text .= $proposal_message . "\n\n";
@@ -115,22 +117,31 @@ try {
     $proposal_text .= str_repeat("-", 40) . "\n";
     
     foreach ($proposal_details as $detail) {
+        $quantity_note = '';
+        if ($detail['quantity_proposed'] != $detail['quantity_requested']) {
+            $quantity_note = sprintf(
+                " (solicitaste %d, ofrecemos %d)",
+                $detail['quantity_requested'],
+                $detail['quantity_proposed']
+            );
+        }
         $proposal_text .= sprintf(
-            "%s\n   Cantidad: %d x $%.2f = $%.2f\n\n",
+            "%s%s\n   %d unidades x USD $%.2f = USD $%.2f\n\n",
             $detail['name'],
-            $detail['quantity'],
+            $quantity_note,
+            $detail['quantity_proposed'],
             $detail['price'],
             $detail['subtotal']
         );
     }
     
     $proposal_text .= str_repeat("-", 40) . "\n";
-    $proposal_text .= sprintf("Subtotal: $%.2f\n", $subtotal);
-    $proposal_text .= sprintf("Envío: $%.2f\n", $shipping);
+    $proposal_text .= sprintf("Subtotal: USD $%.2f\n", $subtotal);
+    $proposal_text .= sprintf("Envío: USD $%.2f\n", $shipping);
     if ($discount > 0) {
-        $proposal_text .= sprintf("Descuento: -$%.2f\n", $discount);
+        $proposal_text .= sprintf("Descuento: -USD $%.2f\n", $discount);
     }
-    $proposal_text .= sprintf("\n✅ TOTAL: $%.2f\n", $total);
+    $proposal_text .= sprintf("\n✅ TOTAL: USD $%.2f\n", $total);
     $proposal_text .= "\nPuedes revisar los detalles completos en tu pedido. Si tienes alguna duda, no dudes en preguntarnos por este chat.";
     
     // Insertar mensaje en el chat (sin columna is_proposal si no existe)

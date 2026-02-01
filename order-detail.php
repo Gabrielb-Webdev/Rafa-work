@@ -639,7 +639,7 @@ require_once 'includes/header.php';
                 <h3>🎉 ¡Hemos preparado tu propuesta!</h3>
                 <p>Revisa los detalles a continuación y acepta la propuesta si estás de acuerdo.</p>
                 <div class="proposal-total">
-                    $<?php echo number_format($order['proposal_total'], 2); ?>
+                    USD $<?php echo number_format($order['proposal_total'], 2); ?>
                 </div>
                 <button class="btn-accept" onclick="acceptProposal()">
                     ✓ Aceptar Propuesta
@@ -660,20 +660,23 @@ require_once 'includes/header.php';
                 <?php foreach ($items as $item): ?>
                 <div class="product-item">
                     <?php if ($item['image']): ?>
-                    <img src="<?php echo htmlspecialchars($item['image']); ?>" 
+                    <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo htmlspecialchars($item['image']); ?>" 
                          alt="<?php echo htmlspecialchars($item['product_name']); ?>">
                     <?php endif; ?>
                     
                     <div class="product-info">
                         <h3><?php echo htmlspecialchars($item['product_name']); ?></h3>
-                        <p>Cantidad: <?php echo $item['quantity']; ?></p>
+                        <p>Solicitaste: <?php echo $item['quantity']; ?> unidades</p>
+                        <?php if ($item['proposed_quantity'] && $item['proposed_quantity'] != $item['quantity']): ?>
+                        <p style="color: #28a745; font-weight: 600;">Ofrecemos: <?php echo $item['proposed_quantity']; ?> unidades</p>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="product-price">
                         <?php if ($item['proposed_price']): ?>
-                        <div class="price">$<?php echo number_format($item['proposed_subtotal'], 2); ?></div>
+                        <div class="price">USD $<?php echo number_format($item['proposed_subtotal'], 2); ?></div>
                         <small style="color: var(--text-light);">
-                            $<?php echo number_format($item['proposed_price'], 2); ?> c/u
+                            USD $<?php echo number_format($item['proposed_price'], 2); ?> c/u
                         </small>
                         <?php else: ?>
                         <small style="color: var(--text-light);">Pendiente de cotización</small>
@@ -685,7 +688,7 @@ require_once 'includes/header.php';
                 <?php if ($order['proposal_total']): ?>
                 <div style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border-light);">
                     <span style="font-size: 24px; font-weight: 700; color: var(--primary-cyan);">
-                        Total: $<?php echo number_format($order['proposal_total'], 2); ?>
+                        Total: USD $<?php echo number_format($order['proposal_total'], 2); ?>
                     </span>
                 </div>
                 <?php endif; ?>

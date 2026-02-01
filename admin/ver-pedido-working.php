@@ -539,10 +539,10 @@ include __DIR__ . '/header.php';
                     <div class="proposal-form">
                         <h3>
                             <i class="fas fa-file-invoice-dollar"></i>
-                            Crear Propuesta de Cotización
+                            Crear Propuesta de Cotización (USD)
                         </h3>
                         <p style="color: #856404; margin-bottom: 20px;">
-                            Ingresa el precio propuesto para cada producto y envía la cotización al cliente
+                            Ingresa el precio y cantidad propuesta para cada producto. Puedes ofrecer cantidades diferentes si consigues mejor precio.
                         </p>
                         
                         <form id="proposalForm">
@@ -550,16 +550,27 @@ include __DIR__ . '/header.php';
                                 <div class="product-proposal">
                                     <div class="product-proposal-header">
                                         <?php echo htmlspecialchars($item['product_name']); ?>
-                                        <small style="color: #6c757d; font-weight: normal;">(Cantidad: <?php echo $item['quantity']; ?>)</small>
+                                        <small style="color: #6c757d; font-weight: normal;">(Cliente solicitó: <?php echo $item['quantity']; ?> unidades)</small>
                                     </div>
-                                    <div class="price-input-group">
+                                    <div class="price-input-group" style="grid-template-columns: 1fr 1fr 1fr;">
                                         <div>
-                                            <label>Precio Unitario:</label>
+                                            <label>Cantidad Propuesta:</label>
+                                            <input type="number" 
+                                                   name="quantity_<?php echo $item['id']; ?>" 
+                                                   class="item-quantity" 
+                                                   data-item-id="<?php echo $item['id']; ?>"
+                                                   min="1"
+                                                   placeholder="<?php echo $item['quantity']; ?>"
+                                                   value="<?php echo $item['quantity']; ?>"
+                                                   required>
+                                            <small style="color: #28a745; font-size: 11px;">Puedes ofrecer más</small>
+                                        </div>
+                                        <div>
+                                            <label>Precio Unitario (USD):</label>
                                             <input type="number" 
                                                    name="price_<?php echo $item['id']; ?>" 
                                                    class="item-price" 
                                                    data-item-id="<?php echo $item['id']; ?>"
-                                                   data-quantity="<?php echo $item['quantity']; ?>"
                                                    step="0.01" 
                                                    min="0"
                                                    placeholder="0.00"
@@ -567,7 +578,7 @@ include __DIR__ . '/header.php';
                                                    required>
                                         </div>
                                         <div>
-                                            <label>Subtotal:</label>
+                                            <label>Subtotal (USD):</label>
                                             <input type="number" 
                                                    name="subtotal_<?php echo $item['id']; ?>" 
                                                    class="item-subtotal" 
@@ -584,7 +595,7 @@ include __DIR__ . '/header.php';
                             <div class="product-proposal" style="background: #f8f9fa;">
                                 <div class="price-input-group">
                                     <div>
-                                        <label>Costo de Envío:</label>
+                                        <label>Costo de Envío (USD):</label>
                                         <input type="number" 
                                                name="shipping" 
                                                id="shipping" 
@@ -594,7 +605,7 @@ include __DIR__ . '/header.php';
                                                value="0">
                                     </div>
                                     <div>
-                                        <label>Descuento:</label>
+                                        <label>Descuento (USD):</label>
                                         <input type="number" 
                                                name="discount" 
                                                id="discount" 
@@ -608,7 +619,7 @@ include __DIR__ . '/header.php';
                             
                             <div class="proposal-total-row">
                                 <span>Total de la Propuesta:</span>
-                                <span id="proposalTotal">$0.00</span>
+                                <span id="proposalTotal">USD $0.00</span>
                             </div>
                             
                             <div style="margin-bottom: 15px;">
@@ -640,7 +651,7 @@ include __DIR__ . '/header.php';
                                 ✅ Aceptada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
                             </p>
                             <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
-                                💰 Total Aceptado: $<?php echo number_format($order['proposal_total'], 2); ?>
+                                💰 Total Aceptado: USD $<?php echo number_format($order['proposal_total'], 2); ?>
                             </div>
                         </div>
                     <?php else: ?>
@@ -654,7 +665,7 @@ include __DIR__ . '/header.php';
                                 ⏳ El cliente aún no ha aceptado la propuesta
                             </p>
                             <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
-                                💰 Total Propuesto: $<?php echo number_format($order['proposal_total'], 2); ?>
+                                💰 Total Propuesto: USD $<?php echo number_format($order['proposal_total'], 2); ?>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -677,10 +688,15 @@ include __DIR__ . '/header.php';
                             </div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 700; color: #2c3e50;"><?php echo htmlspecialchars($item['product_name']); ?></div>
-                                <div style="color: #6c757d; font-size: 14px;">Cantidad: <?php echo $item['quantity']; ?></div>
+                                <div style="color: #6c757d; font-size: 14px;">
+                                    Cliente solicitó: <?php echo $item['quantity']; ?> unidades
+                                    <?php if ($item['proposed_quantity'] && $item['proposed_quantity'] != $item['quantity']): ?>
+                                        <span style="color: #28a745; font-weight: 600;"> → Ofreciste: <?php echo $item['proposed_quantity']; ?> unidades</span>
+                                    <?php endif; ?>
+                                </div>
                                 <?php if ($item['proposed_price'] !== null): ?>
                                     <div style="color: #00d4d4; font-weight: 600; margin-top: 5px;">
-                                        $<?php echo number_format($item['proposed_price'], 2); ?> c/u = $<?php echo number_format($item['proposed_subtotal'], 2); ?>
+                                        USD $<?php echo number_format($item['proposed_price'], 2); ?> c/u = USD $<?php echo number_format($item['proposed_subtotal'], 2); ?>
                                     </div>
                                 <?php else: ?>
                                     <div style="color: #ffc107; font-style: italic; margin-top: 5px;">Pendiente de cotización</div>
@@ -693,7 +709,7 @@ include __DIR__ . '/header.php';
                         <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); border-radius: 12px; color: white;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-size: 18px; font-weight: 600;">Total Propuesta:</span>
-                                <span style="font-size: 32px; font-weight: 700;">$<?php echo number_format($order['proposal_total'], 2); ?></span>
+                                <span style="font-size: 32px; font-weight: 700;">USD $<?php echo number_format($order['proposal_total'], 2); ?></span>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -821,25 +837,39 @@ const itemsData = <?php echo json_encode($items); ?>;
 
 // Calcular subtotales automáticamente (solo si existe formulario de propuesta)
 const itemPriceInputs = document.querySelectorAll('.item-price');
+const itemQuantityInputs = document.querySelectorAll('.item-quantity');
+
 if (itemPriceInputs.length > 0) {
+    // Listener para cambios en precio
     itemPriceInputs.forEach(input => {
         input.addEventListener('input', function() {
-            const quantity = parseFloat(this.dataset.quantity);
-            const price = parseFloat(this.value) || 0;
-            const subtotal = (price * quantity).toFixed(2);
-            
-            const itemId = this.dataset.itemId;
-            const subtotalEl = document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`);
-            if (subtotalEl) {
-                subtotalEl.value = subtotal;
-            }
-            
-            calculateTotal();
+            calculateItemSubtotal(this.dataset.itemId);
         });
         
         // Trigger inicial
-        input.dispatchEvent(new Event('input'));
+        calculateItemSubtotal(input.dataset.itemId);
     });
+    
+    // Listener para cambios en cantidad
+    itemQuantityInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            calculateItemSubtotal(this.dataset.itemId);
+        });
+    });
+}
+
+function calculateItemSubtotal(itemId) {
+    const quantityEl = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+    const priceEl = document.querySelector(`.item-price[data-item-id="${itemId}"]`);
+    const subtotalEl = document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`);
+    
+    if (quantityEl && priceEl && subtotalEl) {
+        const quantity = parseFloat(quantityEl.value) || 0;
+        const price = parseFloat(priceEl.value) || 0;
+        const subtotal = (price * quantity).toFixed(2);
+        subtotalEl.value = subtotal;
+        calculateTotal();
+    }
 }
 
 const shippingInput = document.getElementById('shipping');
@@ -869,7 +899,7 @@ function calculateTotal() {
     const total = subtotal + shipping - discount;
     
     if (totalEl) {
-        totalEl.textContent = '$' + total.toFixed(2);
+        totalEl.textContent = 'USD $' + total.toFixed(2);
     }
 }
 
@@ -893,9 +923,12 @@ if (proposalForm) {
         itemPrices.forEach(input => {
             const itemId = input.dataset.itemId;
             const price = input.value;
+            const quantityEl = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+            const quantity = quantityEl ? quantityEl.value : 0;
             const subtotalEl = document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`);
             const subtotal = subtotalEl ? subtotalEl.value : 0;
             formData.append(`items[${itemId}][price]`, price);
+            formData.append(`items[${itemId}][quantity]`, quantity);
             formData.append(`items[${itemId}][subtotal]`, subtotal);
         });
         
