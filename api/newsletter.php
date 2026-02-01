@@ -5,7 +5,7 @@ require_once __DIR__ . '/../config/config.php';
 $response = ['success' => false, 'message' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response['message'] = 'Método no permitido';
+    $response['message'] = 'Method not allowed';
     echo json_encode($response);
     exit;
 }
@@ -14,33 +14,33 @@ $data = json_decode(file_get_contents('php://input'), true);
 $email = sanitizeInput($data['email'] ?? '');
 
 if (empty($email)) {
-    $response['message'] = 'Por favor ingresa un email';
+    $response['message'] = 'Please enter an email';
     echo json_encode($response);
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $response['message'] = 'Email inválido';
+    $response['message'] = 'Invalid email';
     echo json_encode($response);
     exit;
 }
 
 try {
-    // Verificar si ya está suscrito
+    // Check if already subscribed
     $stmt = executeQuery("SELECT id FROM newsletter_subscriptions WHERE email = ?", [$email]);
     if ($stmt->fetch()) {
-        $response['message'] = 'Este email ya está suscrito';
+        $response['message'] = 'This email is already subscribed';
         echo json_encode($response);
         exit;
     }
     
-    // Suscribir
+    // Subscribe
     executeQuery("INSERT INTO newsletter_subscriptions (email) VALUES (?)", [$email]);
     
     $response['success'] = true;
-    $response['message'] = '¡Gracias por suscribirte!';
+    $response['message'] = 'Thanks for subscribing!';
 } catch (Exception $e) {
-    $response['message'] = 'Error al procesar la suscripción';
+    $response['message'] = 'Error processing subscription';
 }
 
 echo json_encode($response);

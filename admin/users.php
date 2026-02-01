@@ -1,16 +1,16 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 
-// Verificar que sea administrador
+// Verify admin access
 if (!isLoggedIn() || !isAdmin()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Gestión de Usuarios - Admin';
+$pageTitle = 'User Management - Admin';
 $success = '';
 $error = '';
 
-// Agregar usuario
+// Add user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
     $full_name = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
     
     if (!empty($full_name) && !empty($email) && !empty($password)) {
         try {
-            // Verificar si el email ya existe
+            // Check if email already exists
             $stmt = executeQuery("SELECT id FROM users WHERE email = ?", [$email]);
             if ($stmt->fetch()) {
-                $error = 'El email ya está registrado';
+                $error = 'Email is already registered';
             } else {
                 $hashed_password = password_hash($password, PASSWORD_BCRYPT);
                 executeQuery(
@@ -32,17 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
                      VALUES (?, ?, ?, ?, ?, ?, NOW())",
                     [$full_name, $email, $hashed_password, $role, $phone, $address]
                 );
-                $success = 'Usuario agregado correctamente';
+                $success = 'User added successfully';
             }
         } catch (Exception $e) {
-            $error = 'Error al agregar el usuario';
+            $error = 'Error adding user';
         }
     } else {
-        $error = 'Por favor completa todos los campos requeridos';
+        $error = 'Please complete all required fields';
     }
 }
 
-// Actualizar usuario
+// Update user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     $id = intval($_POST['user_id'] ?? 0);
     $full_name = trim($_POST['full_name'] ?? '');
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     
     if (!empty($full_name) && !empty($email)) {
         try {
-            // Si hay nueva contraseña, actualizarla
+            // If there's a new password, update it
             if (!empty($_POST['password'])) {
                 $hashed_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
                 executeQuery(
@@ -66,34 +66,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
                     [$full_name, $email, $role, $phone, $address, $id]
                 );
             }
-            $success = 'Usuario actualizado correctamente';
+            $success = 'User updated successfully';
         } catch (Exception $e) {
-            $error = 'Error al actualizar el usuario';
+            $error = 'Error updating user';
         }
     }
 }
 
-// Eliminar usuario
+// Delete user
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     
-    // No permitir eliminar el usuario actual
+    // Don't allow deleting current user
     if ($id == $_SESSION['user_id']) {
-        $error = 'No puedes eliminar tu propio usuario';
+        $error = 'You cannot delete your own user account';
     } else {
         try {
-            // Verificar si tiene pedidos
+            // Check if user has orders
             $stmt = executeQuery("SELECT COUNT(*) as count FROM orders WHERE user_id = ?", [$id]);
             $orderCount = $stmt->fetch()['count'];
             
             if ($orderCount > 0) {
-                $error = "No se puede eliminar este usuario porque tiene $orderCount pedido(s) asociado(s)";
+                $error = "Cannot delete this user because they have $orderCount associated order(s)";
             } else {
                 executeQuery("DELETE FROM users WHERE id = ?", [$id]);
-                $success = 'Usuario eliminado correctamente';
+                $success = 'User deleted successfully';
             }
         } catch (Exception $e) {
-            $error = 'Error al eliminar el usuario';
+            $error = 'Error deleting user';
         }
     }
 }

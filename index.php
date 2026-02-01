@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Home - Online Medicine Store';
 
-// Obtener productos destacados
+// Get featured products
 try {
     $stmt = executeQuery("
         SELECT p.*, c.name as category_name, c.slug as category_slug
@@ -15,7 +15,7 @@ try {
     ");
     $featuredProducts = $stmt->fetchAll();
 
-    // Obtener productos de vitaminas
+    // Get vitamins products
     $stmtVitamins = executeQuery("
         SELECT p.*, c.name as category_name
         FROM products p

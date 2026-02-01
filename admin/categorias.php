@@ -1,16 +1,16 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 
-// Verificar que sea administrador
+// Verify admin access
 if (!isLoggedIn() || !isAdmin()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Gestión de Categorías - Admin';
+$pageTitle = 'Category Management - Admin';
 $success = '';
 $error = '';
 
-// Agregar categoría
+// Add category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -22,16 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                 "INSERT INTO categories (name, description, is_active, created_at) VALUES (?, ?, ?, NOW())",
                 [$name, $description, $is_active]
             );
-            $success = 'Categoría agregada correctamente';
+            $success = 'Category added successfully';
         } catch (Exception $e) {
-            $error = 'Error al agregar la categoría';
+            $error = 'Error adding category';
         }
     } else {
-        $error = 'El nombre de la categoría es requerido';
+        $error = 'Category name is required';
     }
 }
 
-// Actualizar categoría
+// Update category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
     $id = intval($_POST['category_id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
@@ -44,33 +44,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
                 "UPDATE categories SET name = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
                 [$name, $description, $is_active, $id]
             );
-            $success = 'Categoría actualizada correctamente';
+            $success = 'Category updated successfully';
         } catch (Exception $e) {
-            $error = 'Error al actualizar la categoría';
+            $error = 'Error updating category';
         }
     }
 }
 
-// Eliminar categoría
+// Delete category
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     try {
-        // Verificar si hay productos usando esta categoría
+        // Check if there are products using this category
         $stmt = executeQuery("SELECT COUNT(*) as count FROM products WHERE category = (SELECT name FROM categories WHERE id = ?)", [$id]);
         $count = $stmt->fetch()['count'];
         
         if ($count > 0) {
-            $error = "No se puede eliminar esta categoría porque tiene $count producto(s) asociado(s)";
+            $error = "Cannot delete this category because it has $count associated product(s)";
         } else {
             executeQuery("DELETE FROM categories WHERE id = ?", [$id]);
-            $success = 'Categoría eliminada correctamente';
+            $success = 'Category deleted successfully';
         }
     } catch (Exception $e) {
-        $error = 'Error al eliminar la categoría';
+        $error = 'Error deleting category';
     }
 }
 
-// Obtener todas las categorías
+// Get all categories
 try {
     $stmt = executeQuery("SELECT c.*, COUNT(p.id) as product_count 
                           FROM categories c 
@@ -79,7 +79,7 @@ try {
                           ORDER BY c.name ASC");
     $categories = $stmt->fetchAll();
     
-    // Estadísticas
+    // Statistics
     $stmt_stats = executeQuery("SELECT 
         COUNT(*) as total,
         SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active
@@ -88,10 +88,10 @@ try {
     
 } catch (Exception $e) {
     $categories = [];
-    $error = 'Error al cargar las categorías';
+    $error = 'Error loading categories';
 }
 
-$pageTitle = 'Gestión de Categorías';
+$pageTitle = 'Category Management';
 include __DIR__ . '/header.php';
 ?>
 

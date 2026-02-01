@@ -1,32 +1,32 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 
-// Verificar si está logueado
+// Check if logged in
 if (!isLoggedIn()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Finalizar Pedido - Forethink Health';
+$pageTitle = 'Complete Order - Forethink Health';
 $success = '';
 $error = '';
 
-// Obtener datos del usuario
+// Get user data
 try {
     $stmt = executeQuery("SELECT * FROM users WHERE id = ?", [$_SESSION['user_id']]);
     $user = $stmt->fetch();
 } catch (Exception $e) {
-    $error = 'Error al cargar los datos del usuario.';
+    $error = 'Error loading user data.';
 }
 
-// Obtener carrito desde sesión/BD
+// Get cart from session/DB
 $cartItems = $_SESSION['cart'] ?? [];
 
-// Si el carrito está vacío, redirigir
+// If cart is empty, redirect
 if (empty($cartItems)) {
     redirect('/cart.php');
 }
 
-// Procesar el pedido
+// Process order
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $full_name = sanitizeInput($_POST['full_name'] ?? '');
     $phone = sanitizeInput($_POST['phone'] ?? '');
@@ -38,18 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $notes = sanitizeInput($_POST['notes'] ?? '');
     
     if (empty($full_name) || empty($phone) || empty($street) || empty($city) || empty($postal_code)) {
-        $error = 'Por favor completa todos los campos requeridos';
+        $error = 'Please complete all required fields';
     } else {
         try {
-            // No calcular totales - serán establecidos por el admin en la propuesta
+            // Don't calculate totals - will be set by admin in proposal
             $subtotal = null;
             $shipping = null;
             $total = null;
             
-            // Generar número de pedido único
+            // Generate unique order number
             $order_number = 'FTH-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT) . '-' . date('Y');
                 
-                // Insertar pedido
+                // Insert order
                 $conn = getConnection();
                 $conn->beginTransaction();
                 

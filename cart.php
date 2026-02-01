@@ -7,7 +7,7 @@
  */
 require_once __DIR__ . '/config/config.php';
 
-$pageTitle = 'Carrito de Compras - Forethink Health';
+$pageTitle = 'Shopping Cart - Forethink Health';
 
 // Si está logueado, cargar carrito desde BD
 if (isLoggedIn()) {
@@ -33,7 +33,7 @@ if (isLoggedIn()) {
             ];
         }
     } catch (Exception $e) {
-        // Continuar con el carrito de sesión si hay error
+        // Continue with session cart if there's an error
     }
 }
 
@@ -47,7 +47,7 @@ if (!empty($cartItems)) {
         $productId = (int)$key;
         
         if ($productId <= 0) {
-            continue; // Saltar claves inválidas
+            continue; // Skip invalid keys
         }
         
         // Verificar que el producto existe en la base de datos
@@ -66,17 +66,17 @@ if (!empty($cartItems)) {
         }
     }
     
-    // Actualizar sesión con solo productos válidos Y claves enteras
+    // Update session with only valid products AND integer keys
     $_SESSION['cart'] = $validCartItems;
     $cartItems = $validCartItems;
 }
 
-// Calcular total del carrito
+// Calculate cart total
 $subtotal = 0;
 foreach ($cartItems as $item) {
     $subtotal += $item['price'] * $item['quantity'];
 }
-$shipping = 0; // Envío gratis
+$shipping = 0; // Free shipping
 $total = $subtotal + $shipping;
 
 include __DIR__ . '/includes/header.php';
@@ -698,7 +698,7 @@ include __DIR__ . '/includes/header.php';
                         
                         <div class="cart-item-info">
                             <h3><?php echo htmlspecialchars($item['name']); ?></h3>
-                            <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">💬 Pendiente de cotización</div>
+                            <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">💬 Pending quotation</div>
                             <div class="cart-item-quantity">
                                 <button class="qty-btn qty-minus" onclick="updateQuantity(<?php echo $productId; ?>, -1)">−</button>
                                 <input type="number" 
@@ -713,9 +713,9 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         
                         <div class="cart-item-actions">
-                            <div class="cart-item-total" style="font-size: 16px; color: #6c757d;">Cantidad: <span class="quantity-display-<?php echo $productId; ?>"><?php echo $item['quantity']; ?></span></div>
+                            <div class="cart-item-total" style="font-size: 16px; color: #6c757d;">Quantity: <span class="quantity-display-<?php echo $productId; ?>"><?php echo $item['quantity']; ?></span></div>
                             <button class="btn-remove" type="button" data-product-id="<?php echo $productId; ?>" onclick="removeItem(this.getAttribute('data-product-id'))">
-                                <i class="fas fa-trash"></i> Eliminar
+                                <i class="fas fa-trash"></i> Remove
                             </button>
                         </div>
                     </div>
@@ -723,29 +723,29 @@ include __DIR__ . '/includes/header.php';
             </div>
 
             <div class="cart-summary">
-                <h2>Tu Pedido</h2>
+                <h2>Your Order</h2>
                 <div style="padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
                     <div style="font-weight: 700; color: #856404; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-info-circle"></i> Sistema de Cotización
+                        <i class="fas fa-info-circle"></i> Quotation System
                     </div>
                     <div style="font-size: 14px; color: #856404; line-height: 1.6;">
-                        Has agregado <strong><?php echo count($cartItems); ?> producto(s)</strong> a tu pedido.<br><br>
-                        Una vez finalices el pedido, recibirás una <strong>propuesta personalizada</strong> con los precios y disponibilidad de cada producto.
+                        You have added <strong><?php echo count($cartItems); ?> product(s)</strong> to your order.<br><br>
+                        Once you complete the order, you will receive a <strong>personalized proposal</strong> with prices and availability for each product.
                     </div>
                 </div>
                 
                 <?php if (isLoggedIn()): ?>
                     <a href="<?php echo BASE_URL; ?>/checkout.php" class="btn-checkout">
-                        <i class="fas fa-shopping-bag"></i> Finalizar Pedido
+                        <i class="fas fa-shopping-bag"></i> Complete Order
                     </a>
                 <?php else: ?>
                     <a href="<?php echo BASE_URL; ?>/login.php?redirect=checkout" class="btn-checkout">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión para Continuar
+                        <i class="fas fa-sign-in-alt"></i> Login to Continue
                     </a>
                 <?php endif; ?>
                 
                 <a href="<?php echo BASE_URL; ?>/products.php" class="continue-shopping">
-                    <i class="fas fa-arrow-left"></i> Seguir comprando
+                    <i class="fas fa-arrow-left"></i> Continue shopping
                 </a>
             </div>
         </div>
@@ -759,12 +759,12 @@ include __DIR__ . '/includes/header.php';
             <div class="confirm-modal-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h3 class="confirm-modal-title">¿Estás seguro?</h3>
-            <p class="confirm-modal-message">Este producto será eliminado de tu carrito</p>
+            <h3 class="confirm-modal-title">Are you sure?</h3>
+            <p class="confirm-modal-message">This product will be removed from your cart</p>
         </div>
         <div class="confirm-modal-actions">
-            <button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Cancelar</button>
-            <button class="confirm-modal-btn confirm" onclick="confirmRemove()">Eliminar</button>
+            <button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Cancel</button>
+            <button class="confirm-modal-btn confirm" onclick="confirmRemove()">Remove</button>
         </div>
     </div>
 </div>
@@ -789,9 +789,9 @@ function showToast(message, type = 'success', title = '') {
     };
     
     const titles = {
-        success: '¡Éxito!',
+        success: 'Success!',
         error: 'Error',
-        warning: 'Advertencia'
+        warning: 'Warning'
     };
     
     toast.innerHTML = `

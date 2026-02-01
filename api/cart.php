@@ -1,9 +1,9 @@
 <?php
 /**
- * API del Carrito de Compras
- * Version: 2.3 - Verificación de Usuario Antes de Guardar en BD
- * Fecha: 31/01/2026
- * Cambios: Verifica que el user_id existe antes de guardar en cart
+ * Shopping Cart API
+ * Version: 2.3 - User Verification Before Saving to DB
+ * Date: 01/31/2026
+ * Changes: Verifies that user_id exists before saving to cart
  */
 session_start();
 header('Content-Type: application/json');
@@ -13,11 +13,11 @@ require_once __DIR__ . '/../config/database.php';
 $action = $_POST['action'] ?? '';
 $response = ['success' => false, 'message' => ''];
 
-// Verificar si el usuario está logueado
+// Check if user is logged in
 $isLoggedIn = isset($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : null;
 
-// Función para obtener el carrito del usuario desde BD
+// Function to get user cart from DB
 function getCartFromDB($userId) {
     try {
         $stmt = executeQuery(
@@ -35,7 +35,7 @@ function getCartFromDB($userId) {
                 'id' => (int)$item['product_id'],
                 'name' => $item['name'],
                 'price' => (float)$item['price'],
-                'quantity' => (int)$item['quantity'], // Sin límite de stock
+                'quantity' => (int)$item['quantity'], // No stock limit
                 'image' => $item['image']
             ];
         }
@@ -45,27 +45,27 @@ function getCartFromDB($userId) {
     }
 }
 
-// Función para guardar item en BD
+// Function to save item to DB
 function saveCartItemToDB($userId, $productId, $quantity) {
     try {
-        // Primero verificar que el usuario existe
+        // First verify that user exists
         $stmt = executeQuery("SELECT id FROM users WHERE id = ?", [$userId]);
         $user = $stmt->fetch();
         
         if (!$user) {
-            return ['success' => false, 'error' => 'Usuario no existe en la base de datos (ID: ' . $userId . ')'];
+            return ['success' => false, 'error' => 'User does not exist in database (ID: ' . $userId . ')'];
         }
         
-        // Verificar si ya existe el item en el carrito
+        // Check if item already exists in cart
         $stmt = executeQuery("SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?", [$userId, $productId]);
         $existing = $stmt->fetch();
         
         if ($existing) {
-            // Actualizar cantidad
+            // Update quantity
             $result = executeQuery("UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ?", [$quantity, $existing['id']]);
             return ['success' => true, 'action' => 'updated', 'id' => $existing['id']];
         } else {
-            // Insertar nuevo
+            // Insert new
             $result = executeQuery(
                 "INSERT INTO cart (user_id, product_id, quantity, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
                 [$userId, $productId, $quantity]
@@ -77,7 +77,7 @@ function saveCartItemToDB($userId, $productId, $quantity) {
     }
 }
 
-// Función para eliminar item de BD
+// Function to remove item from DB
 function removeCartItemFromDB($userId, $productId) {
     try {
         executeQuery("DELETE FROM cart WHERE user_id = ? AND product_id = ?", [$userId, $productId]);
@@ -87,12 +87,12 @@ function removeCartItemFromDB($userId, $productId) {
     }
 }
 
-// Inicializar carrito
+// Initialize cart
 if ($isLoggedIn) {
-    // Usuario logueado: cargar desde BD
+    // Logged in user: load from DB
     $_SESSION['cart'] = getCartFromDB($userId);
 } else {
-    // Usuario no logueado: usar sesión
+    // Not logged in: use session
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }

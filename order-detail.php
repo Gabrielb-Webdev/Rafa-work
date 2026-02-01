@@ -10,7 +10,7 @@ if (!$order_id) {
     redirect('/orders.php');
 }
 
-// Cargar pedido y verificar que pertenece al usuario
+// Load order and verify it belongs to user
 $stmt = executeQuery(
     "SELECT o.*, u.full_name as user_name, u.email as user_email 
      FROM orders o 
@@ -21,10 +21,10 @@ $stmt = executeQuery(
 $order = $stmt->fetch();
 
 if (!$order) {
-    die('Pedido no encontrado o no tienes permiso para verlo');
+    die('Order not found or you do not have permission to view it');
 }
 
-// Cargar productos
+// Load products
 $stmt = executeQuery(
     "SELECT oi.*, p.name as product_name, p.image, p.price as current_price
      FROM order_items oi 
@@ -34,7 +34,7 @@ $stmt = executeQuery(
 );
 $items = $stmt->fetchAll();
 
-// Cargar mensajes del chat
+// Load chat messages
 $messages = [];
 try {
     $stmt = executeQuery(
@@ -47,10 +47,10 @@ try {
     );
     $messages = $stmt->fetchAll();
 } catch (Exception $e) {
-    // Si la tabla no existe, continuar sin mensajes
+    // If table doesn't exist, continue without messages
 }
 
-$pageTitle = "Pedido #" . $order['order_number'];
+$pageTitle = "Order #" . $order['order_number'];
 require_once 'includes/header.php';
 ?>
 

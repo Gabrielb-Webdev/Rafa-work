@@ -1,9 +1,9 @@
 <?php
 /**
- * Productos - Forethink Health
- * Version: 2.0 - Sistema de Cotización sin Límite de Stock
- * Fecha: 31/01/2026
- * Cambios: Eliminadas restricciones de cantidad, input editable, sin límite máximo
+ * Products - Forethink Health
+ * Version: 2.0 - Quotation System without Stock Limit
+ * Date: 01/31/2026
+ * Changes: Removed quantity restrictions, editable input, no maximum limit
  */
 require_once __DIR__ . '/config/config.php';
 
@@ -11,7 +11,7 @@ $pageTitle = 'Products - Online Medicine Store';
 
 include __DIR__ . '/includes/header.php';
 
-// Obtener productos de la base de datos
+// Get products from database
 try {
     $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY (stock > 0) DESC, stock DESC, created_at DESC");
     $allProducts = $stmt->fetchAll();

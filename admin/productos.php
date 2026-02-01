@@ -155,16 +155,16 @@ if (isset($_GET['delete'])) {
                 }
             }
             
-            $success = 'Producto eliminado correctamente';
+            $success = 'Product deleted successfully';
             header('Location: ' . BASE_URL . '/admin/productos.php');
             exit;
         }
     } catch (Exception $e) {
-        $error = 'Error al eliminar el producto: ' . $e->getMessage();
+        $error = 'Error deleting product: ' . $e->getMessage();
     }
 }
 
-// Obtener todos los productos
+// Get all products
 $search = $_GET['search'] ?? '';
 $filter_active = $_GET['active'] ?? 'all';
 
@@ -190,7 +190,7 @@ try {
     $stmt = executeQuery($sql, $params);
     $products = $stmt->fetchAll();
     
-    // Estadísticas
+    // Statistics
     $stats = [
         'total' => 0,
         'active' => 0,

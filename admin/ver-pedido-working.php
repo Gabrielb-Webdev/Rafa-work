@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 
-// Verificar que sea administrador
+// Verify admin access
 if (!isLoggedIn() || !isAdmin()) {
     redirect('/login.php');
 }
@@ -39,7 +39,7 @@ try {
     );
     $items = $stmt->fetchAll();
     
-    // Obtener mensajes del chat (puede que la tabla no exista)
+    // Get chat messages (table might not exist)
     $messages = [];
     try {
         $stmt = executeQuery(
@@ -52,26 +52,26 @@ try {
         );
         $messages = $stmt->fetchAll();
     } catch (Exception $e) {
-        // Tabla no existe, continuar sin mensajes
+        // Table doesn't exist, continue without messages
     }
     
 } catch (Exception $e) {
-    // Error al cargar pedido, mostrar mensaje
-    die('Error al cargar el pedido: ' . $e->getMessage());
+    // Error loading order, show message
+    die('Error loading order: ' . $e->getMessage());
 }
 
 function getStatusBadge($status) {
     $badges = [
-        'pending' => '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
-        'processing' => '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> EN PROCESO</span>',
-        'shipped' => '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> ENVIADO</span>',
-        'delivered' => '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
-        'cancelled' => '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+        'pending' => '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDING</span>',
+        'processing' => '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> PROCESSING</span>',
+        'shipped' => '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> SHIPPED</span>',
+        'delivered' => '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> DELIVERED</span>',
+        'cancelled' => '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELLED</span>'
     ];
     return $badges[$status] ?? '<span style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700;">' . strtoupper($status) . '</span>';
 }
 
-$pageTitle = 'Detalle del Pedido - Admin';
+$pageTitle = 'Order Detail - Admin';
 include __DIR__ . '/header.php';
 ?>
 
@@ -912,13 +912,13 @@ if (proposalForm) {
         const btn = document.getElementById('sendProposalBtn');
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando propuesta...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending proposal...';
         
         const formData = new FormData(e.target);
         formData.append('action', 'send_proposal');
         formData.append('order_id', orderId);
         
-        // Agregar datos de items si existen
+        // Add item data if exists
         const itemPrices = document.querySelectorAll('.item-price');
         itemPrices.forEach(input => {
             const itemId = input.dataset.itemId;
@@ -977,10 +977,10 @@ async function loadMessages() {
         if (data.success && data.messages) {
             updateChatMessages(data.messages);
         } else {
-            console.error('Admin: Error en respuesta:', data);
+            console.error('Admin: Error in response:', data);
         }
     } catch (error) {
-        console.error('Admin: Error al cargar mensajes:', error);
+        console.error('Admin: Error loading messages:', error);
     }
 }
 
@@ -1015,7 +1015,7 @@ function updateChatMessages(messages) {
             `;
             
             messageDiv.innerHTML = `
-                <div>${msg.sender_name || 'Usuario'}</div>
+                <div>${msg.sender_name || 'User'}</div>
                 <div>${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
                 <div>${new Date(msg.created_at).toLocaleString('es-MX')}</div>
             `;
@@ -1042,7 +1042,7 @@ async function updateOrderStatus() {
             updateStatusBadge(data.status, data.proposal_sent);
         }
     } catch (error) {
-        console.error('Error al actualizar estado:', error);
+        console.error('Error updating status:', error);
     }
 }
 

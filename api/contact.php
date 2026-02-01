@@ -5,7 +5,7 @@ require_once __DIR__ . '/../config/config.php';
 $response = ['success' => false, 'message' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response['message'] = 'Método no permitido';
+    $response['message'] = 'Method not allowed';
     echo json_encode($response);
     exit;
 }
@@ -19,13 +19,13 @@ $medicine = sanitizeInput($data['medicine'] ?? '');
 $message = sanitizeInput($data['message'] ?? '');
 
 if (empty($name) || empty($phone) || empty($email)) {
-    $response['message'] = 'Por favor completa todos los campos requeridos';
+    $response['message'] = 'Please complete all required fields';
     echo json_encode($response);
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $response['message'] = 'Email inválido';
+    $response['message'] = 'Invalid email';
     echo json_encode($response);
     exit;
 }
@@ -37,9 +37,9 @@ try {
     );
     
     $response['success'] = true;
-    $response['message'] = 'Solicitud enviada exitosamente';
+    $response['message'] = 'Request sent successfully';
 } catch (Exception $e) {
-    $response['message'] = 'Error al enviar la solicitud';
+    $response['message'] = 'Error sending request';
 }
 
 echo json_encode($response);

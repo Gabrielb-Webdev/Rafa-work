@@ -1,31 +1,31 @@
 <?php
 /**
- * API de Mensajes de Pedidos
+ * Order Messages API
  * Version: 1.0
- * Fecha: 31/01/2026
+ * Date: 01/31/2026
  */
 require_once __DIR__ . '/../config/config.php';
 
 header('Content-Type: application/json');
 
-// Verificar que esté logueado
+// Check if logged in
 if (!isLoggedIn()) {
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Si es POST, enviar mensaje
+// If POST, send message
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $order_id = (int)($_POST['order_id'] ?? 0);
     $message = trim($_POST['message'] ?? '');
     
     if (!$order_id || !$message) {
-        echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
+        echo json_encode(['success' => false, 'message' => 'Incomplete data']);
         exit;
     }
     
     try {
-        // Verificar que el pedido pertenezca al usuario o que sea admin
+        // Verify that order belongs to user or is admin
         if (!isAdmin()) {
             $stmt = executeQuery(
                 "SELECT id FROM orders WHERE id = ? AND user_id = ?",
@@ -34,12 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $order = $stmt->fetch();
             
             if (!$order) {
-                echo json_encode(['success' => false, 'message' => 'Pedido no encontrado']);
+                echo json_encode(['success' => false, 'message' => 'Order not found']);
                 exit;
             }
         }
         
-        // Insertar mensaje
+        // Insert message
         $stmt = executeQuery(
             "INSERT INTO order_messages (order_id, user_id, message, created_at) 
              VALUES (?, ?, ?, NOW())",
@@ -48,29 +48,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         echo json_encode([
             'success' => true,
-            'message' => 'Mensaje enviado correctamente'
+            'message' => 'Message sent successfully'
         ]);
         
     } catch (Exception $e) {
         echo json_encode([
             'success' => false,
-            'message' => 'Error al enviar el mensaje: ' . $e->getMessage()
+            'message' => 'Error sending message: ' . $e->getMessage()
         ]);
     }
     exit;
 }
     
-    // Si es GET, obtener mensajes
+    // If GET, get messages
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $order_id = (int)($_GET['order_id'] ?? 0);
         
         if (!$order_id) {
-            echo json_encode(['success' => false, 'message' => 'Order ID requerido']);
+            echo json_encode(['success' => false, 'message' => 'Order ID required']);
             exit;
         }
         
         try {
-            // Verificar permisos
+            // Verify permissions
             if (!isAdmin()) {
                 $stmt = executeQuery(
                     "SELECT id FROM orders WHERE id = ? AND user_id = ?",
@@ -79,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $order = $stmt->fetch();
                 
                 if (!$order) {
-                    echo json_encode(['success' => false, 'message' => 'Pedido no encontrado']);
+                    echo json_encode(['success' => false, 'message' => 'Order not found']);
                     exit;
                 }
             }
             
-            // Obtener mensajes
+            // Get messages
             $stmt = executeQuery(
                 "SELECT om.*, u.full_name as sender_name, u.role as user_role
                  FROM order_messages om

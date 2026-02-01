@@ -20,12 +20,12 @@ include __DIR__ . '/includes/header.php';
                 <h2 class="form-title">REQUEST A CALL BACK</h2>
                 <form id="contactForm" method="POST" action="<?php echo BASE_URL; ?>/api/contact.php" class="contact-form">
                     <div class="form-group">
-                        <label for="name">Nombre</label>
+                        <label for="name">Name</label>
                         <input type="text" id="name" name="name" placeholder="Enter your name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Teléfono</label>
+                        <label for="phone">Phone</label>
                         <input type="tel" id="phone" name="phone" placeholder="Enter your phone" required>
                     </div>
 
@@ -35,30 +35,30 @@ include __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="form-group">
-                        <label for="medicine">Seleccionar medicina</label>
+                        <label for="medicine">Select medicine</label>
                         <select id="medicine" name="medicine">
-                            <option value="">Selecciona una opción</option>
-                            <option value="general">Consulta general</option>
-                            <option value="prescription">Receta médica</option>
-                            <option value="vitamins">Vitaminas y suplementos</option>
+                            <option value="">Select an option</option>
+                            <option value="general">General inquiry</option>
+                            <option value="prescription">Prescription</option>
+                            <option value="vitamins">Vitamins and supplements</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="message">Mensaje</label>
+                        <label for="message">Message</label>
                         <textarea id="message" name="message" rows="4" placeholder="Write your message..."></textarea>
                     </div>
 
                     <button type="submit" class="btn-submit-contact">
-                        <i class="fas fa-paper-plane"></i> Enviar
+                        <i class="fas fa-paper-plane"></i> Send
                     </button>
                 </form>
             </div>
 
             <!-- Contact Info -->
             <div class="contact-info-container">
-                <h2 class="info-title">Contáctanos</h2>
-                <p class="info-description">Estamos aquí para ayudarte. Envíanos tu consulta y nos pondremos en contacto contigo lo antes posible.</p>
+                <h2 class="info-title">Contact Us</h2>
+                <p class="info-description">We're here to help you. Send us your inquiry and we'll get back to you as soon as possible.</p>
                 
                 <div class="contact-details">
                     <div class="contact-item">
@@ -66,7 +66,7 @@ include __DIR__ . '/includes/header.php';
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-text">
-                            <h4>Teléfono</h4>
+                            <h4>Phone</h4>
                             <p><?php echo SITE_PHONE; ?></p>
                         </div>
                     </div>
@@ -86,8 +86,8 @@ include __DIR__ . '/includes/header.php';
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="contact-text">
-                            <h4>Horario</h4>
-                            <p>Lun - Vie: 9:00 AM - 6:00 PM</p>
+                            <h4>Schedule</h4>
+                            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
                         </div>
                     </div>
                 </div>

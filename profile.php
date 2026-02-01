@@ -1,16 +1,16 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 
-// Verificar si está logueado
+// Check if logged in
 if (!isLoggedIn()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Mi Perfil - Forethink Health';
+$pageTitle = 'My Profile - Forethink Health';
 $success = '';
 $error = '';
 
-// Obtener datos del usuario
+// Get user data
 try {
     $stmt = executeQuery("SELECT * FROM users WHERE id = ?", [$_SESSION['user_id']]);
     $user = $stmt->fetch();
@@ -19,17 +19,17 @@ try {
         redirect('/logout.php');
     }
 } catch (Exception $e) {
-    $error = 'Error al cargar los datos del perfil.';
+    $error = 'Error loading profile data.';
 }
 
-// Actualizar perfil
+// Update profile
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $full_name = sanitizeInput($_POST['full_name'] ?? '');
     $phone = sanitizeInput($_POST['phone'] ?? '');
     $address = sanitizeInput($_POST['address'] ?? '');
     
     if (empty($full_name)) {
-        $error = 'El nombre completo es requerido';
+        $error = 'Full name is required';
     } else {
         try {
             executeQuery(
@@ -38,40 +38,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             );
             
             $_SESSION['user_name'] = $full_name;
-            $success = '¡Perfil actualizado exitosamente!';
+            $success = 'Profile updated successfully!';
             
-            // Recargar datos
+            // Reload data
             $stmt = executeQuery("SELECT * FROM users WHERE id = ?", [$_SESSION['user_id']]);
             $user = $stmt->fetch();
         } catch (Exception $e) {
-            $error = 'Error al actualizar el perfil.';
+            $error = 'Error updating profile.';
         }
     }
 }
 
-// Cambiar contraseña
+// Change password
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     $current_password = $_POST['current_password'] ?? '';
     $new_password = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
     if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-        $error = 'Todos los campos de contraseña son requeridos';
+        $error = 'All password fields are required';
     } elseif ($new_password !== $confirm_password) {
-        $error = 'Las contraseñas nuevas no coinciden';
+        $error = 'New passwords do not match';
     } elseif (strlen($new_password) < 6) {
-        $error = 'La contraseña debe tener al menos 6 caracteres';
+        $error = 'Password must be at least 6 characters';
     } else {
         if (password_verify($current_password, $user['password'])) {
             $new_hash = password_hash($new_password, PASSWORD_BCRYPT);
             try {
                 executeQuery("UPDATE users SET password = ? WHERE id = ?", [$new_hash, $_SESSION['user_id']]);
-                $success = '¡Contraseña actualizada exitosamente!';
+                $success = 'Password updated successfully!';
             } catch (Exception $e) {
-                $error = 'Error al actualizar la contraseña.';
+                $error = 'Error updating password.';
             }
         } else {
-            $error = 'La contraseña actual es incorrecta';
+            $error = 'Current password is incorrect';
         }
     }
 }

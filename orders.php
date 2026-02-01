@@ -7,14 +7,14 @@
  */
 require_once __DIR__ . '/config/config.php';
 
-// Verificar si está logueado
+// Check if logged in
 if (!isLoggedIn()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Mis Pedidos - Forethink Health';
+$pageTitle = 'My Orders - Forethink Health';
 
-// Obtener pedidos reales del usuario desde la base de datos
+// Get user's real orders from database
 $filter_status = $_GET['status'] ?? 'all';
 
 try {
@@ -35,13 +35,13 @@ try {
     $stmt = executeQuery($sql, $params);
     $orders = $stmt->fetchAll();
     
-    // Transformar para compatibilidad
+    // Transform for compatibility
     foreach ($orders as &$order) {
         $order['tracking'] = $order['order_number'];
         $order['date'] = $order['created_at'];
     }
     
-    // Calcular estadísticas por estado (siempre mostrar todos los totales)
+    // Calculate statistics by status (always show all totals)
     $stmt_stats = executeQuery(
         "SELECT status, COUNT(*) as count 
          FROM orders 
@@ -77,13 +77,13 @@ try {
 
 function getStatusText($status) {
     $statuses = [
-        'pending' => 'Pendiente',
-        'processing' => 'En Proceso',
-        'shipped' => 'Enviado',
-        'delivered' => 'Entregado',
-        'cancelled' => 'Cancelado'
+        'pending' => 'Pending',
+        'processing' => 'Processing',
+        'shipped' => 'Shipped',
+        'delivered' => 'Delivered',
+        'cancelled' => 'Cancelled'
     ];
-    return $statuses[$status] ?? 'Desconocido';
+    return $statuses[$status] ?? 'Unknown';
 }
 
 function getStatusColor($status) {

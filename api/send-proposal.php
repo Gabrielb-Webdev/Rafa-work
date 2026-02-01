@@ -3,21 +3,21 @@ require_once __DIR__ . '/../config/config.php';
 
 header('Content-Type: application/json');
 
-// Verificar que sea administrador
+// Verify admin access
 if (!isLoggedIn() || !isAdmin()) {
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
 }
 
 $action = $_POST['action'] ?? '';
 
 if ($action !== 'send_proposal') {
-    echo json_encode(['success' => false, 'message' => 'Acción no válida']);
+    echo json_encode(['success' => false, 'message' => 'Invalid action']);
     exit;
 }
 
@@ -29,10 +29,10 @@ try {
     $proposal_message = trim($_POST['proposal_message'] ?? '');
     
     if (!$order_id || empty($items)) {
-        throw new Exception('Datos incompletos');
+        throw new Exception('Incomplete data');
     }
     
-    // Obtener información del pedido
+    // Get order information
     $stmt = executeQuery(
         "SELECT o.*, u.email, u.full_name
          FROM orders o
@@ -43,14 +43,14 @@ try {
     $order = $stmt->fetch();
     
     if (!$order) {
-        throw new Exception('Pedido no encontrado');
+        throw new Exception('Order not found');
     }
     
     if ($order['proposal_sent']) {
-        throw new Exception('Ya se envió una propuesta para este pedido');
+        throw new Exception('A proposal has already been sent for this order');
     }
     
-    // Calcular totales
+    // Calculate totals
     $subtotal = 0;
     $proposal_details = [];
     
@@ -63,10 +63,10 @@ try {
         $item_subtotal = (float)($item_data['subtotal'] ?? 0);
         
         if ($price <= 0 || $quantity <= 0) {
-            throw new Exception('Todos los productos deben tener precio y cantidad válidos');
+            throw new Exception('All products must have valid price and quantity');
         }
         
-        // Actualizar order_items con precios y cantidades propuestas
+        // Update order_items with proposed prices and quantities
         $stmt = $conn->prepare(
             "UPDATE order_items 
              SET proposed_price = ?, proposed_quantity = ?, proposed_subtotal = ?
@@ -76,7 +76,7 @@ try {
         
         $subtotal += $item_subtotal;
         
-        // Obtener nombre del producto y cantidad original para el email
+        // Get product name and original quantity for email
         $stmt_prod = $conn->prepare("SELECT product_name, quantity FROM order_items WHERE id = ?");
         $stmt_prod->execute([$item_id]);
         $prod = $stmt_prod->fetch();
@@ -93,7 +93,7 @@ try {
     
     $total = $subtotal + $shipping - $discount;
     
-    // Actualizar orden con la propuesta
+    // Update order with proposal
     $stmt = $conn->prepare(
         "UPDATE orders 
          SET proposal_sent = 1,
