@@ -123,7 +123,7 @@ body::before {
 
 .auth-wrapper {
     width: 100%;
-    max-width: 500px;
+    max-width: 520px;
     padding: 0;
     position: relative;
     z-index: 1;
@@ -136,7 +136,7 @@ body::before {
     box-shadow: 
         0 30px 90px rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    padding: 50px 45px;
+    padding: 45px 50px 50px;
     animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
@@ -153,16 +153,16 @@ body::before {
 }
 
 .auth-logo {
-    width: 90px;
-    height: 90px;
-    margin: 0 auto 25px;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 22px;
+    border-radius: 20px;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-    padding: 18px;
+    padding: 16px;
     animation: logoFloat 3s ease-in-out infinite;
 }
 
@@ -180,7 +180,7 @@ body::before {
 
 .auth-container h2 {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -193,13 +193,13 @@ body::before {
 .auth-subtitle {
     text-align: center;
     color: #6c757d;
-    margin-bottom: 35px;
+    margin-bottom: 40px;
     font-size: 15px;
     font-weight: 500;
 }
 
 .auth-form .form-group {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
     position: relative;
 }
 
@@ -208,7 +208,7 @@ body::before {
     margin-bottom: 10px;
     font-weight: 700;
     color: #2c3e50;
-    font-size: 13px;
+    font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -448,7 +448,7 @@ body::before {
 
 .auth-links {
     text-align: center;
-    margin-top: 28px;
+    margin-top: 32px;
     padding-top: 28px;
     border-top: 2px solid #f0f0f0;
 }
@@ -488,7 +488,7 @@ body::before {
 
 .back-home {
     text-align: center;
-    margin-top: 24px;
+    margin-top: 28px;
 }
 
 .back-home a {
@@ -543,12 +543,23 @@ body::before {
 }
 
 @media (max-width: 576px) {
+    .auth-wrapper {
+        padding: 0 15px;
+    }
+    
     .auth-container {
-        padding: 40px 30px;
+        padding: 40px 35px 45px;
+        border-radius: 20px;
     }
     
     .auth-container h2 {
         font-size: 28px;
+    }
+    
+    .auth-logo {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 25px;
     }
 }
 </style>
