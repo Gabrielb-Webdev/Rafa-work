@@ -48,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
             $slug = trim($slug, '-');
             
             // Verificar si el slug ya existe y hacerlo único
-            $existing = fetchOne("SELECT COUNT(*) as count FROM products WHERE slug = ?", [$slug]);
+            $stmt = executeQuery("SELECT COUNT(*) as count FROM products WHERE slug = ?", [$slug]);
+            $existing = $stmt->fetch();
             if ($existing['count'] > 0) {
                 $slug = $slug . '-' . time();
             }
@@ -83,7 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $slug = trim($slug, '-');
     
     // Verificar si el slug ya existe (excluyendo el producto actual)
-    $existing = fetchOne("SELECT COUNT(*) as count FROM products WHERE slug = ? AND id != ?", [$slug, $id]);
+    $stmt = executeQuery("SELECT COUNT(*) as count FROM products WHERE slug = ? AND id != ?", [$slug, $id]);
+    $existing = $stmt->fetch();
     if ($existing['count'] > 0) {
         $slug = $slug . '-' . time();
     }
@@ -116,13 +118,15 @@ if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     try {
         // Primero verificar si el producto está en pedidos
-        $check = fetchOne("SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", [$id]);
+        $stmt = executeQuery("SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", [$id]);
+        $check = $stmt->fetch();
         
         if ($check['count'] > 0) {
             $error = 'No se puede eliminar: el producto está asociado a pedidos existentes. Mejor márcalo como inactivo.';
         } else {
             // Obtener imagen para eliminarla
-            $product = fetchOne("SELECT image FROM products WHERE id = ?", [$id]);
+            $stmt = executeQuery("SELECT image FROM products WHERE id = ?", [$id]);
+            $product = $stmt->fetch();
             
             // Eliminar producto
             executeQuery("DELETE FROM products WHERE id = ?", [$id]);

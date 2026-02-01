@@ -938,14 +938,10 @@ scrollToBottom();
 // Función para cargar mensajes sin recargar la página
 async function loadMessages() {
     try {
-        console.log('Admin: Cargando mensajes para order_id:', orderId);
         const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
-        console.log('Admin: Respuesta recibida:', response.status);
         const data = await response.json();
-        console.log('Admin: Mensajes recibidos:', data);
         
         if (data.success && data.messages) {
-            console.log('Admin: Actualizando chat con', data.messages.length, 'mensajes');
             updateChatMessages(data.messages);
         } else {
             console.error('Admin: Error en respuesta:', data);
@@ -961,8 +957,6 @@ function updateChatMessages(messages) {
         return;
     }
     
-    console.log('Admin: Renderizando', messages.length, 'mensajes');
-    
     const currentScroll = chatMessages.scrollHeight - chatMessages.scrollTop;
     const wasAtBottom = currentScroll <= chatMessages.clientHeight + 50;
     
@@ -972,7 +966,6 @@ function updateChatMessages(messages) {
         chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
     } else {
         messages.forEach((msg, index) => {
-            console.log('Admin: Renderizando mensaje', index, ':', msg);
             const isAdmin = msg.user_role === 'admin';
             const messageDiv = document.createElement('div');
             messageDiv.className = 'chat-message';
@@ -996,7 +989,6 @@ function updateChatMessages(messages) {
             
             chatMessages.appendChild(messageDiv);
         });
-        console.log('Admin: Mensajes renderizados correctamente');
     }
     
     if (wasAtBottom) {
@@ -1043,13 +1035,10 @@ setInterval(updateOrderStatus, 5000);
 if (chatForm) {
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('Admin: Formulario de chat enviado');
         
         const message = messageInput.value.trim();
-        console.log('Admin: Mensaje a enviar:', message);
         
         if (!message) {
-            console.log('Admin: Mensaje vacío, no se envía');
             return;
         }
         
@@ -1059,20 +1048,16 @@ if (chatForm) {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         
         try {
-            console.log('Admin: Enviando mensaje a API...');
             const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
             });
             
-            console.log('Admin: Respuesta recibida:', response.status);
             const data = await response.json();
-            console.log('Admin: Datos:', data);
             
             if (data.success) {
                 messageInput.value = '';
-                console.log('Admin: Mensaje enviado exitosamente');
                 // Cargar mensajes inmediatamente
                 await loadMessages();
             } else {
