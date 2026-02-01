@@ -68,8 +68,10 @@ try {
     // Tabla no existe
 }
 
-// Estilos personalizados para esta página
-$custom_styles = '
+$pageTitle = "Pedido #" . $order['order_number'];
+require_once 'header.php';
+?>
+
 <style>
 /* ===============================================
    DISEÑO COMPLETAMENTE NUEVO Y ULTRA MODERNO
@@ -662,14 +664,6 @@ body {
     }
 }
 </style>
-';
-
-$pageTitle = "Pedido #" . $order['order_number'];
-require_once 'header.php';
-?>
-
-<!-- Inyectar estilos personalizados -->
-<?php echo $custom_styles; ?>
 
 <div class="container-fluid px-4 py-4">
     <!-- Hero Header -->
