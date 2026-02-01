@@ -81,6 +81,13 @@ include __DIR__ . '/includes/header.php';
 ?>
 
 <style>
+/* Hide navigation and footer completely */
+.top-bar,
+header,
+footer {
+    display: none !important;
+}
+
 body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
@@ -90,6 +97,7 @@ body {
     padding: 20px;
     position: relative;
     overflow-x: hidden;
+    margin: 0;
 }
 
 /* Animated background */
@@ -105,15 +113,12 @@ body::before {
         radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
     animation: float 15s ease-in-out infinite;
     pointer-events: none;
+    z-index: 0;
 }
 
 @keyframes float {
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-20px) scale(1.05); }
-}
-
-header, footer {
-    display: none;
 }
 
 .auth-wrapper {
