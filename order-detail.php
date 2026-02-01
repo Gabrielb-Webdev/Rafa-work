@@ -862,15 +862,9 @@ function updateChatMessages(messages) {
             messageDiv.className = 'chat-message ' + (isAdmin ? 'admin-message' : 'user-message');
             
             messageDiv.innerHTML = `
-                <div style="font-weight: 700; font-size: 13px; margin-bottom: 5px; opacity: 0.8;">
-                    ${msg.sender_name || 'Usuario'}
-                </div>
-                <div style="white-space: pre-wrap; line-height: 1.5;">
-                    ${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                </div>
-                <div style="font-size: 11px; margin-top: 8px; opacity: 0.7;">
-                    ${new Date(msg.created_at).toLocaleString('es-MX')}
-                </div>
+                <div>${msg.sender_name || 'Usuario'}</div>
+                <div>${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                <div>${new Date(msg.created_at).toLocaleString('es-MX')}</div>
             `;
             
             chatMessages.appendChild(messageDiv);
