@@ -1,9 +1,9 @@
 <?php
 /**
  * API del Carrito de Compras
- * Version: 2.1 - Sistema de Cotización sin Límite de Stock + Debug Mejorado
+ * Version: 2.2 - Sistema de Cotización con Debug Completo de BD
  * Fecha: 31/01/2026
- * Cambios: Agregado mejor manejo de errores y mensajes de debug
+ * Cambios: Mejorado saveCartItemToDB para retornar detalles de errores
  */
 session_start();
 header('Content-Type: application/json');
@@ -54,17 +54,18 @@ function saveCartItemToDB($userId, $productId, $quantity) {
         
         if ($existing) {
             // Actualizar cantidad
-            executeQuery("UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ?", [$quantity, $existing['id']]);
+            $result = executeQuery("UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ?", [$quantity, $existing['id']]);
+            return ['success' => true, 'action' => 'updated', 'id' => $existing['id']];
         } else {
             // Insertar nuevo
-            executeQuery(
+            $result = executeQuery(
                 "INSERT INTO cart (user_id, product_id, quantity, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
                 [$userId, $productId, $quantity]
             );
+            return ['success' => true, 'action' => 'inserted'];
         }
-        return true;
     } catch (Exception $e) {
-        return false;
+        return ['success' => false, 'error' => $e->getMessage()];
     }
 }
 
@@ -120,8 +121,9 @@ switch ($action) {
                     ];
                     
                     // Si está logueado, guardar también en BD
+                    $dbResult = null;
                     if ($isLoggedIn) {
-                        saveCartItemToDB($userId, $productId, $newQty);
+                        $dbResult = saveCartItemToDB($userId, $productId, $newQty);
                     }
                     
                     $response['success'] = true;
@@ -131,7 +133,9 @@ switch ($action) {
                         'productId' => $productId,
                         'quantity' => $quantity,
                         'newQty' => $newQty,
-                        'isLoggedIn' => $isLoggedIn
+                        'isLoggedIn' => $isLoggedIn,
+                        'userId' => $userId,
+                        'dbResult' => $dbResult
                     ];
                 } else {
                     $response['message'] = 'Producto no encontrado o inactivo (ID: ' . $productId . ')';

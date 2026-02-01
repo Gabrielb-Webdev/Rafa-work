@@ -1,4 +1,9 @@
 <?php
+/**
+ * API de Mensajes de Pedidos
+ * Version: 1.0
+ * Fecha: 31/01/2026
+ */
 require_once __DIR__ . '/../config/config.php';
 
 header('Content-Type: application/json');
