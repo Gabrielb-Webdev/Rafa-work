@@ -106,27 +106,27 @@ try {
     );
     $stmt->execute([$total, $subtotal, $shipping, $total, $order_id]);
     
-    // Crear mensaje en el chat con la propuesta
-    $proposal_text = "📋 PROPUESTA DE COTIZACIÓN (USD)\n\n";
+    // Create chat message with proposal
+    $proposal_text = "📋 QUOTATION PROPOSAL (USD)\n\n";
     
     if ($proposal_message) {
         $proposal_text .= $proposal_message . "\n\n";
     }
     
-    $proposal_text .= "DETALLE DE PRODUCTOS:\n";
+    $proposal_text .= "PRODUCT DETAILS:\n";
     $proposal_text .= str_repeat("-", 40) . "\n";
     
     foreach ($proposal_details as $detail) {
         $quantity_note = '';
         if ($detail['quantity_proposed'] != $detail['quantity_requested']) {
             $quantity_note = sprintf(
-                " (solicitaste %d, ofrecemos %d)",
+                " (you requested %d, we offer %d)",
                 $detail['quantity_requested'],
                 $detail['quantity_proposed']
             );
         }
         $proposal_text .= sprintf(
-            "%s%s\n   %d unidades x USD $%.2f = USD $%.2f\n\n",
+            "%s%s\n   %d units x USD $%.2f = USD $%.2f\n\n",
             $detail['name'],
             $quantity_note,
             $detail['quantity_proposed'],
@@ -137,12 +137,12 @@ try {
     
     $proposal_text .= str_repeat("-", 40) . "\n";
     $proposal_text .= sprintf("Subtotal: USD $%.2f\n", $subtotal);
-    $proposal_text .= sprintf("Envío: USD $%.2f\n", $shipping);
+    $proposal_text .= sprintf("Shipping: USD $%.2f\n", $shipping);
     if ($discount > 0) {
-        $proposal_text .= sprintf("Descuento: -USD $%.2f\n", $discount);
+        $proposal_text .= sprintf("Discount: -USD $%.2f\n", $discount);
     }
     $proposal_text .= sprintf("\n✅ TOTAL: USD $%.2f\n", $total);
-    $proposal_text .= "\nPuedes revisar los detalles completos en tu pedido. Si tienes alguna duda, no dudes en preguntarnos por este chat.";
+    $proposal_text .= "\nYou can review the complete details in your order. If you have any questions, feel free to ask us through this chat.";
     
     // Insertar mensaje en el chat (sin columna is_proposal si no existe)
     try {
@@ -152,16 +152,16 @@ try {
         );
         $stmt->execute([$order_id, $_SESSION['user_id'], $proposal_text]);
     } catch (Exception $e) {
-        // Si falla, intentar sin la columna is_proposal
-        error_log("Error al insertar mensaje: " . $e->getMessage());
+        // If it fails, try without is_proposal column
+        error_log("Error inserting message: " . $e->getMessage());
     }
     
     $conn->commit();
     
-    // Enviar email al cliente
+    // Send email to client
     try {
         $to = $order['email'];
-        $subject = "Propuesta de Cotización - Pedido #" . $order['order_number'];
+        $subject = "Quotation Proposal - Order #" . $order['order_number'];
         
         $email_body = "
         <html>
@@ -182,22 +182,22 @@ try {
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h1>Propuesta de Cotización</h1>
-                    <p>Pedido #" . htmlspecialchars($order['order_number']) . "</p>
+                    <h1>Quotation Proposal</h1>
+                    <p>Order #" . htmlspecialchars($order['order_number']) . "</p>
                 </div>
                 <div class='content'>
-                    <p>Hola <strong>" . htmlspecialchars($order['full_name']) . "</strong>,</p>
+                    <p>Hello <strong>" . htmlspecialchars($order['full_name']) . "</strong>,</p>
                     
-                    <p>Hemos preparado una propuesta personalizada para tu pedido. A continuación encontrarás los detalles:</p>
+                    <p>We have prepared a personalized proposal for your order. Here are the details:</p>
                     
                     " . ($proposal_message ? "<div style='background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;'>" . nl2br(htmlspecialchars($proposal_message)) . "</div>" : "") . "
                     
                     <table class='product-table'>
                         <thead>
                             <tr>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Precio Unit.</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
                                 <th>Subtotal</th>
                             </tr>
                         </thead>
@@ -219,10 +219,10 @@ try {
                     
                     <div style='background: white; padding: 20px; border-radius: 8px; margin-top: 20px;'>
                         <p style='margin: 10px 0;'><strong>Subtotal:</strong> $" . number_format($subtotal, 2) . "</p>
-                        <p style='margin: 10px 0;'><strong>Envío:</strong> $" . number_format($shipping, 2) . "</p>";
+                        <p style='margin: 10px 0;'><strong>Shipping:</strong> $" . number_format($shipping, 2) . "</p>";
         
         if ($discount > 0) {
-            $email_body .= "<p style='margin: 10px 0;'><strong>Descuento:</strong> -$" . number_format($discount, 2) . "</p>";
+            $email_body .= "<p style='margin: 10px 0;'><strong>Discount:</strong> -$" . number_format($discount, 2) . "</p>";
         }
         
         $email_body .= "
@@ -231,15 +231,15 @@ try {
                         </p>
                     </div>
                     
-                    <p style='margin-top: 30px;'>Para ver más detalles o realizar consultas sobre esta propuesta, puedes acceder al chat del pedido en tu cuenta.</p>
+                    <p style='margin-top: 30px;'>To see more details or ask questions about this proposal, you can access the order chat in your account.</p>
                     
                     <center>
-                        <a href='" . BASE_URL . "/order-detail.php?id=" . $order_id . "' class='button'>Ver Pedido y Chat</a>
+                        <a href='" . BASE_URL . "/order-detail.php?id=" . $order_id . "' class='button'>View Order and Chat</a>
                     </center>
                 </div>
                 <div class='footer'>
-                    <p>Forethink Health - Sistema de Pedidos</p>
-                    <p>Este es un correo automático, por favor no responder.</p>
+                    <p>Forethink Health - Order System</p>
+                    <p>This is an automated email, please do not reply.</p>
                 </div>
             </div>
         </body>

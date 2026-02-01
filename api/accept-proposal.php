@@ -1,6 +1,6 @@
 <?php
 /**
- * API para Aceptar Propuesta
+ * API to Accept Proposal
  * Version: 1.0
  */
 require_once __DIR__ . '/../config/config.php';
@@ -8,12 +8,12 @@ require_once __DIR__ . '/../config/config.php';
 header('Content-Type: application/json');
 
 if (!isLoggedIn()) {
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
 }
 
@@ -21,10 +21,10 @@ try {
     $order_id = (int)($_POST['order_id'] ?? 0);
     
     if (!$order_id) {
-        throw new Exception('ID de pedido no válido');
+        throw new Exception('Invalid order ID');
     }
     
-    // Verificar que el pedido pertenezca al usuario
+    // Verify that order belongs to user
     $stmt = executeQuery(
         "SELECT id, user_id, proposal_sent, status 
          FROM orders 
@@ -34,18 +34,18 @@ try {
     $order = $stmt->fetch();
     
     if (!$order) {
-        throw new Exception('Pedido no encontrado');
+        throw new Exception('Order not found');
     }
     
     if (!$order['proposal_sent']) {
-        throw new Exception('No hay propuesta pendiente para este pedido');
+        throw new Exception('No pending proposal for this order');
     }
     
     if ($order['status'] === 'delivered' || $order['status'] === 'cancelled') {
-        throw new Exception('Este pedido ya ha sido finalizado');
+        throw new Exception('This order has already been completed');
     }
     
-    // Actualizar el estado del pedido
+    // Update order status
     executeQuery(
         "UPDATE orders 
          SET status = 'processing',
@@ -55,20 +55,20 @@ try {
         [$order_id]
     );
     
-    // Enviar mensaje en el chat notificando la aceptación
+    // Send chat message notifying acceptance
     try {
         executeQuery(
             "INSERT INTO order_messages (order_id, user_id, message, created_at) 
              VALUES (?, ?, ?, NOW())",
-            [$order_id, $_SESSION['user_id'], '✅ He aceptado la propuesta. Procedo con el pedido.']
+            [$order_id, $_SESSION['user_id'], '✅ I have accepted the proposal. Proceeding with the order.']
         );
     } catch (Exception $e) {
-        // Si falla el mensaje, continuar igual
+        // If message fails, continue anyway
     }
     
     echo json_encode([
         'success' => true,
-        'message' => 'Propuesta aceptada correctamente'
+        'message' => 'Proposal accepted successfully'
     ]);
     
 } catch (Exception $e) {

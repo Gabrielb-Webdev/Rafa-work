@@ -14,7 +14,7 @@ if (!$order_id) {
     redirect('/admin/pedidos.php');
 }
 
-// Obtener información del pedido
+// Get order information
 try {
     $stmt = executeQuery(
         "SELECT o.*, u.full_name as user_name, u.email as user_email, u.id as user_id
@@ -29,7 +29,7 @@ try {
         redirect('/admin/pedidos.php');
     }
     
-    // Obtener items del pedido
+    // Get order items
     $stmt = executeQuery(
         "SELECT oi.*, p.name as product_name, p.image, p.price as current_price
          FROM order_items oi 
@@ -639,7 +639,7 @@ include __DIR__ . '/header.php';
                         </form>
                     </div>
                 <?php else: ?>
-                    <!-- Propuesta Enviada -->
+                    <!-- Proposal Sent -->
                     <?php if (isset($order['proposal_accepted']) && $order['proposal_accepted']): ?>
                         <!-- Proposal Accepted -->
                         <div style="padding: 25px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);">
@@ -835,22 +835,22 @@ const orderId = <?php echo $order_id; ?>;
 const orderData = <?php echo json_encode($order); ?>;
 const itemsData = <?php echo json_encode($items); ?>;
 
-// Calcular subtotales automáticamente (solo si existe formulario de propuesta)
+// Calculate subtotals automatically (only if proposal form exists)
 const itemPriceInputs = document.querySelectorAll('.item-price');
 const itemQuantityInputs = document.querySelectorAll('.item-quantity');
 
 if (itemPriceInputs.length > 0) {
-    // Listener para cambios en precio
+    // Listener for price changes
     itemPriceInputs.forEach(input => {
         input.addEventListener('input', function() {
             calculateItemSubtotal(this.dataset.itemId);
         });
         
-        // Trigger inicial
+        // Initial trigger
         calculateItemSubtotal(input.dataset.itemId);
     });
     
-    // Listener para cambios en cantidad
+    // Listener for quantity changes
     itemQuantityInputs.forEach(input => {
         input.addEventListener('input', function() {
             calculateItemSubtotal(this.dataset.itemId);
@@ -903,7 +903,7 @@ function calculateTotal() {
     }
 }
 
-// Enviar propuesta
+// Send proposal
 const proposalForm = document.getElementById('proposalForm');
 if (proposalForm) {
     proposalForm.addEventListener('submit', async (e) => {
@@ -968,7 +968,7 @@ function scrollToBottom() {
 
 scrollToBottom();
 
-// Función para cargar mensajes sin recargar la página
+// Function to load messages without reloading page
 async function loadMessages() {
     try {
         const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
@@ -1029,10 +1029,10 @@ function updateChatMessages(messages) {
     }
 }
 
-// Polling cada 3 segundos para actualizar mensajes
+// Polling every 3 seconds to update messages
 setInterval(loadMessages, 3000);
 
-// Actualizar estado del pedido en tiempo real
+// Update order status in real time
 async function updateOrderStatus() {
     try {
         const response = await fetch('<?php echo BASE_URL; ?>/api/get-order-status.php?order_id=' + orderId);
@@ -1061,10 +1061,10 @@ function updateStatusBadge(status, proposalSent) {
     }
 }
 
-// Actualizar estado cada 5 segundos
+// Update status every 5 seconds
 setInterval(updateOrderStatus, 5000);
 
-// Enviar mensaje sin recargar
+// Send message without reloading
 if (chatForm) {
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1091,7 +1091,7 @@ if (chatForm) {
             
             if (data.success) {
                 messageInput.value = '';
-                // Cargar mensajes inmediatamente
+                // Load messages immediately
                 await loadMessages();
             } else {
                 console.error('Admin: Error sending:', data);

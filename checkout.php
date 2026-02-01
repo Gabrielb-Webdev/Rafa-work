@@ -429,20 +429,20 @@ include __DIR__ . '/includes/header.php';
                     </div>
                     
                     <button type="submit" name="place_order" class="btn-place-order">
-                        <i class="fas fa-check-circle"></i> Realizar Pedido
+                        <i class="fas fa-check-circle"></i> Place Order
                     </button>
                 </form>
             </div>
             
             <div class="order-summary">
-                <h2 class="summary-title">Tu Pedido</h2>
+                <h2 class="summary-title">Your Order</h2>
                 
                 <div style="padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
                     <div style="font-weight: 700; color: #856404; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-info-circle"></i> Sistema de Cotización
+                        <i class="fas fa-info-circle"></i> Quotation System
                     </div>
                     <div style="font-size: 14px; color: #856404; line-height: 1.6;">
-                        Una vez finalices el pedido, recibirás una <strong>propuesta personalizada</strong> con los precios y disponibilidad.
+                        Once you complete your order, you will receive a <strong>personalized proposal</strong> with prices and availability.
                     </div>
                 </div>
                 
@@ -459,14 +459,14 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         <div class="item-details">
                             <div class="item-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                            <div class="item-qty">Cantidad: <?php echo $item['quantity']; ?></div>
+                            <div class="item-qty">Quantity: <?php echo $item['quantity']; ?></div>
                         </div>
                     </div>
                 <?php endforeach; ?>
                 
                 <div class="summary-totals">
                     <div class="summary-row" style="justify-content: center; color: #6c757d; font-size: 14px;">
-                        <span><?php echo count($cartItems); ?> producto(s) en tu pedido</span>
+                        <span><?php echo count($cartItems); ?> product(s) in your order</span>
                     </div>
                 </div>
             </div>

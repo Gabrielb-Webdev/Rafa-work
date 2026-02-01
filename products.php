@@ -619,19 +619,19 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                     <h2 id="modalName" style="font-size: 28px; margin-bottom: 15px; color: #2c3e50;"></h2>
                     <div id="modalCategory" style="display: inline-block; background: #00d4d4; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px;"></div>
                     <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
-                        <div style="font-weight: 700; color: #856404; margin-bottom: 5px;">💬 Precio bajo cotización</div>
-                        <div style="font-size: 14px; color: #856404;">Agrega este producto a tu pedido y recibirás una propuesta personalizada</div>
+                        <div style="font-weight: 700; color: #856404; margin-bottom: 5px;">💬 Price under quotation</div>
+                        <div style="font-size: 14px; color: #856404;">Add this product to your order and you will receive a personalized proposal</div>
                     </div>
                     <div id="modalDescription" style="color: #6c757d; line-height: 1.6; margin-bottom: 20px;"></div>
                     <div id="modalStock" style="margin-bottom: 20px; padding: 12px; background: #e7f9f9; border-radius: 8px;"></div>
                     <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
-                        <label style="font-weight: 600;">Cantidad:</label>
+                        <label style="font-weight: 600;">Quantity:</label>
                         <button onclick="changeQty(-1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">−</button>
                         <input type="number" id="modalQuantity" value="1" min="1" style="width: 80px; text-align: center; padding: 10px; border: 2px solid #eee; border-radius: 6px; font-size: 18px;">
                         <button onclick="changeQty(1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">+</button>
                     </div>
                     <button onclick="addToCartFromModal()" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer;">
-                        <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                        <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                 </div>
             </div>
@@ -725,15 +725,15 @@ function addToCart(productId, quantity = 1) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            showToast('Producto agregado a tu pedido. Recibirás una propuesta personalizada', 'success', '¡Agregado!');
-            // Actualizar contador del carrito en el header si existe
+            showToast('Product added to your order. You will receive a personalized proposal', 'success', 'Added!');
+            // Update cart counter in header if it exists
             const cartBadge = document.querySelector('.cart-badge');
             if (cartBadge) cartBadge.textContent = data.cartCount;
         } else {
             showToast(data.message, 'error', 'Error');
         }
     })
-    .catch(() => showToast('No se pudo conectar con el servidor', 'error', 'Error de conexión'));
+    .catch(() => showToast('Could not connect to server', 'error', 'Connection error'));
 }
 
 function addToCartFromModal() {

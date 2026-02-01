@@ -633,30 +633,30 @@ require_once 'includes/header.php';
 
     <div class="order-content">
         <div>
-            <!-- Propuesta recibida -->
+            <!-- Proposal received -->
             <?php if ($order['proposal_sent'] && !$order['proposal_accepted']): ?>
             <div class="proposal-alert">
-                <h3>🎉 ¡Hemos preparado tu propuesta!</h3>
-                <p>Revisa los detalles a continuación y acepta la propuesta si estás de acuerdo.</p>
+                <h3>🎉 We've prepared your proposal!</h3>
+                <p>Review the details below and accept the proposal if you agree.</p>
                 <div class="proposal-total">
                     USD $<?php echo number_format($order['proposal_total'], 2); ?>
                 </div>
                 <button class="btn-accept" onclick="acceptProposal()">
-                    ✓ Aceptar Propuesta
+                    ✓ Accept Proposal
                 </button>
             </div>
             <?php elseif ($order['proposal_accepted']): ?>
             <div class="section-card" style="background: #d4edda; border: 2px solid #28a745;">
-                <h2 style="color: #155724;">✅ Propuesta Aceptada</h2>
+                <h2 style="color: #155724;">✅ Proposal Accepted</h2>
                 <p style="color: #155724; margin: 0;">
-                    Aceptaste esta propuesta el <?php echo date('d/m/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
+                    You accepted this proposal on <?php echo date('m/d/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
                 </p>
             </div>
             <?php endif; ?>
 
-            <!-- Productos -->
+            <!-- Products -->
             <div class="section-card">
-                <h2>📦 Productos Solicitados</h2>
+                <h2>📦 Requested Products</h2>
                 <?php foreach ($items as $item): ?>
                 <div class="product-item">
                     <?php if ($item['image']): ?>
@@ -666,9 +666,9 @@ require_once 'includes/header.php';
                     
                     <div class="product-info">
                         <h3><?php echo htmlspecialchars($item['product_name']); ?></h3>
-                        <p>Solicitaste: <?php echo $item['quantity']; ?> unidades</p>
+                        <p>You requested: <?php echo $item['quantity']; ?> units</p>
                         <?php if ($item['proposed_quantity'] && $item['proposed_quantity'] != $item['quantity']): ?>
-                        <p style="color: #28a745; font-weight: 600;">Ofrecemos: <?php echo $item['proposed_quantity']; ?> unidades</p>
+                        <p style="color: #28a745; font-weight: 600;">We offer: <?php echo $item['proposed_quantity']; ?> units</p>
                         <?php endif; ?>
                     </div>
                     
@@ -679,7 +679,7 @@ require_once 'includes/header.php';
                             USD $<?php echo number_format($item['proposed_price'], 2); ?> c/u
                         </small>
                         <?php else: ?>
-                        <small style="color: var(--text-light);">Pendiente de cotización</small>
+                        <small style="color: var(--text-light);">Pending quotation</small>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -767,7 +767,7 @@ require_once 'includes/header.php';
 <script>
 const orderId = <?php echo $order_id; ?>;
 
-// Función para cargar mensajes
+// Function to load messages
 async function loadMessages() {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) {
