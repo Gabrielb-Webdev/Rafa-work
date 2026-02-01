@@ -100,10 +100,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     try {
-        executeQuery("DELETE FROM products WHERE id = ?", [$id]);
-        $success = 'Producto eliminado correctamente';
+        // Primero verificar si el producto está en pedidos
+        $check = fetchOne("SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", [$id]);
+        
+        if ($check['count'] > 0) {
+            $error = 'No se puede eliminar: el producto está asociado a pedidos existentes. Mejor márcalo como inactivo.';
+        } else {
+            // Obtener imagen para eliminarla
+            $product = fetchOne("SELECT image FROM products WHERE id = ?", [$id]);
+            
+            // Eliminar producto
+            executeQuery("DELETE FROM products WHERE id = ?", [$id]);
+            
+            // Eliminar imagen física si existe
+            if ($product && !empty($product['image'])) {
+                $image_path = __DIR__ . '/../uploads/products/' . $product['image'];
+                if (file_exists($image_path)) {
+                    unlink($image_path);
+                }
+            }
+            
+            $success = 'Producto eliminado correctamente';
+            header('Location: ' . BASE_URL . '/admin/productos.php');
+            exit;
+        }
     } catch (Exception $e) {
-        $error = 'Error al eliminar el producto';
+        $error = 'Error al eliminar el producto: ' . $e->getMessage();
     }
 }
 
