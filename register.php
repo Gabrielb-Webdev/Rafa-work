@@ -224,7 +224,7 @@ body::before {
     transform: translateY(-50%);
     color: #adb5bd;
     font-size: 17px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 2;
 }
 
@@ -234,7 +234,24 @@ body::before {
 
 .auth-form .input-icon input:focus ~ i {
     color: #667eea;
-    transform: translateY(-50%) scale(1.1);
+    transform: translateY(-50%) scale(1.15);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+    font-size: 16px;
+    padding: 4px;
+}
+
+.password-toggle:hover {
+    color: #667eea;
 }
 
 .auth-form input {
@@ -262,14 +279,33 @@ body::before {
     transform: translateY(-1px);
 }
 
+.auth-form input:hover:not(:focus) {
+    border-color: #d1d5db;
+}
+
 .auth-form input.valid {
     border-color: #28a745;
     background-color: #f0fff4;
 }
 
+.auth-form input.valid:focus {
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.12);
+}
+
 .auth-form input.invalid {
     border-color: #dc3545;
     background-color: #fff5f5;
+    animation: shake 0.4s ease;
+}
+
+.auth-form input.invalid:focus {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.12);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
 }
 
 .password-strength {
@@ -323,18 +359,19 @@ body::before {
 .strength-text.strong { color: #28a745; }
 
 .validation-message {
-    margin-top: 6px;
+    margin-top: 8px;
     font-size: 13px;
     display: flex;
     align-items: center;
     gap: 6px;
     animation: slideDown 0.3s ease;
+    font-weight: 600;
 }
 
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-5px);
+        transform: translateY(-8px);
     }
     to {
         opacity: 1;
@@ -344,6 +381,16 @@ body::before {
 
 .validation-message.success {
     color: #28a745;
+}
+
+.validation-message.success i {
+    animation: checkPop 0.4s ease;
+}
+
+@keyframes checkPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
 .validation-message.error {
@@ -567,6 +614,7 @@ body::before {
                     <input type="password" id="password" name="password" required 
                            minlength="6" placeholder="Minimum 6 characters">
                     <i class="fas fa-lock"></i>
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
                 </div>
                 <div class="password-strength" id="passwordStrength">
                     <div class="strength-bar">
@@ -582,6 +630,7 @@ body::before {
                     <input type="password" id="confirm_password" name="confirm_password" required
                            placeholder="Repeat your password">
                     <i class="fas fa-lock"></i>
+                    <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
                 </div>
                 <div id="confirmValidation" class="validation-message"></div>
             </div>
@@ -611,10 +660,38 @@ const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirm_password');
 const submitBtn = document.getElementById('submitBtn');
 
+// Password toggle functionality
+const togglePassword = document.getElementById('togglePassword');
+const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
+if (togglePassword) {
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+}
+
+if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener('click', function() {
+        const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+        confirmPasswordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+}
+
 // Name validation
 fullNameInput.addEventListener('input', function() {
     const nameValidation = document.getElementById('nameValidation');
     const value = this.value.trim();
+    
+    if (value.length === 0) {
+        this.classList.remove('valid', 'invalid');
+        nameValidation.innerHTML = '';
+        return;
+    }
     
     if (value.length < 3) {
         this.classList.remove('valid');
@@ -633,6 +710,13 @@ fullNameInput.addEventListener('input', function() {
 emailInput.addEventListener('input', function() {
     const emailValidation = document.getElementById('emailValidation');
     const value = this.value.trim();
+    
+    if (value.length === 0) {
+        this.classList.remove('valid', 'invalid');
+        emailValidation.innerHTML = '';
+        return;
+    }
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
     if (!emailRegex.test(value)) {
@@ -735,12 +819,36 @@ form.addEventListener('submit', function(e) {
     
     if (!isValid) {
         e.preventDefault();
-        alert('Please fill in all required fields correctly');
+        
+        // Shake invalid fields
+        if (fullNameInput.value.trim().length < 3) {
+            fullNameInput.classList.add('invalid');
+            fullNameInput.focus();
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
+            emailInput.classList.add('invalid');
+        }
+        if (passwordInput.value.length < 6) {
+            passwordInput.classList.add('invalid');
+        }
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordInput.classList.add('invalid');
+        }
+        
         return;
     }
     
     // Disable button to prevent double submission
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+});
+
+// Clear validation on blur if empty
+[fullNameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+    input.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+            this.classList.remove('valid', 'invalid');
+        }
+    });
 });
 </script>
