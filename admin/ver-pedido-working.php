@@ -933,6 +933,171 @@ function scrollToBottom() {
     }
 }
 
+scrollToBottom();
+
+// Función para cargar mensajes sin recargar la página
+async function loadMessages() {
+    try {
+        console.log('Admin: Cargando mensajes para order_id:', orderId);
+        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
+        console.log('Admin: Respuesta recibida:', response.status);
+        const data = await response.json();
+        console.log('Admin: Mensajes recibidos:', data);
+        
+        if (data.success && data.messages) {
+            console.log('Admin: Actualizando chat con', data.messages.length, 'mensajes');
+            updateChatMessages(data.messages);
+        } else {
+            console.error('Admin: Error en respuesta:', data);
+        }
+    } catch (error) {
+        console.error('Admin: Error al cargar mensajes:', error);
+    }
+}
+
+function updateChatMessages(messages) {
+    if (!chatMessages) {
+        console.error('Admin: chatMessages element not found');
+        return;
+    }
+    
+    console.log('Admin: Renderizando', messages.length, 'mensajes');
+    
+    const currentScroll = chatMessages.scrollHeight - chatMessages.scrollTop;
+    const wasAtBottom = currentScroll <= chatMessages.clientHeight + 50;
+    
+    chatMessages.innerHTML = '';
+    
+    if (messages.length === 0) {
+        chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
+    } else {
+        messages.forEach((msg, index) => {
+            console.log('Admin: Renderizando mensaje', index, ':', msg);
+            const isAdmin = msg.user_role === 'admin';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.style.cssText = `
+                background: ${isAdmin ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f8f9fa'};
+                color: ${isAdmin ? 'white' : '#2c3e50'};
+                padding: 15px 20px;
+                border-radius: 20px;
+                margin-bottom: 15px;
+                max-width: 70%;
+                ${isAdmin ? 'margin-left: auto;' : 'margin-right: auto;'}
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            messageDiv.innerHTML = `
+                <div style="font-weight: 700; font-size: 12px; margin-bottom: 5px; opacity: 0.8; text-transform: uppercase;">
+                    ${msg.sender_name || 'Usuario'}
+                </div>
+                <div style="white-space: pre-wrap; line-height: 1.5;">
+                    ${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.7;">
+                    ${new Date(msg.created_at).toLocaleString('es-MX')}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+        });
+        console.log('Admin: Mensajes renderizados correctamente');
+    }
+    
+    if (wasAtBottom) {
+        scrollToBottom();
+    }
+}
+
+// Polling cada 3 segundos para actualizar mensajes
+setInterval(loadMessages, 3000);
+
+// Actualizar estado del pedido en tiempo real
+async function updateOrderStatus() {
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/get-order-status.php?order_id=' + orderId);
+        const data = await response.json();
+        
+        if (data.success) {
+            updateStatusBadge(data.status, data.proposal_sent);
+        }
+    } catch (error) {
+        console.error('Error al actualizar estado:', error);
+    }
+}
+
+function updateStatusBadge(status, proposalSent) {
+    const badges = {
+        'pending': '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
+        'processing': '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> EN PROCESO</span>',
+        'shipped': '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> ENVIADO</span>',
+        'delivered': '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
+        'cancelled': '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+    };
+    
+    const badgeEl = document.getElementById('orderStatusBadge');
+    if (badgeEl && badges[status]) {
+        badgeEl.innerHTML = badges[status];
+    }
+}
+
+// Actualizar estado cada 5 segundos
+setInterval(updateOrderStatus, 5000);
+
+// Enviar mensaje sin recargar
+if (chatForm) {
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('Admin: Formulario de chat enviado');
+        
+        const message = messageInput.value.trim();
+        console.log('Admin: Mensaje a enviar:', message);
+        
+        if (!message) {
+            console.log('Admin: Mensaje vacío, no se envía');
+            return;
+        }
+        
+        const btn = document.getElementById('sendChatBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            console.log('Admin: Enviando mensaje a API...');
+            const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
+            });
+            
+            console.log('Admin: Respuesta recibida:', response.status);
+            const data = await response.json();
+            console.log('Admin: Datos:', data);
+            
+            if (data.success) {
+                messageInput.value = '';
+                console.log('Admin: Mensaje enviado exitosamente');
+                // Cargar mensajes inmediatamente
+                await loadMessages();
+            } else {
+                console.error('Admin: Error al enviar:', data);
+                alert('Error al enviar el mensaje: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Admin: Error de conexión:', error);
+            alert('Error de conexión al enviar el mensaje: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+} else {
+    console.error('Admin: chatForm element not found');
+}
+</script>
+
 <style>
 @keyframes slideIn {
     from {
