@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
             );
             $success = 'Producto agregado correctamente';
         } catch (Exception $e) {
-            $error = 'Error al agregar el producto';
+            $error = 'Error al agregar el producto: ' . $e->getMessage();
         }
     } else {
         $error = 'Por favor completa todos los campos requeridos';
