@@ -312,17 +312,6 @@ require_once 'includes/header.php';
     gap: 15px;
 }
 
-.chat-header::before {
-    content: '💬';
-    font-size: 28px;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-
 .chat-header h2 {
     font-size: 22px;
     color: white;
@@ -350,11 +339,11 @@ require_once 'includes/header.php';
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 25px;
+    padding: 20px 15px;
     background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 /* Scrollbar personalizado */
@@ -405,9 +394,9 @@ require_once 'includes/header.php';
 .chat-message.user-message > div:nth-child(2) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 14px 20px;
-    border-radius: 20px 20px 4px 20px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    padding: 10px 16px;
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25);
     position: relative;
 }
 
@@ -442,9 +431,9 @@ require_once 'includes/header.php';
 .chat-message.admin-message > div:nth-child(2) {
     background: white;
     color: #2c3e50;
-    padding: 14px 20px;
-    border-radius: 20px 20px 20px 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 10px 16px;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
     border: 2px solid #e9ecef;
     position: relative;
 }
@@ -476,12 +465,12 @@ require_once 'includes/header.php';
 
 /* Nombre del remitente */
 .chat-message > div:first-child {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
-    padding: 0 8px;
+    margin-bottom: 4px;
+    padding: 0 6px;
 }
 
 .chat-message.user-message > div:first-child {
@@ -501,9 +490,9 @@ require_once 'includes/header.php';
 
 /* Hora del mensaje */
 .chat-message > div:last-child {
-    font-size: 10px;
-    margin-top: 6px;
-    padding: 0 8px;
+    font-size: 9px;
+    margin-top: 4px;
+    padding: 0 6px;
 }
 
 .chat-message.user-message > div:last-child {
@@ -910,8 +899,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar mensajes iniciales
     loadMessages();
     
-    // Actualizar mensajes cada 3 segundos
-    setInterval(loadMessages, 3000);
+    // Actualizar mensajes cada 10 segundos
+    setInterval(loadMessages, 10000);
     
     // Enviar mensaje de chat
     chatForm.addEventListener('submit', async (e) => {
