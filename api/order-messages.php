@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Obtener mensajes
             $stmt = executeQuery(
-                "SELECT om.*, u.full_name as sender_name, u.user_role
+                "SELECT om.*, u.full_name as sender_name, u.role as user_role
                  FROM order_messages om
                  JOIN users u ON om.user_id = u.id
                  WHERE om.order_id = ?
