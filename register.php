@@ -211,10 +211,13 @@ body::before {
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-form .input-icon {
     position: relative;
+    z-index: 0;
 }
 
 .auth-form .input-icon i {
@@ -225,11 +228,14 @@ body::before {
     color: #adb5bd;
     font-size: 17px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 2;
+    z-index: 1;
+    pointer-events: none;
 }
 
 .auth-form .input-icon input {
     padding-left: 52px;
+    position: relative;
+    z-index: 0;
 }
 
 .auth-form .input-icon input:focus ~ i {
@@ -245,9 +251,10 @@ body::before {
     color: #adb5bd;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 3;
+    z-index: 2;
     font-size: 16px;
     padding: 4px;
+    pointer-events: auto;
 }
 
 .password-toggle:hover {
