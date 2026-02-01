@@ -950,19 +950,19 @@ tr:last-child td {
             </div>
             
             <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px; margin-bottom: 20px;">
-                <strong style="color: #856404;">Instrucciones:</strong>
+                <strong style="color: #856404;">Instructions:</strong>
                 <ul style="margin: 10px 0 0 20px; color: #856404; font-size: 14px;">
-                    <li>La primera fila debe contener los encabezados</li>
-                    <li>Formato: nombre,descripcion,stock</li>
-                    <li>El stock es opcional (por defecto será 999999)</li>
-                    <li>Los productos se crearán como activos</li>
+                    <li>The first row must contain the headers</li>
+                    <li>Format: name,description,stock</li>
+                    <li>Stock is optional (default will be 999999)</li>
+                    <li>Products will be created as active</li>
                 </ul>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="btn btn-back" onclick="document.getElementById('csvUploadModal').classList.remove('show')">Cancelar</button>
+                <button type="button" class="btn btn-back" onclick="document.getElementById('csvUploadModal').classList.remove('show')">Cancel</button>
                 <button type="submit" class="btn btn-upload">
-                    <i class="fas fa-upload"></i> Importar Productos
+                    <i class="fas fa-upload"></i> Import Products
                 </button>
             </div>
         </form>
