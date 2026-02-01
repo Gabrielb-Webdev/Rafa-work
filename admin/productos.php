@@ -638,6 +638,31 @@ tr:last-child td {
         grid-template-columns: 1fr;
     }
 }
+
+/* Previsualizador de imagen */
+.image-preview-container {
+    margin-top: 15px;
+    display: none;
+    text-align: center;
+}
+
+.image-preview-container.show {
+    display: block;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+.image-preview-label {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 600;
+}
 </style>
 
 <section class="admin-page">
@@ -807,7 +832,11 @@ tr:last-child td {
             
             <div class="form-group">
                 <label>Imagen del Producto</label>
-                <input type="file" name="image" id="image" accept="image/*">
+                <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
+                <div id="imagePreviewContainer" class="image-preview-container">
+                    <img id="imagePreview" class="image-preview" src="" alt="Preview">
+                    <div class="image-preview-label">Vista previa de la imagen</div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -868,12 +897,39 @@ tr:last-child td {
 </div>
 
 <script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.classList.add('show');
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        previewContainer.classList.remove('show');
+        preview.src = '';
+    }
+}
+
 function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Agregar Producto';
     document.getElementById('productForm').reset();
     document.getElementById('product_id').value = '';
     document.getElementById('stock').value = '999999'; // Stock alto por defecto
     document.getElementById('submitBtn').name = 'add_product';
+    
+    // Limpiar preview de imagen
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+    previewContainer.classList.remove('show');
+    preview.src = '';
+    
     document.getElementById('productModal').classList.add('show');
 }
 
@@ -885,6 +941,19 @@ function editProduct(product) {
     document.getElementById('stock').value = product.stock || 999999;
     document.getElementById('is_active').checked = product.is_active == 1;
     document.getElementById('submitBtn').name = 'update_product';
+    
+    // Mostrar imagen actual si existe
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+    
+    if (product.image) {
+        preview.src = '<?php echo BASE_URL; ?>/uploads/products/' + product.image;
+        previewContainer.classList.add('show');
+    } else {
+        previewContainer.classList.remove('show');
+        preview.src = '';
+    }
+    
     document.getElementById('productModal').classList.add('show');
 }
 
