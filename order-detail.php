@@ -583,6 +583,63 @@ require_once 'includes/header.php';
 
 <script>
 const orderId = <?php echo $order_id; ?>;
+const chatMessages = document.getElementById('chatMessages');
+
+// Función para cargar mensajes
+async function loadMessages() {
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
+        const data = await response.json();
+        
+        if (data.success && data.messages) {
+            updateChatMessages(data.messages);
+        }
+    } catch (error) {
+        console.error('Error al cargar mensajes:', error);
+    }
+}
+
+function updateChatMessages(messages) {
+    if (!chatMessages) return;
+    
+    const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 50;
+    
+    chatMessages.innerHTML = '';
+    
+    if (messages.length === 0) {
+        chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
+    } else {
+        messages.forEach(msg => {
+            const isAdmin = msg.user_role === 'admin';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message ' + (isAdmin ? 'admin-message' : 'user-message');
+            
+            messageDiv.innerHTML = `
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 5px; opacity: 0.8;">
+                    ${msg.sender_name || 'Usuario'}
+                </div>
+                <div style="white-space: pre-wrap; line-height: 1.5;">
+                    ${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.7;">
+                    ${new Date(msg.created_at).toLocaleString('es-MX')}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+        });
+    }
+    
+    if (wasAtBottom) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+// Actualizar mensajes cada 3 segundos
+setInterval(loadMessages, 3000);
+
+// Auto-scroll inicial
+chatMessages.scrollTop = chatMessages.scrollHeight;
 
 // Enviar mensaje de chat
 document.getElementById('chatForm').addEventListener('submit', async (e) => {
@@ -604,14 +661,15 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `action=send&order_id=${orderId}&message=${encodeURIComponent(message)}`
+            body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
         });
         
         const data = await response.json();
         
         if (data.success) {
             messageInput.value = '';
-            location.reload();
+            // Recargar mensajes inmediatamente
+            await loadMessages();
         } else {
             showNotification('error', 'Error', data.message);
         }
@@ -627,10 +685,6 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
 async function acceptProposal() {
     showConfirmModal();
 }
-
-// Auto-scroll del chat
-const chatMessages = document.getElementById('chatMessages');
-chatMessages.scrollTop = chatMessages.scrollHeight;
 </script>
 
 <!-- Modal de Confirmación Moderno -->

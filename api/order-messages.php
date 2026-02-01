@@ -29,36 +29,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!isAdmin()) {
             $stmt = executeQuery(
                 "SELECT id FROM orders WHERE id = ? AND user_id = ?",
-                    [$order_id, $_SESSION['user_id']]
-                );
-                $order = $stmt->fetch();
-                
-                if (!$order) {
-                    echo json_encode(['success' => false, 'message' => 'Pedido no encontrado']);
-                    exit;
-                }
-            }
-            
-            // Insertar mensaje
-            $stmt = executeQuery(
-                "INSERT INTO order_messages (order_id, user_id, message, created_at) 
-                 VALUES (?, ?, ?, NOW())",
-                [$order_id, $_SESSION['user_id'], $message]
+                [$order_id, $_SESSION['user_id']]
             );
+            $order = $stmt->fetch();
             
-            echo json_encode([
-                'success' => true,
-                'message' => 'Mensaje enviado correctamente'
-            ]);
-            
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al enviar el mensaje: ' . $e->getMessage()
-            ]);
+            if (!$order) {
+                echo json_encode(['success' => false, 'message' => 'Pedido no encontrado']);
+                exit;
+            }
         }
-        exit;
+        
+        // Insertar mensaje
+        $stmt = executeQuery(
+            "INSERT INTO order_messages (order_id, user_id, message, created_at) 
+             VALUES (?, ?, ?, NOW())",
+            [$order_id, $_SESSION['user_id'], $message]
+        );
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Mensaje enviado correctamente'
+        ]);
+        
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error al enviar el mensaje: ' . $e->getMessage()
+        ]);
     }
+    exit;
+}
     
     // Si es GET, obtener mensajes
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
