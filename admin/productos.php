@@ -25,6 +25,7 @@ if (isset($_GET['success'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
+    $stock = intval($_POST['stock'] ?? 999999); // Stock alto por defecto para cotizaciones
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Manejo de imagen
@@ -54,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                 $slug = $slug . '-' . time();
             }
             
-            // Los precios y stock se asignan 0 por defecto (se manejan en cotizaciones)
+            // El precio se asigna 0 por defecto (se maneja en cotizaciones), stock es configurable
             executeQuery(
                 "INSERT INTO products (name, slug, description, price, stock, category_id, image, is_active, created_at) 
-                 VALUES (?, ?, ?, 0, 0, NULL, ?, ?, NOW())",
-                [$name, $slug, $description, $image, $is_active]
+                 VALUES (?, ?, ?, 0, ?, NULL, ?, ?, NOW())",
+                [$name, $slug, $description, $stock, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
             header('Location: ' . BASE_URL . '/admin/productos.php?success=1');
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $id = intval($_POST['product_id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
+    $stock = intval($_POST['stock'] ?? 999999);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Generar slug único a partir del nombre
@@ -98,13 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
         
         executeQuery(
-            "UPDATE products SET name = ?, slug = ?, description = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $slug, $description, $image, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, stock = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $stock, $image, $is_active, $id]
         );
     } else {
         executeQuery(
-            "UPDATE products SET name = ?, slug = ?, description = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $slug, $description, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, stock = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $stock, $is_active, $id]
         );
     }
     
@@ -738,6 +740,12 @@ tr:last-child td {
             </div>
             
             <div class="form-group">
+                <label>Stock Disponible (Cantidad Ilimitada)</label>
+                <input type="number" name="stock" id="stock" value="999999" min="0">
+                <small style="color: #6c757d; font-size: 12px;">Cantidad disponible para pedidos. Usa un número alto para stock ilimitado.</small>
+            </div>
+            
+            <div class="form-group">
                 <label>Imagen del Producto</label>
                 <input type="file" name="image" id="image" accept="image/*">
             </div>
@@ -764,6 +772,7 @@ function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Agregar Producto';
     document.getElementById('productForm').reset();
     document.getElementById('product_id').value = '';
+    document.getElementById('stock').value = '999999'; // Stock alto por defecto
     document.getElementById('submitBtn').name = 'add_product';
     document.getElementById('productModal').classList.add('show');
 }
@@ -773,6 +782,7 @@ function editProduct(product) {
     document.getElementById('product_id').value = product.id;
     document.getElementById('name').value = product.name;
     document.getElementById('description').value = product.description || '';
+    document.getElementById('stock').value = product.stock || 999999;
     document.getElementById('is_active').checked = product.is_active == 1;
     document.getElementById('submitBtn').name = 'update_product';
     document.getElementById('productModal').classList.add('show');
