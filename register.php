@@ -280,7 +280,7 @@ header, footer {
 <div class="auth-wrapper">
     <div class="auth-container">
         <div class="auth-logo">
-            <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="Forethink Health">
+            <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Forethink Health">
         </div>
         <h2>Create Account</h2>
         <p class="auth-subtitle">Join Forethink Health today</p>
