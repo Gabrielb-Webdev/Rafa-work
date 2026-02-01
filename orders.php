@@ -9,16 +9,24 @@ if (!isLoggedIn()) {
 $pageTitle = 'Mis Pedidos - Forethink Health';
 
 // Obtener pedidos reales del usuario desde la base de datos
+$filter_status = $_GET['status'] ?? 'all';
+
 try {
-    $stmt = executeQuery(
-        "SELECT o.*, COUNT(oi.id) as items 
-         FROM orders o 
-         LEFT JOIN order_items oi ON o.id = oi.order_id 
-         WHERE o.user_id = ? 
-         GROUP BY o.id 
-         ORDER BY o.created_at DESC",
-        [$_SESSION['user_id']]
-    );
+    $sql = "SELECT o.*, COUNT(oi.id) as items 
+            FROM orders o 
+            LEFT JOIN order_items oi ON o.id = oi.order_id 
+            WHERE o.user_id = ?";
+    
+    $params = [$_SESSION['user_id']];
+    
+    if ($filter_status !== 'all') {
+        $sql .= " AND o.status = ?";
+        $params[] = $filter_status;
+    }
+    
+    $sql .= " GROUP BY o.id ORDER BY o.created_at DESC";
+    
+    $stmt = executeQuery($sql, $params);
     $orders = $stmt->fetchAll();
     
     // Transformar para compatibilidad
@@ -26,8 +34,39 @@ try {
         $order['tracking'] = $order['order_number'];
         $order['date'] = $order['created_at'];
     }
+    
+    // Calcular estadísticas por estado (siempre mostrar todos los totales)
+    $stmt_stats = executeQuery(
+        "SELECT status, COUNT(*) as count 
+         FROM orders 
+         WHERE user_id = ? 
+         GROUP BY status",
+        [$_SESSION['user_id']]
+    );
+    
+    $stats = [
+        'total' => 0,
+        'pending' => 0,
+        'processing' => 0,
+        'shipped' => 0,
+        'delivered' => 0
+    ];
+    
+    while ($row = $stmt_stats->fetch()) {
+        if (isset($stats[$row['status']])) {
+            $stats[$row['status']] = $row['count'];
+        }
+        $stats['total'] += $row['count'];
+    }
 } catch (Exception $e) {
     $orders = [];
+    $stats = [
+        'total' => 0,
+        'pending' => 0,
+        'processing' => 0,
+        'shipped' => 0,
+        'delivered' => 0
+    ];
 }
 
 function getStatusText($status) {
@@ -173,6 +212,9 @@ include __DIR__ . '/includes/header.php';
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+    display: inline-block;
 }
 
 .filter-btn:hover,
@@ -375,7 +417,7 @@ include __DIR__ . '/includes/header.php';
                     <i class="fas fa-shopping-bag"></i>
                 </div>
                 <div class="stat-info">
-                    <h3><?php echo count($orders); ?></h3>
+                    <h3><?php echo $stats['total']; ?></h3>
                     <p>Total de Pedidos</p>
                 </div>
             </div>
@@ -385,7 +427,7 @@ include __DIR__ . '/includes/header.php';
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>1</h3>
+                    <h3><?php echo $stats['delivered']; ?></h3>
                     <p>Pedidos Entregados</p>
                 </div>
             </div>
@@ -395,7 +437,7 @@ include __DIR__ . '/includes/header.php';
                     <i class="fas fa-truck"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>2</h3>
+                    <h3><?php echo $stats['shipped']; ?></h3>
                     <p>En Camino</p>
                 </div>
             </div>
@@ -403,10 +445,11 @@ include __DIR__ . '/includes/header.php';
         
         <!-- Filtros -->
         <div class="orders-filter">
-            <button class="filter-btn active">Todos</button>
-            <button class="filter-btn">En Proceso</button>
-            <button class="filter-btn">Enviados</button>
-            <button class="filter-btn">Entregados</button>
+            <a href="?status=all" class="filter-btn <?php echo $filter_status === 'all' ? 'active' : ''; ?>">Todos</a>
+            <a href="?status=pending" class="filter-btn <?php echo $filter_status === 'pending' ? 'active' : ''; ?>">Pendientes</a>
+            <a href="?status=processing" class="filter-btn <?php echo $filter_status === 'processing' ? 'active' : ''; ?>">En Proceso</a>
+            <a href="?status=shipped" class="filter-btn <?php echo $filter_status === 'shipped' ? 'active' : ''; ?>">Enviados</a>
+            <a href="?status=delivered" class="filter-btn <?php echo $filter_status === 'delivered' ? 'active' : ''; ?>">Entregados</a>
         </div>
         
         <!-- Lista de Pedidos -->

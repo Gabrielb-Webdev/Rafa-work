@@ -66,7 +66,8 @@ try {
         'total_revenue' => 0
     ];
     
-    $stmt_stats = executeQuery("SELECT status, COUNT(*) as count, SUM(total) as revenue FROM orders GROUP BY status");
+    // Usar el nombre de columna correcto: 'total' en lugar de 'total_amount'
+    $stmt_stats = executeQuery("SELECT status, COUNT(*) as count, COALESCE(SUM(total), 0) as revenue FROM orders GROUP BY status");
     while ($row = $stmt_stats->fetch()) {
         if (isset($stats[$row['status']])) {
             $stats[$row['status']] = $row['count'];
