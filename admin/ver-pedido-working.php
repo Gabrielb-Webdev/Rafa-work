@@ -1,4 +1,10 @@
 <?php
+/**
+ * Ver Detalle de Pedido - Panel Admin
+ * Version: 2.0 - UI/UX Mejorado
+ * Fecha: 31/01/2026
+ * Cambios: Diseño moderno, chat mejorado, animaciones fluidas
+ */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
