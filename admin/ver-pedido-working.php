@@ -628,14 +628,36 @@ include __DIR__ . '/header.php';
                         </form>
                     </div>
                 <?php else: ?>
-                    <div style="padding: 20px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; margin-bottom: 30px;">
-                        <strong style="color: #155724; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-check-circle"></i> Propuesta ya enviada
-                        </strong>
-                        <p style="color: #155724; margin: 10px 0 0 0;">
-                            La propuesta fue enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?>
-                        </p>
-                    </div>
+                    <!-- Propuesta Enviada -->
+                    <?php if (isset($order['proposal_accepted']) && $order['proposal_accepted']): ?>
+                        <!-- Propuesta Aceptada -->
+                        <div style="padding: 25px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);">
+                            <strong style="display: flex; align-items: center; gap: 10px; font-size: 20px; margin-bottom: 10px;">
+                                <i class="fas fa-check-double" style="font-size: 28px;"></i> ¡Propuesta Aceptada por el Cliente!
+                            </strong>
+                            <p style="margin: 5px 0 0 0; opacity: 0.95; font-size: 15px;">
+                                ✅ Propuesta enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?><br>
+                                ✅ Aceptada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
+                            </p>
+                            <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
+                                💰 Total Aceptado: $<?php echo number_format($order['proposal_total'], 2); ?>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- Propuesta Enviada pero no aceptada -->
+                        <div style="padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+                            <strong style="display: flex; align-items: center; gap: 10px; font-size: 20px; margin-bottom: 10px;">
+                                <i class="fas fa-paper-plane"></i> Propuesta Enviada - Esperando Respuesta
+                            </strong>
+                            <p style="margin: 5px 0 0 0; opacity: 0.95; font-size: 15px;">
+                                📨 La propuesta fue enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?><br>
+                                ⏳ El cliente aún no ha aceptado la propuesta
+                            </p>
+                            <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
+                                💰 Total Propuesto: $<?php echo number_format($order['proposal_total'], 2); ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
                 
                 <div class="detail-section">
