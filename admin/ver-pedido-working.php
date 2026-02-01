@@ -62,13 +62,13 @@ try {
 
 function getStatusBadge($status) {
     $badges = [
-        'pending' => '<span style="background: #ff9800; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
-        'processing' => '<span style="background: #ffc107; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-clock"></i> EN PROCESO</span>',
-        'shipped' => '<span style="background: #17a2b8; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-truck"></i> ENVIADO</span>',
-        'delivered' => '<span style="background: #28a745; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
-        'cancelled' => '<span style="background: #dc3545; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+        'pending' => '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
+        'processing' => '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> EN PROCESO</span>',
+        'shipped' => '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> ENVIADO</span>',
+        'delivered' => '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
+        'cancelled' => '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
     ];
-    return $badges[$status] ?? $status;
+    return $badges[$status] ?? '<span style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700;">' . strtoupper($status) . '</span>';
 }
 
 $pageTitle = 'Detalle del Pedido - Admin';
@@ -521,7 +521,7 @@ include __DIR__ . '/header.php';
                     <i class="fas fa-user"></i>
                     <span><?php echo htmlspecialchars($order['user_name']); ?></span>
                 </div>
-                <div class="meta-item">
+                <div class="meta-item" id="orderStatusBadge">
                     <?php echo getStatusBadge($order['status']); ?>
                 </div>
                 <?php if ($order['proposal_sent']): ?>
@@ -832,90 +832,217 @@ function calculateTotal() {
 }
 
 // Enviar propuesta
-document.getElementById('proposalForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const btn = document.getElementById('sendProposalBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando propuesta...';
-    
-    const formData = new FormData(e.target);
-    formData.append('action', 'send_proposal');
-    formData.append('order_id', orderId);
-    
-    // Agregar datos de items
-    itemsData.forEach(item => {
-        const price = document.querySelector(`[name="price_${item.id}"]`).value;
-        const subtotal = document.querySelector(`[name="subtotal_${item.id}"]`).value;
-        formData.append(`items[${item.id}][price]`, price);
-        formData.append(`items[${item.id}][subtotal]`, subtotal);
-    });
-    
-    try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/send-proposal.php', {
-            method: 'POST',
-            body: formData
+const proposalForm = document.getElementById('proposalForm');
+if (proposalForm) {
+    proposalForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById('sendProposalBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando propuesta...';
+        
+        const formData = new FormData(e.target);
+        formData.append('action', 'send_proposal');
+        formData.append('order_id', orderId);
+        
+        // Agregar datos de items si existen
+        const itemPrices = document.querySelectorAll('.item-price');
+        itemPrices.forEach(input => {
+            const itemId = input.dataset.itemId;
+            const price = input.value;
+            const subtotalEl = document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`);
+            const subtotal = subtotalEl ? subtotalEl.value : 0;
+            formData.append(`items[${itemId}][price]`, price);
+            formData.append(`items[${itemId}][subtotal]`, subtotal);
         });
         
-        const data = await response.json();
-        
-        if (data.success) {
-            alert('✅ Propuesta enviada exitosamente. Se ha notificado al cliente por email.');
-            location.reload();
-        } else {
-            alert('❌ Error: ' + data.message);
+        try {
+            const response = await fetch('<?php echo BASE_URL; ?>/api/send-proposal.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('✅ Propuesta enviada exitosamente. Se ha notificado al cliente por email y por chat.');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+        } catch (error) {
+            alert('❌ Error de conexión al enviar la propuesta');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
-    } catch (error) {
-        alert('❌ Error de conexión al enviar la propuesta');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Propuesta al Cliente';
-    }
-});
+    });
+}
+</script>
 
-// Chat
+<style>
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<?php include __DIR__ . '/footer.php'; ?>
+// Chat en tiempo real
 const chatMessages = document.getElementById('chatMessages');
 const chatForm = document.getElementById('chatForm');
 const messageInput = document.getElementById('messageInput');
+const orderId = <?php echo $order_id; ?>;
 
 function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 scrollToBottom();
 
-chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const message = messageInput.value.trim();
-    if (!message) return;
-    
-    const btn = document.getElementById('sendChatBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
+// Función para cargar mensajes sin recargar la página
+async function loadMessages() {
     try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `action=send&order_id=${orderId}&message=${encodeURIComponent(message)}`
-        });
+        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?action=get&order_id=' + orderId);
+        const data = await response.json();
         
+        if (data.success && data.messages) {
+            updateChatMessages(data.messages);
+        }
+    } catch (error) {
+        console.error('Error al cargar mensajes:', error);
+    }
+}
+
+function updateChatMessages(messages) {
+    if (!chatMessages) return;
+    
+    const currentScroll = chatMessages.scrollHeight - chatMessages.scrollTop;
+    const wasAtBottom = currentScroll <= chatMessages.clientHeight + 50;
+    
+    chatMessages.innerHTML = '';
+    
+    if (messages.length === 0) {
+        chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
+    } else {
+        messages.forEach(msg => {
+            const isAdmin = msg.user_role === 'admin';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.style.cssText = `
+                background: ${isAdmin ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f8f9fa'};
+                color: ${isAdmin ? 'white' : '#2c3e50'};
+                padding: 15px 20px;
+                border-radius: 20px;
+                margin-bottom: 15px;
+                max-width: 70%;
+                ${isAdmin ? 'margin-left: auto;' : 'margin-right: auto;'}
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            messageDiv.innerHTML = `
+                <div style="font-weight: 700; font-size: 12px; margin-bottom: 5px; opacity: 0.8; text-transform: uppercase;">
+                    ${msg.sender_name || 'Usuario'}
+                </div>
+                <div style="white-space: pre-wrap; line-height: 1.5;">
+                    ${msg.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                </div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.7;">
+                    ${new Date(msg.created_at).toLocaleString('es-MX')}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+        });
+    }
+    
+    if (wasAtBottom) {
+        scrollToBottom();
+    }
+}
+
+// Polling cada 3 segundos para actualizar mensajes
+setInterval(loadMessages, 3000);
+
+// Actualizar estado del pedido en tiempo real
+async function updateOrderStatus() {
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/get-order-status.php?order_id=' + orderId);
         const data = await response.json();
         
         if (data.success) {
-            messageInput.value = '';
-            location.reload();
-        } else {
-            alert('Error al enviar el mensaje: ' + data.message);
+            updateStatusBadge(data.status, data.proposal_sent);
         }
     } catch (error) {
-        alert('Error de conexión al enviar el mensaje');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
+        console.error('Error al actualizar estado:', error);
     }
-});
-</script>
+}
 
-<?php include __DIR__ . '/footer.php'; ?>
+function updateStatusBadge(status, proposalSent) {
+    const badges = {
+        'pending': '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
+        'processing': '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> EN PROCESO</span>',
+        'shipped': '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> ENVIADO</span>',
+        'delivered': '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
+        'cancelled': '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+    };
+    
+    const badgeEl = document.getElementById('orderStatusBadge');
+    if (badgeEl && badges[status]) {
+        badgeEl.innerHTML = badges[status];
+    }
+}
+
+// Actualizar estado cada 5 segundos
+setInterval(updateOrderStatus, 5000);
+
+// Enviar mensaje sin recargar
+if (chatForm) {
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        const btn = document.getElementById('sendChatBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                messageInput.value = '';
+                // Cargar mensajes inmediatamente
+                await loadMessages();
+            } else {
+                alert('Error al enviar el mensaje: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error de conexión al enviar el mensaje');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+}
+
+// Calcular subtotales automáticamente
+document.querySelectorAll('.item-price').forEach(input => {
