@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $description = trim($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $stock = intval($_POST['stock'] ?? 0);
-    $category = trim($_POST['category'] ?? '');
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Manejo de imagen
@@ -35,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     if (!empty($name) && $price > 0) {
         try {
             executeQuery(
-                "INSERT INTO products (name, description, price, stock, category, image, is_active, created_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())",
-                [$name, $description, $price, $stock, $category, $image, $is_active]
+                "INSERT INTO products (name, description, price, stock, image, is_active, created_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
+                [$name, $description, $price, $stock, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
         } catch (Exception $e) {
@@ -55,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $description = trim($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $stock = intval($_POST['stock'] ?? 0);
-    $category = trim($_POST['category'] ?? '');
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Manejo de imagen
@@ -66,13 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
         
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category = ?, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $description, $price, $stock, $category, $image, $is_active, $id]
+            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $description, $price, $stock, $image, $is_active, $id]
         );
     } else {
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $description, $price, $stock, $category, $is_active, $id]
+            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $description, $price, $stock, $is_active, $id]
         );
     }
     
@@ -707,11 +705,6 @@ tr:last-child td {
                     <label>Stock *</label>
                     <input type="number" name="stock" id="stock" min="0" required>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label>Categoría</label>
-                <input type="text" name="category" id="category" placeholder="Ej: Suplementos, Vitaminas, etc.">
             </div>
             
             <div class="form-group">
