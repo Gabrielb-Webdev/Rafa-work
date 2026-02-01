@@ -68,10 +68,8 @@ try {
     // Tabla no existe
 }
 
-$pageTitle = "Pedido #" . $order['order_number'];
-require_once 'header.php';
-?>
-
+// Estilos personalizados para esta página
+$custom_styles = '
 <style>
 /* ===============================================
    DISEÑO COMPLETAMENTE NUEVO Y ULTRA MODERNO
@@ -80,7 +78,7 @@ require_once 'header.php';
 body {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
     min-height: 100vh;
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif !important;
 }
 
 /* Hero Header con Gradiente Espectacular */
@@ -96,7 +94,7 @@ body {
 }
 
 .hero-header::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -50%;
     right: -10%;
@@ -107,7 +105,7 @@ body {
 }
 
 .hero-header::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -30%;
     left: -5%;
@@ -663,9 +661,15 @@ body {
         font-size: 48px;
     }
 }
-    </style>
-</head>
-<body>
+</style>
+';
+
+$pageTitle = "Pedido #" . $order['order_number'];
+require_once 'header.php';
+?>
+
+<!-- Inyectar estilos personalizados -->
+<?php echo $custom_styles; ?>
 
 <div class="container-fluid px-4 py-4">
     <!-- Hero Header -->
