@@ -199,20 +199,39 @@ body::before {
 }
 
 .auth-form .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     position: relative;
 }
 
 .auth-form label {
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     font-weight: 700;
     color: #2c3e50;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     position: relative;
     z-index: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.auth-form label .required-star {
+    color: #dc3545;
+    font-size: 12px;
+}
+
+.auth-form label .optional-badge {
+    font-size: 10px;
+    background: #e9ecef;
+    color: #6c757d;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: none;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .auth-form .input-icon {
@@ -263,7 +282,7 @@ body::before {
 
 .auth-form input {
     width: 100%;
-    padding: 16px 18px;
+    padding: 15px 18px;
     border: 2px solid #e9ecef;
     border-radius: 12px;
     font-size: 15px;
@@ -271,53 +290,59 @@ body::before {
     background-color: #f8f9fa;
     font-weight: 500;
     color: #2c3e50;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .auth-form input::placeholder {
     color: #adb5bd;
     font-weight: 400;
+    font-size: 14px;
 }
 
 .auth-form input:focus {
     outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.12);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(102, 126, 234, 0.1);
     background-color: #fff;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .auth-form input:hover:not(:focus) {
     border-color: #d1d5db;
+    background-color: #fff;
 }
 
 .auth-form input.valid {
     border-color: #28a745;
     background-color: #f0fff4;
+    padding-right: 45px;
 }
 
 .auth-form input.valid:focus {
-    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.12);
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15), 0 4px 12px rgba(40, 167, 69, 0.1);
 }
 
 .auth-form input.invalid {
     border-color: #dc3545;
     background-color: #fff5f5;
     animation: shake 0.4s ease;
+    padding-right: 45px;
 }
 
 .auth-form input.invalid:focus {
-    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.12);
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.15), 0 4px 12px rgba(220, 53, 69, 0.1);
 }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
 }
 
 .password-strength {
-    margin-top: 8px;
+    margin-top: 12px;
     display: none;
+    animation: slideDown 0.3s ease;
 }
 
 .password-strength.active {
@@ -325,40 +350,70 @@ body::before {
 }
 
 .strength-bar {
-    height: 4px;
+    height: 6px;
     background: #e9ecef;
-    border-radius: 2px;
+    border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .strength-fill {
     height: 100%;
     width: 0%;
-    transition: all 0.3s ease;
-    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.strength-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
 
 .strength-fill.weak {
     width: 33%;
-    background: #dc3545;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
 }
 
 .strength-fill.medium {
     width: 66%;
-    background: #ffc107;
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
 }
 
 .strength-fill.strong {
     width: 100%;
-    background: #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
 }
 
 .strength-text {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.strength-text::before {
+    content: '●';
+    font-size: 16px;
 }
 
 .strength-text.weak { color: #dc3545; }
@@ -406,21 +461,21 @@ body::before {
 
 .auth-form button {
     width: 100%;
-    padding: 18px;
+    padding: 17px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     border-radius: 12px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 10px;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    letter-spacing: 1.2px;
+    margin-top: 12px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
 .auth-form button::before {
@@ -430,27 +485,41 @@ body::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
 }
 
 .auth-form button:hover::before {
     left: 100%;
 }
 
+.auth-form button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
 .auth-form button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
 }
 
 .auth-form button:active {
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(0.99);
 }
 
 .auth-form button:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     cursor: not-allowed;
     transform: none;
+    filter: grayscale(0.3);
 }
 
 .auth-links {
@@ -595,7 +664,10 @@ body::before {
         
         <form class="auth-form" method="POST" id="registerForm">
             <div class="form-group">
-                <label for="full_name">Full Name *</label>
+                <label for="full_name">
+                    <span>Full Name</span>
+                    <span class="required-star">*</span>
+                </label>
                 <div class="input-icon">
                     <input type="text" id="full_name" name="full_name" required 
                            placeholder="John Doe"
@@ -606,7 +678,10 @@ body::before {
             </div>
             
             <div class="form-group">
-                <label for="email">Email *</label>
+                <label for="email">
+                    <span>Email Address</span>
+                    <span class="required-star">*</span>
+                </label>
                 <div class="input-icon">
                     <input type="email" id="email" name="email" required 
                            placeholder="your@email.com"
@@ -617,7 +692,10 @@ body::before {
             </div>
             
             <div class="form-group">
-                <label for="phone">Phone (Optional)</label>
+                <label for="phone">
+                    <span>Phone Number</span>
+                    <span class="optional-badge">Optional</span>
+                </label>
                 <div class="input-icon">
                     <input type="tel" id="phone" name="phone" 
                            placeholder="+1 234 567 8900"
@@ -627,10 +705,13 @@ body::before {
             </div>
             
             <div class="form-group">
-                <label for="password">Password *</label>
+                <label for="password">
+                    <span>Create Password</span>
+                    <span class="required-star">*</span>
+                </label>
                 <div class="input-icon">
                     <input type="password" id="password" name="password" required 
-                           minlength="6" placeholder="Minimum 6 characters">
+                           minlength="6" placeholder="At least 6 characters">
                     <i class="fas fa-lock"></i>
                     <i class="fas fa-eye password-toggle" id="togglePassword"></i>
                 </div>
@@ -643,10 +724,13 @@ body::before {
             </div>
             
             <div class="form-group">
-                <label for="confirm_password">Confirm Password *</label>
+                <label for="confirm_password">
+                    <span>Confirm Password</span>
+                    <span class="required-star">*</span>
+                </label>
                 <div class="input-icon">
                     <input type="password" id="confirm_password" name="confirm_password" required
-                           placeholder="Repeat your password">
+                           placeholder="Enter the same password">
                     <i class="fas fa-lock"></i>
                     <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
                 </div>
