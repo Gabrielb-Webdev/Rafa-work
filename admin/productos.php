@@ -733,19 +733,19 @@ tr:last-child td {
 <section class="admin-page">
     <div class="admin-container">
         <div class="admin-header">
-            <h1><i class="fas fa-pills"></i> Gestión de Productos</h1>
+            <h1><i class="fas fa-pills"></i> Product Management</h1>
             <div class="header-actions">
                 <a href="<?php echo BASE_URL; ?>/admin" class="btn btn-back">
-                    <i class="fas fa-arrow-left"></i> Volver
+                    <i class="fas fa-arrow-left"></i> Back
                 </a>
                 <a href="<?php echo BASE_URL; ?>/admin/download-csv-example.php" class="btn btn-download">
-                    <i class="fas fa-download"></i> CSV Ejemplo
+                    <i class="fas fa-download"></i> CSV Sample
                 </a>
                 <button class="btn btn-upload" onclick="document.getElementById('csvUploadModal').classList.add('show')">
-                    <i class="fas fa-file-upload"></i> Importar CSV
+                    <i class="fas fa-file-upload"></i> Import CSV
                 </button>
                 <button class="btn btn-add" onclick="openAddModal()">
-                    <i class="fas fa-plus"></i> Agregar Producto
+                    <i class="fas fa-plus"></i> Add Product
                 </button>
             </div>
         </div>
@@ -764,38 +764,38 @@ tr:last-child td {
             </div>
         <?php endif; ?>
         
-        <!-- Estadísticas -->
+        <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['total']; ?></div>
-                <div class="stat-label">Total Productos</div>
+                <div class="stat-label">Total Products</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['active']; ?></div>
-                <div class="stat-label">Productos Activos</div>
+                <div class="stat-label">Active Products</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" style="color: #ff9800;"><?php echo $stats['low_stock']; ?></div>
-                <div class="stat-label">Bajo Stock (&lt;10)</div>
+                <div class="stat-label">Low Stock (&lt;10)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">$<?php echo number_format($stats['total_value'], 2); ?></div>
-                <div class="stat-label">Valor Total Inventario</div>
+                <div class="stat-label">Total Inventory Value</div>
             </div>
         </div>
         
-        <!-- Filtros -->
+        <!-- Filters -->
         <div class="filters-section">
             <div class="filters-row">
                 <div class="filter-group">
-                    <a href="?active=all" class="filter-btn <?php echo $filter_active === 'all' ? 'active' : ''; ?>">Todos</a>
-                    <a href="?active=1" class="filter-btn <?php echo $filter_active === '1' ? 'active' : ''; ?>">Activos</a>
-                    <a href="?active=0" class="filter-btn <?php echo $filter_active === '0' ? 'active' : ''; ?>">Inactivos</a>
+                    <a href="?active=all" class="filter-btn <?php echo $filter_active === 'all' ? 'active' : ''; ?>">All</a>
+                    <a href="?active=1" class="filter-btn <?php echo $filter_active === '1' ? 'active' : ''; ?>">Active</a>
+                    <a href="?active=0" class="filter-btn <?php echo $filter_active === '0' ? 'active' : ''; ?>">Inactive</a>
                 </div>
                 
                 <div class="search-box">
                     <form method="GET">
-                        <input type="text" name="search" placeholder="Buscar por nombre o categoría..." 
+                        <input type="text" name="search" placeholder="Search by name or category..." 
                                value="<?php echo htmlspecialchars($search); ?>">
                         <?php if ($filter_active !== 'all'): ?>
                             <input type="hidden" name="active" value="<?php echo $filter_active; ?>">
@@ -810,8 +810,8 @@ tr:last-child td {
             <div class="products-table">
                 <div class="empty-state">
                     <i class="fas fa-box-open"></i>
-                    <h3>No hay productos</h3>
-                    <p>Comienza agregando tu primer producto</p>
+                    <h3>No products</h3>
+                    <p>Start by adding your first product</p>
                 </div>
             </div>
         <?php else: ?>
@@ -819,11 +819,11 @@ tr:last-child td {
                 <table>
                     <thead>
                         <tr>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
-                            <th>Categoría</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -845,10 +845,10 @@ tr:last-child td {
                                         <?php echo substr(htmlspecialchars($product['description']), 0, 50); ?>...
                                     </div>
                                 </td>
-                                <td><?php echo htmlspecialchars($product['category'] ?? 'Sin categoría'); ?></td>
+                                <td><?php echo htmlspecialchars($product['category'] ?? 'No category'); ?></td>
                                 <td>
                                     <span class="status-badge status-<?php echo $product['is_active'] ? 'active' : 'inactive'; ?>">
-                                        <?php echo $product['is_active'] ? 'Activo' : 'Inactivo'; ?>
+                                        <?php echo $product['is_active'] ? 'Active' : 'Inactive'; ?>
                                     </span>
                                 </td>
                                 <td>
@@ -868,11 +868,11 @@ tr:last-child td {
     </div>
 </section>
 
-<!-- Modal Agregar/Editar Producto -->
+<!-- Add/Edit Product Modal -->
 <div id="productModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="modalTitle">Agregar Producto</h2>
+            <h2 id="modalTitle">Add Product</h2>
             <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
         
@@ -880,71 +880,71 @@ tr:last-child td {
             <input type="hidden" name="product_id" id="product_id">
             
             <div class="form-group">
-                <label>Nombre del Producto *</label>
+                <label>Product Name *</label>
                 <input type="text" name="name" id="name" required>
             </div>
             
             <div class="form-group">
-                <label>Descripción</label>
+                <label>Description</label>
                 <textarea name="description" id="description" rows="4"></textarea>
             </div>
             
             <div class="form-group">
-                <label>Stock Disponible (Cantidad Ilimitada)</label>
+                <label>Available Stock (Unlimited Quantity)</label>
                 <input type="number" name="stock" id="stock" value="999999" min="0">
-                <small style="color: #6c757d; font-size: 12px;">Cantidad disponible para pedidos. Usa un número alto para stock ilimitado.</small>
+                <small style="color: #6c757d; font-size: 12px;">Available quantity for orders. Use a high number for unlimited stock.</small>
             </div>
             
             <div class="form-group">
-                <label>Imagen del Producto</label>
+                <label>Product Image</label>
                 <label class="custom-file-upload">
                     <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
                     <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
-                    <div class="file-upload-text">Haz clic o arrastra una imagen aquí</div>
-                    <div class="file-upload-hint">PNG, JPG o JPEG (Máx. 5MB)</div>
+                    <div class="file-upload-text">Click or drag an image here</div>
+                    <div class="file-upload-hint">PNG, JPG or JPEG (Max. 5MB)</div>
                 </label>
                 <div id="fileNameDisplay" class="file-name-display">
                     <i class="fas fa-file-image"></i> <span id="fileName"></span>
                 </div>
                 <div id="imagePreviewContainer" class="image-preview-container">
                     <img id="imagePreview" class="image-preview" src="" alt="Preview">
-                    <div class="image-preview-label">Vista previa de la imagen</div>
+                    <div class="image-preview-label">Image preview</div>
                 </div>
             </div>
             
             <div class="form-group">
                 <div class="checkbox-group">
                     <input type="checkbox" name="is_active" id="is_active" checked>
-                    <label for="is_active" style="margin: 0;">Producto Activo</label>
+                    <label for="is_active" style="margin: 0;">Active Product</label>
                 </div>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="btn btn-back" onclick="closeModal()">Cancelar</button>
+                <button type="button" class="btn btn-back" onclick="closeModal()">Cancel</button>
                 <button type="submit" name="add_product" id="submitBtn" class="btn btn-add">
-                    <i class="fas fa-save"></i> Guardar Producto
+                    <i class="fas fa-save"></i> Save Product
                 </button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Modal Importar CSV -->
+<!-- Import CSV Modal -->
 <div id="csvUploadModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Importar Productos desde CSV</h2>
+            <h2>Import Products from CSV</h2>
             <button class="btn-close" onclick="document.getElementById('csvUploadModal').classList.remove('show')">&times;</button>
         </div>
         
         <form action="<?php echo BASE_URL; ?>/admin/import-csv.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label>Selecciona el archivo CSV</label>
+                <label>Select CSV file</label>
                 <input type="file" name="csv_file" accept=".csv" required>
                 <small style="color: #6c757d; font-size: 12px;">
-                    El archivo debe tener el formato: nombre,descripcion,stock<br>
+                    The file must have the format: name,description,stock<br>
                     <a href="<?php echo BASE_URL; ?>/admin/download-csv-example.php" style="color: #17a2b8;">
-                        <i class="fas fa-download"></i> Descargar archivo de ejemplo
+                        <i class="fas fa-download"></i> Download sample file
                     </a>
                 </small>
             </div>
@@ -1000,10 +1000,10 @@ function previewImage(event) {
 }
 
 function openAddModal() {
-    document.getElementById('modalTitle').textContent = 'Agregar Producto';
+    document.getElementById('modalTitle').textContent = 'Add Product';
     document.getElementById('productForm').reset();
     document.getElementById('product_id').value = '';
-    document.getElementById('stock').value = '999999'; // Stock alto por defecto
+    document.getElementById('stock').value = '999999'; // High stock by default
     document.getElementById('submitBtn').name = 'add_product';
     
     // Limpiar preview de imagen
@@ -1021,7 +1021,7 @@ function openAddModal() {
 }
 
 function editProduct(product) {
-    document.getElementById('modalTitle').textContent = 'Editar Producto';
+    document.getElementById('modalTitle').textContent = 'Edit Product';
     document.getElementById('product_id').value = product.id;
     document.getElementById('name').value = product.name;
     document.getElementById('description').value = product.description || '';
@@ -1055,7 +1055,7 @@ function closeModal() {
 }
 
 function deleteProduct(id, name) {
-    if (confirm(`¿Estás seguro de eliminar el producto "${name}"?\n\nEsta acción no se puede deshacer.`)) {
+    if (confirm(`Are you sure you want to delete the product "${name}"?\n\nThis action cannot be undone.`)) {
         window.location.href = '?delete=' + id;
     }
 }

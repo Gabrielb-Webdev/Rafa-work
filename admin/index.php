@@ -39,43 +39,43 @@ include 'header.php';
 <div class="stats-grid">
     <div class="stat-card">
         <i class="fas fa-pills"></i>
-        <h3>Total Productos</h3>
+        <h3>Total Products</h3>
         <div class="stat-value"><?php echo $totalProducts; ?></div>
     </div>
     <div class="stat-card">
         <i class="fas fa-shopping-bag"></i>
-        <h3>Total Pedidos</h3>
+        <h3>Total Orders</h3>
         <div class="stat-value"><?php echo $totalOrders; ?></div>
     </div>
     <div class="stat-card">
         <i class="fas fa-clock"></i>
-        <h3>Pendientes</h3>
+        <h3>Pending</h3>
         <div class="stat-value" style="color: #ff9800;"><?php echo $pendingOrders; ?></div>
     </div>
     <div class="stat-card">
         <i class="fas fa-users"></i>
-        <h3>Usuarios</h3>
+        <h3>Users</h3>
         <div class="stat-value"><?php echo $totalUsers; ?></div>
     </div>
     <div class="stat-card">
         <i class="fas fa-dollar-sign"></i>
-        <h3>Ventas Totales</h3>
+        <h3>Total Sales</h3>
         <div class="stat-value">$<?php echo number_format($totalSales, 2); ?></div>
-        <small style="color: var(--text-light);">ARS</small>
+        <small style="color: var(--text-light);">USD</small>
     </div>
 </div>
 
 <div class="card">
-    <h3 style="margin-bottom: 20px;"><i class="fas fa-shopping-bag"></i> Pedidos Recientes</h3>
+    <h3 style="margin-bottom: 20px;"><i class="fas fa-shopping-bag"></i> Recent Orders</h3>
     <?php if (!empty($recentOrders)): ?>
         <table>
             <thead>
                 <tr>
-                    <th>Nº Pedido</th>
-                    <th>Cliente</th>
+                    <th>Order #</th>
+                    <th>Customer</th>
                     <th>Total</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
+                    <th>Status</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,13 +85,13 @@ include 'header.php';
                         <td><?php echo htmlspecialchars($order['full_name']); ?></td>
                         <td>$<?php echo number_format($order['total'], 2); ?></td>
                         <td><span class="status-badge status-<?php echo $order['status']; ?>"><?php echo ucfirst($order['status']); ?></span></td>
-                        <td><?php echo date('d/m/Y', strtotime($order['created_at'])); ?></td>
+                        <td><?php echo date('m/d/Y', strtotime($order['created_at'])); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p style="text-align: center; padding: 40px; color: var(--text-light);">No hay pedidos todavía</p>
+        <p style="text-align: center; padding: 40px; color: var(--text-light);">No orders yet</p>
     <?php endif; ?>
 </div>
 
