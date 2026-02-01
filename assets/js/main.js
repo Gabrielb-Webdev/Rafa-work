@@ -27,15 +27,25 @@ function updateCartCount() {
 // Initialize search functionality
 function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    
+    function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            window.location.href = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/products.php?search=${encodeURIComponent(searchTerm)}`;
+        }
+    }
+    
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const searchTerm = this.value.trim();
-                if (searchTerm) {
-                    window.location.href = `products.php?search=${encodeURIComponent(searchTerm)}`;
-                }
+                performSearch();
             }
         });
+    }
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', performSearch);
     }
 }
 

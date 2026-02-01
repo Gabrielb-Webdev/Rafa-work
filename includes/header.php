@@ -44,7 +44,7 @@
             <div class="nav-right">
                 <div class="search-box">
                     <input type="text" placeholder="SEARCH" id="searchInput">
-                    <button type="button"><i class="fas fa-search"></i></button>
+                    <button type="button" id="searchButton"><i class="fas fa-search"></i></button>
                 </div>
 
                 <a href="<?php echo BASE_URL; ?>/cart.php" class="cart-icon">

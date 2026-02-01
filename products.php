@@ -11,9 +11,20 @@ $pageTitle = 'Products - Online Medicine Store';
 
 include __DIR__ . '/includes/header.php';
 
+// Get search term
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 // Get products from database
 try {
-    $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY (stock > 0) DESC, stock DESC, created_at DESC");
+    if ($searchTerm) {
+        // Search in name and description
+        $stmt = executeQuery(
+            "SELECT * FROM products WHERE is_active = 1 AND (name LIKE ? OR description LIKE ?) ORDER BY (stock > 0) DESC, stock DESC, created_at DESC",
+            ['%' . $searchTerm . '%', '%' . $searchTerm . '%']
+        );
+    } else {
+        $stmt = executeQuery("SELECT * FROM products WHERE is_active = 1 ORDER BY (stock > 0) DESC, stock DESC, created_at DESC");
+    }
     $allProducts = $stmt->fetchAll();
 } catch (Exception $e) {
     $allProducts = [];
@@ -511,14 +522,42 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
         <!-- Products Section -->
         <div class="products-category-section">
             <div class="category-header">
-                <h2 class="category-title">ALL PRODUCTS</h2>
+                <h2 class="category-title"><?php echo $searchTerm ? 'SEARCH RESULTS' : 'ALL PRODUCTS'; ?></h2>
+                <?php if ($searchTerm): ?>
+                    <div style="margin-bottom: 20px;">
+                        <p style="color: #6c757d; font-size: 16px;">
+                            Searching for: <strong>"<?php echo htmlspecialchars($searchTerm); ?>"</strong>
+                            <a href="<?php echo BASE_URL; ?>/products.php" style="color: #00d4d4; text-decoration: none; margin-left: 15px;">
+                                <i class="fas fa-times-circle"></i> Clear search
+                            </a>
+                        </p>
+                    </div>
+                <?php endif; ?>
                 <div class="products-count-info">
                     Showing <?php echo count($productsToDisplay); ?> of <?php echo $totalProducts; ?> products
                 </div>
             </div>
             
             <div class="products-grid">
-                <?php foreach ($productsToDisplay as $product): ?>
+                <?php if (empty($productsToDisplay)): ?>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 80px 20px;">
+                        <i class="fas fa-search" style="font-size: 64px; color: #dee2e6; margin-bottom: 20px;"></i>
+                        <h3 style="color: #6c757d; margin-bottom: 10px;">No products found</h3>
+                        <p style="color: #adb5bd; margin-bottom: 30px;">
+                            <?php if ($searchTerm): ?>
+                                No results for "<?php echo htmlspecialchars($searchTerm); ?>"
+                            <?php else: ?>
+                                There are no products available at the moment
+                            <?php endif; ?>
+                        </p>
+                        <?php if ($searchTerm): ?>
+                            <a href="<?php echo BASE_URL; ?>/products.php" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: 700;">
+                                <i class="fas fa-arrow-left"></i> View all products
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($productsToDisplay as $product): ?>
                     <div class="product-card-page" style="cursor: pointer;">
                         <?php if ($product['stock'] > 0): ?>
                             <div class="product-badge-page">Available</div>
@@ -557,6 +596,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -564,8 +604,11 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
         <?php if ($totalPages > 1): ?>
         <div class="pagination-section">
             <div class="pagination">
+                <?php 
+                $searchParam = $searchTerm ? '&search=' . urlencode($searchTerm) : '';
+                ?>
                 <?php if ($currentPage > 1): ?>
-                    <a href="?page=<?php echo $currentPage - 1; ?>" class="pagination-btn pagination-prev">
+                    <a href="?page=<?php echo $currentPage - 1; ?><?php echo $searchParam; ?>" class="pagination-btn pagination-prev">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 <?php endif; ?>
@@ -576,14 +619,14 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                 $endPage = min($totalPages, $currentPage + 2);
 
                 if ($startPage > 1): ?>
-                    <a href="?page=1" class="pagination-number">1</a>
+                    <a href="?page=1<?php echo $searchParam; ?>" class="pagination-number">1</a>
                     <?php if ($startPage > 2): ?>
                         <span class="pagination-dots">...</span>
                     <?php endif; ?>
                 <?php endif; ?>
 
                 <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                    <a href="?page=<?php echo $i; ?>" 
+                    <a href="?page=<?php echo $i; ?><?php echo $searchParam; ?>" 
                        class="pagination-number <?php echo $i === $currentPage ? 'active' : ''; ?>">
                         <?php echo $i; ?>
                     </a>
@@ -593,11 +636,11 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                     <?php if ($endPage < $totalPages - 1): ?>
                         <span class="pagination-dots">...</span>
                     <?php endif; ?>
-                    <a href="?page=<?php echo $totalPages; ?>" class="pagination-number"><?php echo $totalPages; ?></a>
+                    <a href="?page=<?php echo $totalPages; ?><?php echo $searchParam; ?>" class="pagination-number"><?php echo $totalPages; ?></a>
                 <?php endif; ?>
 
                 <?php if ($currentPage < $totalPages): ?>
-                    <a href="?page=<?php echo $currentPage + 1; ?>" class="pagination-btn pagination-next">
+                    <a href="?page=<?php echo $currentPage + 1; ?><?php echo $searchParam; ?>" class="pagination-btn pagination-next">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 <?php endif; ?>
