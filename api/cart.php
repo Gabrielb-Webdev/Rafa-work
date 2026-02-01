@@ -1,9 +1,9 @@
 <?php
 /**
  * API del Carrito de Compras
- * Version: 2.2 - Sistema de Cotización con Debug Completo de BD
+ * Version: 2.3 - Verificación de Usuario Antes de Guardar en BD
  * Fecha: 31/01/2026
- * Cambios: Mejorado saveCartItemToDB para retornar detalles de errores
+ * Cambios: Verifica que el user_id existe antes de guardar en cart
  */
 session_start();
 header('Content-Type: application/json');
@@ -48,7 +48,15 @@ function getCartFromDB($userId) {
 // Función para guardar item en BD
 function saveCartItemToDB($userId, $productId, $quantity) {
     try {
-        // Verificar si ya existe
+        // Primero verificar que el usuario existe
+        $stmt = executeQuery("SELECT id FROM users WHERE id = ?", [$userId]);
+        $user = $stmt->fetch();
+        
+        if (!$user) {
+            return ['success' => false, 'error' => 'Usuario no existe en la base de datos (ID: ' . $userId . ')'];
+        }
+        
+        // Verificar si ya existe el item en el carrito
         $stmt = executeQuery("SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?", [$userId, $productId]);
         $existing = $stmt->fetch();
         
