@@ -537,7 +537,6 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                         </div>
                         <div class="product-info-page">
                             <h3 class="product-name" onclick='showProductModal(<?php echo json_encode($product); ?>)' style="cursor: pointer; font-size: 16px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;"><?php echo htmlspecialchars($product['name']); ?></h3>
-                            <div class="product-category-page"><?php echo htmlspecialchars($product['category'] ?? 'No category'); ?></div>
                             <div style="padding: 10px 0; color: #6c757d; font-size: 14px; font-style: italic;">
                                 💬 Request quote
                             </div>
@@ -617,7 +616,6 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                 <div id="modalImage" style="width: 100%; height: 400px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center;"></div>
                 <div>
                     <h2 id="modalName" style="font-size: 28px; margin-bottom: 15px; color: #2c3e50;"></h2>
-                    <div id="modalCategory" style="display: inline-block; background: #00d4d4; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px;"></div>
                     <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-bottom: 20px;">
                         <div style="font-weight: 700; color: #856404; margin-bottom: 5px;">💬 Price under quotation</div>
                         <div style="font-size: 14px; color: #856404;">Add this product to your order and you will receive a personalized proposal</div>
@@ -695,7 +693,6 @@ function showProductModal(product) {
     }
     
     document.getElementById('modalName').textContent = product.name;
-    document.getElementById('modalCategory').textContent = product.category || 'No category';
     document.getElementById('modalDescription').textContent = product.description || 'No description available';
     document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Available quantity: <strong>No limit</strong> (personalized quotation)`;
     document.getElementById('modalQuantity').value = 1;
