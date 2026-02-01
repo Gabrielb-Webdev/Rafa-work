@@ -21,6 +21,20 @@ if (isset($_GET['success'])) {
     }
 }
 
+// Mensajes de importación CSV
+if (isset($_GET['csv_imported'])) {
+    $success = 'Se importaron ' . intval($_GET['csv_imported']) . ' productos correctamente';
+    if (isset($_SESSION['csv_import_errors']) && !empty($_SESSION['csv_import_errors'])) {
+        $error = 'Algunos productos tuvieron errores: ' . implode(', ', $_SESSION['csv_import_errors']);
+        unset($_SESSION['csv_import_errors']);
+    }
+}
+
+if (isset($_GET['csv_error'])) {
+    $error = $_SESSION['csv_import_error'] ?? 'Error al importar el archivo CSV';
+    unset($_SESSION['csv_import_error']);
+}
+
 // Agregar producto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $name = trim($_POST['name'] ?? '');
@@ -258,6 +272,46 @@ include __DIR__ . '/header.php';
 .btn-add {
     background: #28a745;
     color: white;
+}
+
+.btn-add:hover {
+    background: #218838;
+}
+
+.btn-download {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #138496;
+}
+
+.btn-upload {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-upload:hover {
+    background: #e0a800;
+}
+
+.btn-download {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #138496;
+}
+
+.btn-upload {
+    background: #ffc107;
+    color: #000;
+}
+
+.btn-upload:hover {
+    background: #e0a800;
 }
 
 .btn-add:hover {
@@ -594,6 +648,12 @@ tr:last-child td {
                 <a href="<?php echo BASE_URL; ?>/admin" class="btn btn-back">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
+                <a href="<?php echo BASE_URL; ?>/admin/download-csv-example.php" class="btn btn-download">
+                    <i class="fas fa-download"></i> CSV Ejemplo
+                </a>
+                <button class="btn btn-upload" onclick="document.getElementById('csvUploadModal').classList.add('show')">
+                    <i class="fas fa-file-upload"></i> Importar CSV
+                </button>
                 <button class="btn btn-add" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Agregar Producto
                 </button>
@@ -761,6 +821,46 @@ tr:last-child td {
                 <button type="button" class="btn btn-back" onclick="closeModal()">Cancelar</button>
                 <button type="submit" name="add_product" id="submitBtn" class="btn btn-add">
                     <i class="fas fa-save"></i> Guardar Producto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Importar CSV -->
+<div id="csvUploadModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Importar Productos desde CSV</h2>
+            <button class="btn-close" onclick="document.getElementById('csvUploadModal').classList.remove('show')">&times;</button>
+        </div>
+        
+        <form action="<?php echo BASE_URL; ?>/admin/import-csv.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Selecciona el archivo CSV</label>
+                <input type="file" name="csv_file" accept=".csv" required>
+                <small style="color: #6c757d; font-size: 12px;">
+                    El archivo debe tener el formato: nombre,descripcion,stock<br>
+                    <a href="<?php echo BASE_URL; ?>/admin/download-csv-example.php" style="color: #17a2b8;">
+                        <i class="fas fa-download"></i> Descargar archivo de ejemplo
+                    </a>
+                </small>
+            </div>
+            
+            <div style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px; margin-bottom: 20px;">
+                <strong style="color: #856404;">Instrucciones:</strong>
+                <ul style="margin: 10px 0 0 20px; color: #856404; font-size: 14px;">
+                    <li>La primera fila debe contener los encabezados</li>
+                    <li>Formato: nombre,descripcion,stock</li>
+                    <li>El stock es opcional (por defecto será 999999)</li>
+                    <li>Los productos se crearán como activos</li>
+                </ul>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-back" onclick="document.getElementById('csvUploadModal').classList.remove('show')">Cancelar</button>
+                <button type="submit" class="btn btn-upload">
+                    <i class="fas fa-upload"></i> Importar Productos
                 </button>
             </div>
         </form>
