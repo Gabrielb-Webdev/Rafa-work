@@ -14,8 +14,6 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $price = floatval($_POST['price'] ?? 0);
-    $stock = intval($_POST['stock'] ?? 0);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Manejo de imagen
@@ -31,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
     }
     
-    if (!empty($name) && $price > 0) {
+    if (!empty($name)) {
         try {
             // Generar slug único a partir del nombre
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
@@ -44,17 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                 $slug = $slug . '-' . time();
             }
             
+            // Los precios y stock se asignan 0 por defecto (se manejan en cotizaciones)
             executeQuery(
                 "INSERT INTO products (name, slug, description, price, stock, category_id, image, is_active, created_at) 
-                 VALUES (?, ?, ?, ?, ?, NULL, ?, ?, NOW())",
-                [$name, $slug, $description, $price, $stock, $image, $is_active]
+                 VALUES (?, ?, ?, 0, 0, NULL, ?, ?, NOW())",
+                [$name, $slug, $description, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
         } catch (Exception $e) {
             $error = 'Error al agregar el producto: ' . $e->getMessage();
         }
     } else {
-        $error = 'Por favor completa todos los campos requeridos';
+        $error = 'Por favor completa el nombre del producto';
     }
 }
 
@@ -63,8 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $id = intval($_POST['product_id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $price = floatval($_POST['price'] ?? 0);
-    $stock = intval($_POST['stock'] ?? 0);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // Generar slug único a partir del nombre
@@ -86,13 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
         
         executeQuery(
-            "UPDATE products SET name = ?, slug = ?, description = ?, price = ?, stock = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $slug, $description, $price, $stock, $image, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $image, $is_active, $id]
         );
     } else {
         executeQuery(
-            "UPDATE products SET name = ?, slug = ?, description = ?, price = ?, stock = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $slug, $description, $price, $stock, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $is_active, $id]
         );
     }
     
@@ -632,8 +629,6 @@ tr:last-child td {
                             <th>Imagen</th>
                             <th>Nombre</th>
                             <th>Categoría</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -658,22 +653,6 @@ tr:last-child td {
                                     </div>
                                 </td>
                                 <td><?php echo htmlspecialchars($product['category'] ?? 'Sin categoría'); ?></td>
-                                <td><strong>$<?php echo number_format($product['price'], 2); ?></strong></td>
-                                <td>
-                                    <?php 
-                                    $stock = $product['stock'];
-                                    if ($stock == 0) {
-                                        $class = 'stock-out';
-                                    } elseif ($stock < 10) {
-                                        $class = 'stock-low';
-                                    } else {
-                                        $class = 'stock-high';
-                                    }
-                                    ?>
-                                    <span class="stock-badge <?php echo $class; ?>">
-                                        <?php echo $stock; ?> unidades
-                                    </span>
-                                </td>
                                 <td>
                                     <span class="status-badge status-<?php echo $product['is_active'] ? 'active' : 'inactive'; ?>">
                                         <?php echo $product['is_active'] ? 'Activo' : 'Inactivo'; ?>
@@ -714,19 +693,7 @@ tr:last-child td {
             
             <div class="form-group">
                 <label>Descripción</label>
-                <textarea name="description" id="description"></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Precio (ARS) *</label>
-                    <input type="number" name="price" id="price" step="0.01" min="0" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Stock *</label>
-                    <input type="number" name="stock" id="stock" min="0" required>
-                </div>
+                <textarea name="description" id="description" rows="4"></textarea>
             </div>
             
             <div class="form-group">
@@ -765,9 +732,6 @@ function editProduct(product) {
     document.getElementById('product_id').value = product.id;
     document.getElementById('name').value = product.name;
     document.getElementById('description').value = product.description || '';
-    document.getElementById('price').value = product.price;
-    document.getElementById('stock').value = product.stock;
-    document.getElementById('category').value = product.category || '';
     document.getElementById('is_active').checked = product.is_active == 1;
     document.getElementById('submitBtn').name = 'update_product';
     document.getElementById('productModal').classList.add('show');
