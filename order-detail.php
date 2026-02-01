@@ -587,14 +587,23 @@ const orderId = <?php echo $order_id; ?>;
 // Función para cargar mensajes
 async function loadMessages() {
     const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
+    if (!chatMessages) {
+        console.error('chatMessages element not found');
+        return;
+    }
     
     try {
+        console.log('Cargando mensajes para order_id:', orderId);
         const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
+        console.log('Respuesta loadMessages:', response.status);
         const data = await response.json();
+        console.log('Mensajes recibidos:', data);
         
         if (data.success && data.messages) {
+            console.log('Actualizando chat con', data.messages.length, 'mensajes');
             updateChatMessages(data.messages);
+        } else {
+            console.error('No success o no messages en respuesta:', data);
         }
     } catch (error) {
         console.error('Error al cargar mensajes:', error);
@@ -603,7 +612,12 @@ async function loadMessages() {
 
 function updateChatMessages(messages) {
     const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
+    if (!chatMessages) {
+        console.error('chatMessages element not found en updateChatMessages');
+        return;
+    }
+    
+    console.log('Renderizando', messages.length, 'mensajes');
     
     const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 50;
     
@@ -612,7 +626,8 @@ function updateChatMessages(messages) {
     if (messages.length === 0) {
         chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
     } else {
-        messages.forEach(msg => {
+        messages.forEach((msg, index) => {
+            console.log('Renderizando mensaje', index, ':', msg);
             const isAdmin = msg.user_role === 'admin';
             const messageDiv = document.createElement('div');
             messageDiv.className = 'chat-message ' + (isAdmin ? 'admin-message' : 'user-message');
@@ -631,6 +646,7 @@ function updateChatMessages(messages) {
             
             chatMessages.appendChild(messageDiv);
         });
+        console.log('Mensajes renderizados correctamente');
     }
     
     if (wasAtBottom) {
