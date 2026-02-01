@@ -10,6 +10,17 @@ $pageTitle = 'Gestión de Productos - Admin';
 $success = '';
 $error = '';
 
+// Mensajes de éxito desde redirecciones
+if (isset($_GET['success'])) {
+    if ($_GET['success'] == '1') {
+        $success = 'Producto agregado correctamente';
+    } elseif ($_GET['success'] == '2') {
+        $success = 'Producto actualizado correctamente';
+    } elseif ($_GET['success'] == '3') {
+        $success = 'Producto eliminado correctamente';
+    }
+}
+
 // Agregar producto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $name = trim($_POST['name'] ?? '');
@@ -49,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                 [$name, $slug, $description, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
+            header('Location: ' . BASE_URL . '/admin/productos.php?success=1');
+            exit;
         } catch (Exception $e) {
             $error = 'Error al agregar el producto: ' . $e->getMessage();
         }
@@ -94,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     }
     
     $success = 'Producto actualizado correctamente';
+    header('Location: ' . BASE_URL . '/admin/productos.php?success=2');
+    exit;
 }
 
 // Eliminar producto
