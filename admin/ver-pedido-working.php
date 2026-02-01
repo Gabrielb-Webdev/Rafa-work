@@ -495,7 +495,7 @@ include __DIR__ . '/header.php';
 <section class="order-detail-page">
     <div class="detail-container">
         <a href="<?php echo BASE_URL; ?>/admin/pedidos.php" class="back-link">
-            <i class="fas fa-arrow-left"></i> Volver a Pedidos
+            <i class="fas fa-arrow-left"></i> Back to Orders
         </a>
         
         <?php if ($success): ?>
@@ -511,7 +511,7 @@ include __DIR__ . '/header.php';
         <?php endif; ?>
         
         <div class="detail-header">
-            <h1>Pedido #<?php echo $order['order_number']; ?></h1>
+            <h1>Order #<?php echo $order['order_number']; ?></h1>
             <div class="order-meta">
                 <div class="meta-item">
                     <i class="fas fa-calendar"></i>
@@ -527,7 +527,7 @@ include __DIR__ . '/header.php';
                 <?php if ($order['proposal_sent']): ?>
                     <div class="meta-item">
                         <i class="fas fa-check-circle" style="color: #28a745;"></i>
-                        <span style="color: #28a745; font-weight: 700;">Propuesta Enviada</span>
+                        <span style="color: #28a745; font-weight: 700;">Proposal Sent</span>
                     </div>
                 <?php endif; ?>
             </div>
@@ -539,10 +539,10 @@ include __DIR__ . '/header.php';
                     <div class="proposal-form">
                         <h3>
                             <i class="fas fa-file-invoice-dollar"></i>
-                            Crear Propuesta de Cotización (USD)
+                            Create Quotation Proposal (USD)
                         </h3>
                         <p style="color: #856404; margin-bottom: 20px;">
-                            Ingresa el precio y cantidad propuesta para cada producto. Puedes ofrecer cantidades diferentes si consigues mejor precio.
+                            Enter the price and proposed quantity for each product. You can offer different quantities if you get a better price.
                         </p>
                         
                         <form id="proposalForm">
@@ -550,11 +550,11 @@ include __DIR__ . '/header.php';
                                 <div class="product-proposal">
                                     <div class="product-proposal-header">
                                         <?php echo htmlspecialchars($item['product_name']); ?>
-                                        <small style="color: #6c757d; font-weight: normal;">(Cliente solicitó: <?php echo $item['quantity']; ?> unidades)</small>
+                                        <small style="color: #6c757d; font-weight: normal;">(Client requested: <?php echo $item['quantity']; ?> units)</small>
                                     </div>
                                     <div class="price-input-group" style="grid-template-columns: 1fr 1fr 1fr;">
                                         <div>
-                                            <label>Cantidad Propuesta:</label>
+                                            <label>Proposed Quantity:</label>
                                             <input type="number" 
                                                    name="quantity_<?php echo $item['id']; ?>" 
                                                    class="item-quantity" 
@@ -563,10 +563,10 @@ include __DIR__ . '/header.php';
                                                    placeholder="<?php echo $item['quantity']; ?>"
                                                    value="<?php echo $item['quantity']; ?>"
                                                    required>
-                                            <small style="color: #28a745; font-size: 11px;">Puedes ofrecer más</small>
+                                            <small style="color: #28a745; font-size: 11px;">You can offer more</small>
                                         </div>
                                         <div>
-                                            <label>Precio Unitario (USD):</label>
+                                            <label>Unit Price (USD):</label>
                                             <input type="number" 
                                                    name="price_<?php echo $item['id']; ?>" 
                                                    class="item-price" 
@@ -595,7 +595,7 @@ include __DIR__ . '/header.php';
                             <div class="product-proposal" style="background: #f8f9fa;">
                                 <div class="price-input-group">
                                     <div>
-                                        <label>Costo de Envío (USD):</label>
+                                        <label>Shipping Cost (USD):</label>
                                         <input type="number" 
                                                name="shipping" 
                                                id="shipping" 
@@ -605,7 +605,7 @@ include __DIR__ . '/header.php';
                                                value="0">
                                     </div>
                                     <div>
-                                        <label>Descuento (USD):</label>
+                                        <label>Discount (USD):</label>
                                         <input type="number" 
                                                name="discount" 
                                                id="discount" 
@@ -618,54 +618,54 @@ include __DIR__ . '/header.php';
                             </div>
                             
                             <div class="proposal-total-row">
-                                <span>Total de la Propuesta:</span>
+                                <span>Proposal Total:</span>
                                 <span id="proposalTotal">USD $0.00</span>
                             </div>
                             
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; color: #856404; font-weight: 600; margin-bottom: 8px;">
-                                    Mensaje para el cliente:
+                                    Message for the client:
                                 </label>
                                 <textarea name="proposal_message" 
                                           id="proposalMessage" 
                                           rows="4" 
                                           style="width: 100%; padding: 12px; border: 1px solid #ffc107; border-radius: 8px; font-size: 14px;"
-                                          placeholder="Escribe un mensaje personalizado para acompañar la propuesta..."></textarea>
+                                          placeholder="Write a personalized message to accompany the proposal..."></textarea>
                             </div>
                             
                             <button type="submit" class="btn-send-proposal" id="sendProposalBtn">
-                                <i class="fas fa-paper-plane"></i> Enviar Propuesta al Cliente
+                                <i class="fas fa-paper-plane"></i> Send Proposal to Client
                             </button>
                         </form>
                     </div>
                 <?php else: ?>
                     <!-- Propuesta Enviada -->
                     <?php if (isset($order['proposal_accepted']) && $order['proposal_accepted']): ?>
-                        <!-- Propuesta Aceptada -->
+                        <!-- Proposal Accepted -->
                         <div style="padding: 25px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);">
                             <strong style="display: flex; align-items: center; gap: 10px; font-size: 20px; margin-bottom: 10px;">
-                                <i class="fas fa-check-double" style="font-size: 28px;"></i> ¡Propuesta Aceptada por el Cliente!
+                                <i class="fas fa-check-double" style="font-size: 28px;"></i> Proposal Accepted by Client!
                             </strong>
                             <p style="margin: 5px 0 0 0; opacity: 0.95; font-size: 15px;">
-                                ✅ Propuesta enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?><br>
-                                ✅ Aceptada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
+                                ✅ Proposal sent on <?php echo date('m/d/Y H:i', strtotime($order['proposal_date'])); ?><br>
+                                ✅ Accepted on <?php echo date('m/d/Y H:i', strtotime($order['proposal_accepted_date'])); ?>
                             </p>
                             <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
-                                💰 Total Aceptado: USD $<?php echo number_format($order['proposal_total'], 2); ?>
+                                💰 Accepted Total: USD $<?php echo number_format($order['proposal_total'], 2); ?>
                             </div>
                         </div>
                     <?php else: ?>
-                        <!-- Propuesta Enviada pero no aceptada -->
+                        <!-- Proposal Sent but not accepted -->
                         <div style="padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
                             <strong style="display: flex; align-items: center; gap: 10px; font-size: 20px; margin-bottom: 10px;">
-                                <i class="fas fa-paper-plane"></i> Propuesta Enviada - Esperando Respuesta
+                                <i class="fas fa-paper-plane"></i> Proposal Sent - Waiting for Response
                             </strong>
                             <p style="margin: 5px 0 0 0; opacity: 0.95; font-size: 15px;">
-                                📨 La propuesta fue enviada el <?php echo date('d/m/Y H:i', strtotime($order['proposal_date'])); ?><br>
-                                ⏳ El cliente aún no ha aceptado la propuesta
+                                📨 The proposal was sent on <?php echo date('m/d/Y H:i', strtotime($order['proposal_date'])); ?><br>
+                                ⏳ The client has not yet accepted the proposal
                             </p>
                             <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;">
-                                💰 Total Propuesto: USD $<?php echo number_format($order['proposal_total'], 2); ?>
+                                💰 Proposed Total: USD $<?php echo number_format($order['proposal_total'], 2); ?>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -673,7 +673,7 @@ include __DIR__ . '/header.php';
                 
                 <div class="detail-section">
                     <h2 class="section-title">
-                        <i class="fas fa-box"></i> Productos Solicitados
+                        <i class="fas fa-box"></i> Requested Products
                     </h2>
                     
                     <?php foreach ($items as $item): ?>
@@ -689,17 +689,17 @@ include __DIR__ . '/header.php';
                             <div style="flex: 1;">
                                 <div style="font-weight: 700; color: #2c3e50;"><?php echo htmlspecialchars($item['product_name']); ?></div>
                                 <div style="color: #6c757d; font-size: 14px;">
-                                    Cliente solicitó: <?php echo $item['quantity']; ?> unidades
+                                    Client requested: <?php echo $item['quantity']; ?> units
                                     <?php if ($item['proposed_quantity'] && $item['proposed_quantity'] != $item['quantity']): ?>
-                                        <span style="color: #28a745; font-weight: 600;"> → Ofreciste: <?php echo $item['proposed_quantity']; ?> unidades</span>
+                                        <span style="color: #28a745; font-weight: 600;"> → You offered: <?php echo $item['proposed_quantity']; ?> units</span>
                                     <?php endif; ?>
                                 </div>
                                 <?php if ($item['proposed_price'] !== null): ?>
                                     <div style="color: #00d4d4; font-weight: 600; margin-top: 5px;">
-                                        USD $<?php echo number_format($item['proposed_price'], 2); ?> c/u = USD $<?php echo number_format($item['proposed_subtotal'], 2); ?>
+                                        USD $<?php echo number_format($item['proposed_price'], 2); ?> each = USD $<?php echo number_format($item['proposed_subtotal'], 2); ?>
                                     </div>
                                 <?php else: ?>
-                                    <div style="color: #ffc107; font-style: italic; margin-top: 5px;">Pendiente de cotización</div>
+                                    <div style="color: #ffc107; font-style: italic; margin-top: 5px;">Pending quotation</div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -708,7 +708,7 @@ include __DIR__ . '/header.php';
                     <?php if ($order['proposal_total']): ?>
                         <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); border-radius: 12px; color: white;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 18px; font-weight: 600;">Total Propuesta:</span>
+                                <span style="font-size: 18px; font-weight: 600;">Proposal Total:</span>
                                 <span style="font-size: 32px; font-weight: 700;">USD $<?php echo number_format($order['proposal_total'], 2); ?></span>
                             </div>
                         </div>
@@ -717,10 +717,10 @@ include __DIR__ . '/header.php';
                 
                 <div class="detail-section">
                     <h2 class="section-title">
-                        <i class="fas fa-user"></i> Información de Contacto
+                        <i class="fas fa-user"></i> Contact Information
                     </h2>
                     <div class="info-row">
-                        <div class="info-label">Nombre:</div>
+                        <div class="info-label">Name:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['full_name']); ?></div>
                     </div>
                     <div class="info-row">
@@ -728,40 +728,40 @@ include __DIR__ . '/header.php';
                         <div class="info-value"><?php echo htmlspecialchars($order['email']); ?></div>
                     </div>
                     <div class="info-row">
-                        <div class="info-label">Teléfono:</div>
+                        <div class="info-label">Phone:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['phone']); ?></div>
                     </div>
                 </div>
                 
                 <div class="detail-section">
                     <h2 class="section-title">
-                        <i class="fas fa-map-marker-alt"></i> Dirección de Envío
+                        <i class="fas fa-map-marker-alt"></i> Shipping Address
                     </h2>
                     <div class="info-row">
-                        <div class="info-label">Calle:</div>
+                        <div class="info-label">Street:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['street']); ?></div>
                     </div>
                     <div class="info-row">
-                        <div class="info-label">Número:</div>
+                        <div class="info-label">Number:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['street_number']); ?></div>
                     </div>
                     <?php if ($order['neighborhood']): ?>
                         <div class="info-row">
-                            <div class="info-label">Colonia:</div>
+                            <div class="info-label">Neighborhood:</div>
                             <div class="info-value"><?php echo htmlspecialchars($order['neighborhood']); ?></div>
                         </div>
                     <?php endif; ?>
                     <div class="info-row">
-                        <div class="info-label">Ciudad:</div>
+                        <div class="info-label">City:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['city']); ?></div>
                     </div>
                     <div class="info-row">
-                        <div class="info-label">Código Postal:</div>
+                        <div class="info-label">Postal Code:</div>
                         <div class="info-value"><?php echo htmlspecialchars($order['postal_code']); ?></div>
                     </div>
                     <?php if ($order['notes']): ?>
                         <div class="info-row">
-                            <div class="info-label">Notas:</div>
+                            <div class="info-label">Notes:</div>
                             <div class="info-value"><?php echo nl2br(htmlspecialchars($order['notes'])); ?></div>
                         </div>
                     <?php endif; ?>
@@ -773,7 +773,7 @@ include __DIR__ . '/header.php';
                     <div class="chat-header">
                         <h3>
                             <i class="fas fa-comments"></i>
-                            Chat del Pedido
+                            Order Chat
                         </h3>
                     </div>
                     
@@ -781,7 +781,7 @@ include __DIR__ . '/header.php';
                         <?php if (empty($messages)): ?>
                             <div style="text-align: center; color: #6c757d; padding: 40px;">
                                 <i class="fas fa-comments" style="font-size: 60px; color: #dee2e6; margin-bottom: 15px;"></i>
-                                <p>Aún no hay mensajes</p>
+                                <p>No messages yet</p>
                             </div>
                         <?php else: ?>
                             <?php foreach ($messages as $msg): ?>
@@ -797,7 +797,7 @@ include __DIR__ . '/header.php';
                                         <?php if ($msg['is_proposal']): ?>
                                             <div class="message-bubble proposal-message">
                                                 <strong style="display: block; margin-bottom: 10px;">
-                                                    <i class="fas fa-file-invoice-dollar"></i> Propuesta de Cotización
+                                                    <i class="fas fa-file-invoice-dollar"></i> Quotation Proposal
                                                 </strong>
                                                 <?php echo nl2br(htmlspecialchars($msg['message'])); ?>
                                             </div>
@@ -817,10 +817,10 @@ include __DIR__ . '/header.php';
                             <input type="text" 
                                    class="chat-input" 
                                    id="messageInput" 
-                                   placeholder="Escribe un mensaje..."
+                                   placeholder="Write a message..."
                                    required>
                             <button type="submit" class="chat-send-btn" id="sendChatBtn">
-                                <i class="fas fa-paper-plane"></i> Enviar
+                                <i class="fas fa-paper-plane"></i> Send
                             </button>
                         </form>
                     </div>
@@ -941,13 +941,13 @@ if (proposalForm) {
             const data = await response.json();
             
             if (data.success) {
-                alert('✅ Propuesta enviada exitosamente. Se ha notificado al cliente por email y por chat.');
+                alert('✅ Proposal sent successfully. The client has been notified by email and chat.');
                 location.reload();
             } else {
                 alert('❌ Error: ' + data.message);
             }
         } catch (error) {
-            alert('❌ Error de conexión al enviar la propuesta');
+            alert('❌ Connection error sending the proposal');
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
@@ -996,7 +996,7 @@ function updateChatMessages(messages) {
     chatMessages.innerHTML = '';
     
     if (messages.length === 0) {
-        chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
+        chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No messages yet. Start the conversation!</p>';
     } else {
         messages.forEach((msg, index) => {
             const isAdmin = msg.user_role === 'admin';
@@ -1048,11 +1048,11 @@ async function updateOrderStatus() {
 
 function updateStatusBadge(status, proposalSent) {
     const badges = {
-        'pending': '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
-        'processing': '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> EN PROCESO</span>',
-        'shipped': '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> ENVIADO</span>',
-        'delivered': '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
-        'cancelled': '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+        'pending': '<span style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-hourglass-half"></i> PENDING</span>',
+        'processing': '<span style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-cog fa-spin"></i> PROCESSING</span>',
+        'shipped': '<span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-truck"></i> SHIPPED</span>',
+        'delivered': '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> DELIVERED</span>',
+        'cancelled': '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> CANCELLED</span>'
     };
     
     const badgeEl = document.getElementById('orderStatusBadge');
@@ -1094,12 +1094,12 @@ if (chatForm) {
                 // Cargar mensajes inmediatamente
                 await loadMessages();
             } else {
-                console.error('Admin: Error al enviar:', data);
-                alert('Error al enviar el mensaje: ' + data.message);
+                console.error('Admin: Error sending:', data);
+                alert('Error sending message: ' + data.message);
             }
         } catch (error) {
-            console.error('Admin: Error de conexión:', error);
-            alert('Error de conexión al enviar el mensaje: ' + error.message);
+            console.error('Admin: Connection error:', error);
+            alert('Connection error sending message: ' + error.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
