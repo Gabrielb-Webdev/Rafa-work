@@ -1,9 +1,9 @@
 <?php
 /**
  * API del Carrito de Compras
- * Version: 2.0 - Sistema de Cotización sin Límite de Stock
+ * Version: 2.1 - Sistema de Cotización sin Límite de Stock + Debug Mejorado
  * Fecha: 31/01/2026
- * Cambios: Eliminadas todas las verificaciones de stock para permitir cantidades ilimitadas
+ * Cambios: Agregado mejor manejo de errores y mensajes de debug
  */
 session_start();
 header('Content-Type: application/json');
@@ -94,7 +94,7 @@ switch ($action) {
         $productId = intval($_POST['product_id'] ?? 0);
         $quantity = intval($_POST['quantity'] ?? 1);
         
-        if ($productId > 0) {
+        if ($productId > 0 && $quantity > 0) {
             try {
                 // Verificar que el producto existe y está activo
                 $stmt = executeQuery("SELECT * FROM products WHERE id = ? AND is_active = 1", [$productId]);
@@ -127,12 +127,21 @@ switch ($action) {
                     $response['success'] = true;
                     $response['message'] = 'Producto agregado al carrito';
                     $response['cartCount'] = array_sum(array_column($_SESSION['cart'], 'quantity'));
+                    $response['debug'] = [
+                        'productId' => $productId,
+                        'quantity' => $quantity,
+                        'newQty' => $newQty,
+                        'isLoggedIn' => $isLoggedIn
+                    ];
                 } else {
-                    $response['message'] = 'Producto no encontrado';
+                    $response['message'] = 'Producto no encontrado o inactivo (ID: ' . $productId . ')';
                 }
             } catch (Exception $e) {
-                $response['message'] = 'Error al agregar al carrito';
+                $response['message'] = 'Error al agregar al carrito: ' . $e->getMessage();
+                $response['error'] = $e->getTraceAsString();
             }
+        } else {
+            $response['message'] = 'ID de producto o cantidad inválidos';
         }
         break;
         

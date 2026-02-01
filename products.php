@@ -1,4 +1,10 @@
 <?php
+/**
+ * Productos - Forethink Health
+ * Version: 2.0 - Sistema de Cotización sin Límite de Stock
+ * Fecha: 31/01/2026
+ * Cambios: Eliminadas restricciones de cantidad, input editable, sin límite máximo
+ */
 require_once __DIR__ . '/config/config.php';
 
 $pageTitle = 'Products - Online Medicine Store';
@@ -621,7 +627,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                     <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
                         <label style="font-weight: 600;">Cantidad:</label>
                         <button onclick="changeQty(-1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">−</button>
-                        <input type="number" id="modalQuantity" value="1" min="1" readonly style="width: 80px; text-align: center; padding: 10px; border: 2px solid #eee; border-radius: 6px; font-size: 18px;">
+                        <input type="number" id="modalQuantity" value="1" min="1" style="width: 80px; text-align: center; padding: 10px; border: 2px solid #eee; border-radius: 6px; font-size: 18px;">
                         <button onclick="changeQty(1)" style="width: 40px; height: 40px; border: 2px solid #00d4d4; background: white; color: #00d4d4; border-radius: 6px; cursor: pointer; font-size: 20px;">+</button>
                     </div>
                     <button onclick="addToCartFromModal()" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer;">
@@ -691,9 +697,9 @@ function showProductModal(product) {
     document.getElementById('modalName').textContent = product.name;
     document.getElementById('modalCategory').textContent = product.category || 'Sin categoría';
     document.getElementById('modalDescription').textContent = product.description || 'Sin descripción disponible';
-    document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Stock disponible: <strong>${product.stock}</strong> unidades`;
+    document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Cantidad disponible: <strong>Sin límite</strong> (cotización personalizada)`;
     document.getElementById('modalQuantity').value = 1;
-    document.getElementById('modalQuantity').max = product.stock;
+    // Sin límite de cantidad - sistema de cotización
     
     modal.style.display = 'flex';
 }
@@ -706,7 +712,7 @@ function changeQty(change) {
     const input = document.getElementById('modalQuantity');
     let value = parseInt(input.value) + change;
     if (value < 1) value = 1;
-    if (value > currentProduct.stock) value = currentProduct.stock;
+    // Sin límite máximo - sistema de cotización
     input.value = value;
 }
 
