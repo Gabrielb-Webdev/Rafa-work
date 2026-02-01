@@ -33,10 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     
     if (!empty($name) && $price > 0) {
         try {
+            // Generar slug único a partir del nombre
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+            $slug = preg_replace('/-+/', '-', $slug);
+            $slug = trim($slug, '-');
+            
+            // Verificar si el slug ya existe y hacerlo único
+            $existing = fetchOne("SELECT COUNT(*) as count FROM products WHERE slug = ?", [$slug]);
+            if ($existing['count'] > 0) {
+                $slug = $slug . '-' . time();
+            }
+            
             executeQuery(
-                "INSERT INTO products (name, description, price, stock, category_id, image, is_active, created_at) 
-                 VALUES (?, ?, ?, ?, NULL, ?, ?, NOW())",
-                [$name, $description, $price, $stock, $image, $is_active]
+                "INSERT INTO products (name, slug, description, price, stock, category_id, image, is_active, created_at) 
+                 VALUES (?, ?, ?, ?, ?, NULL, ?, ?, NOW())",
+                [$name, $slug, $description, $price, $stock, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
         } catch (Exception $e) {
@@ -56,6 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $stock = intval($_POST['stock'] ?? 0);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
+    // Generar slug único a partir del nombre
+    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+    $slug = preg_replace('/-+/', '-', $slug);
+    $slug = trim($slug, '-');
+    
+    // Verificar si el slug ya existe (excluyendo el producto actual)
+    $existing = fetchOne("SELECT COUNT(*) as count FROM products WHERE slug = ? AND id != ?", [$slug, $id]);
+    if ($existing['count'] > 0) {
+        $slug = $slug . '-' . time();
+    }
+    
     // Manejo de imagen
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = __DIR__ . '/../uploads/products/';
@@ -64,13 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
         
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $description, $price, $stock, $image, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, price = ?, stock = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $price, $stock, $image, $is_active, $id]
         );
     } else {
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
-            [$name, $description, $price, $stock, $is_active, $id]
+            "UPDATE products SET name = ?, slug = ?, description = ?, price = ?, stock = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $slug, $description, $price, $stock, $is_active, $id]
         );
     }
     
