@@ -797,25 +797,39 @@ const orderId = <?php echo $order_id; ?>;
 const orderData = <?php echo json_encode($order); ?>;
 const itemsData = <?php echo json_encode($items); ?>;
 
-// Calcular subtotales automáticamente
-document.querySelectorAll('.item-price').forEach(input => {
-    input.addEventListener('input', function() {
-        const quantity = parseFloat(this.dataset.quantity);
-        const price = parseFloat(this.value) || 0;
-        const subtotal = (price * quantity).toFixed(2);
+// Calcular subtotales automáticamente (solo si existe formulario de propuesta)
+const itemPriceInputs = document.querySelectorAll('.item-price');
+if (itemPriceInputs.length > 0) {
+    itemPriceInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const quantity = parseFloat(this.dataset.quantity);
+            const price = parseFloat(this.value) || 0;
+            const subtotal = (price * quantity).toFixed(2);
+            
+            const itemId = this.dataset.itemId;
+            const subtotalEl = document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`);
+            if (subtotalEl) {
+                subtotalEl.value = subtotal;
+            }
+            
+            calculateTotal();
+        });
         
-        const itemId = this.dataset.itemId;
-        document.querySelector(`.item-subtotal[data-item-id="${itemId}"]`).value = subtotal;
-        
-        calculateTotal();
+        // Trigger inicial
+        input.dispatchEvent(new Event('input'));
     });
-    
-    // Trigger inicial
-    input.dispatchEvent(new Event('input'));
-});
+}
 
-document.getElementById('shipping').addEventListener('input', calculateTotal);
-document.getElementById('discount').addEventListener('input', calculateTotal);
+const shippingInput = document.getElementById('shipping');
+const discountInput = document.getElementById('discount');
+
+if (shippingInput) {
+    shippingInput.addEventListener('input', calculateTotal);
+}
+
+if (discountInput) {
+    discountInput.addEventListener('input', calculateTotal);
+}
 
 function calculateTotal() {
     let subtotal = 0;
@@ -824,11 +838,17 @@ function calculateTotal() {
         subtotal += parseFloat(input.value) || 0;
     });
     
-    const shipping = parseFloat(document.getElementById('shipping').value) || 0;
-    const discount = parseFloat(document.getElementById('discount').value) || 0;
+    const shippingEl = document.getElementById('shipping');
+    const discountEl = document.getElementById('discount');
+    const totalEl = document.getElementById('proposalTotal');
+    
+    const shipping = shippingEl ? (parseFloat(shippingEl.value) || 0) : 0;
+    const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
     const total = subtotal + shipping - discount;
     
-    document.getElementById('proposalTotal').textContent = '$' + total.toFixed(2);
+    if (totalEl) {
+        totalEl.textContent = '$' + total.toFixed(2);
+    }
 }
 
 // Enviar propuesta
