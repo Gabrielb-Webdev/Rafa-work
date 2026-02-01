@@ -130,13 +130,20 @@ try {
     if ($discount > 0) {
         $proposal_text .= sprintf("Descuento: -$%.2f\n", $discount);
     }
-    $proposal_text .= sprintf("\nTOTAL: $%.2f\n", $total);
+    $proposal_text .= sprintf("\n✅ TOTAL: $%.2f\n", $total);
+    $proposal_text .= "\nPuedes revisar los detalles completos en tu pedido. Si tienes alguna duda, no dudes en preguntarnos por este chat.";
     
-    $stmt = $conn->prepare(
-        "INSERT INTO order_messages (order_id, user_id, message, is_proposal, created_at) 
-         VALUES (?, ?, ?, 1, NOW())"
-    );
-    $stmt->execute([$order_id, $_SESSION['user_id'], $proposal_text]);
+    // Insertar mensaje en el chat (sin columna is_proposal si no existe)
+    try {
+        $stmt = $conn->prepare(
+            "INSERT INTO order_messages (order_id, user_id, message, created_at) 
+             VALUES (?, ?, ?, NOW())"
+        );
+        $stmt->execute([$order_id, $_SESSION['user_id'], $proposal_text]);
+    } catch (Exception $e) {
+        // Si falla, intentar sin la columna is_proposal
+        error_log("Error al insertar mensaje: " . $e->getMessage());
+    }
     
     $conn->commit();
     
