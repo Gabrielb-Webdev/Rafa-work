@@ -521,9 +521,9 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                 <?php foreach ($productsToDisplay as $product): ?>
                     <div class="product-card-page" style="cursor: pointer;">
                         <?php if ($product['stock'] > 0): ?>
-                            <div class="product-badge-page">Disponible</div>
+                            <div class="product-badge-page">Available</div>
                         <?php else: ?>
-                            <div class="product-badge-page" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">Sin Stock</div>
+                            <div class="product-badge-page" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">Out of Stock</div>
                         <?php endif; ?>
                         <div class="product-image-wrapper-page" onclick='showProductModal(<?php echo json_encode($product); ?>)'>
                             <?php if (!empty($product['image'])): ?>
@@ -531,27 +531,27 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                             <?php else: ?>
                                 <div class="product-placeholder-page">
                                     <i class="fas fa-pills"></i>
-                                    <span>Sin Imagen</span>
+                                    <span>No Image</span>
                                 </div>
                             <?php endif; ?>
                         </div>
                         <div class="product-info-page">
                             <h3 class="product-name" onclick='showProductModal(<?php echo json_encode($product); ?>)' style="cursor: pointer; font-size: 16px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;"><?php echo htmlspecialchars($product['name']); ?></h3>
-                            <div class="product-category-page"><?php echo htmlspecialchars($product['category'] ?? 'Sin categoría'); ?></div>
+                            <div class="product-category-page"><?php echo htmlspecialchars($product['category'] ?? 'No category'); ?></div>
                             <div style="padding: 10px 0; color: #6c757d; font-size: 14px; font-style: italic;">
-                                💬 Solicita cotización
+                                💬 Request quote
                             </div>
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
                                 <button onclick='showProductModal(<?php echo json_encode($product); ?>)' class="btn-view-details" style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                                    <i class="fas fa-eye"></i> Ver detalles
+                                    <i class="fas fa-eye"></i> View details
                                 </button>
                                 <?php if ($product['stock'] > 0): ?>
                                     <button onclick="addToCart(<?php echo $product['id']; ?>)" class="btn-add-cart" style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                                        <i class="fas fa-cart-plus"></i> Agregar
+                                        <i class="fas fa-cart-plus"></i> Add
                                     </button>
                                 <?php else: ?>
                                     <button disabled style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: not-allowed; font-size: 14px; opacity: 0.6;">
-                                        <i class="fas fa-times"></i> Sin Stock
+                                        <i class="fas fa-times"></i> Out of Stock
                                     </button>
                                 <?php endif; ?>
                             </div>
@@ -695,11 +695,11 @@ function showProductModal(product) {
     }
     
     document.getElementById('modalName').textContent = product.name;
-    document.getElementById('modalCategory').textContent = product.category || 'Sin categoría';
-    document.getElementById('modalDescription').textContent = product.description || 'Sin descripción disponible';
-    document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Cantidad disponible: <strong>Sin límite</strong> (cotización personalizada)`;
+    document.getElementById('modalCategory').textContent = product.category || 'No category';
+    document.getElementById('modalDescription').textContent = product.description || 'No description available';
+    document.getElementById('modalStock').innerHTML = `<i class="fas fa-box"></i> Available quantity: <strong>No limit</strong> (personalized quotation)`;
     document.getElementById('modalQuantity').value = 1;
-    // Sin límite de cantidad - sistema de cotización
+    // No quantity limit - quotation system
     
     modal.style.display = 'flex';
 }
