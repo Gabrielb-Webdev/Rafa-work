@@ -205,19 +205,19 @@ body::before {
 
 .auth-form label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: 700;
     color: #2c3e50;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     position: relative;
-    z-index: 1;
+    z-index: auto;
 }
 
 .auth-form .input-icon {
     position: relative;
-    z-index: 0;
+    z-index: auto;
 }
 
 .auth-form .input-icon i {
@@ -235,7 +235,7 @@ body::before {
 .auth-form .input-icon input {
     padding-left: 52px;
     position: relative;
-    z-index: 0;
+    z-index: auto;
 }
 
 .auth-form .input-icon input:focus ~ i {
