@@ -31,7 +31,7 @@ try {
     
     // Obtener items del pedido
     $stmt = executeQuery(
-        "SELECT oi.*, p.image, p.price as current_price
+        "SELECT oi.*, p.name as product_name, p.image, p.price as current_price
          FROM order_items oi 
          LEFT JOIN products p ON oi.product_id = p.id 
          WHERE oi.order_id = ?",
@@ -39,19 +39,25 @@ try {
     );
     $items = $stmt->fetchAll();
     
-    // Obtener mensajes del chat
-    $stmt = executeQuery(
-        "SELECT om.*, u.full_name as sender_name, u.user_role
-         FROM order_messages om
-         JOIN users u ON om.user_id = u.id
-         WHERE om.order_id = ?
-         ORDER BY om.created_at ASC",
-        [$order_id]
-    );
-    $messages = $stmt->fetchAll();
+    // Obtener mensajes del chat (puede que la tabla no exista)
+    $messages = [];
+    try {
+        $stmt = executeQuery(
+            "SELECT om.*, u.full_name as sender_name, u.user_role
+             FROM order_messages om
+             JOIN users u ON om.user_id = u.id
+             WHERE om.order_id = ?
+             ORDER BY om.created_at ASC",
+            [$order_id]
+        );
+        $messages = $stmt->fetchAll();
+    } catch (Exception $e) {
+        // Tabla no existe, continuar sin mensajes
+    }
     
 } catch (Exception $e) {
-    redirect('/admin/pedidos.php');
+    // Error al cargar pedido, mostrar mensaje
+    die('Error al cargar el pedido: ' . $e->getMessage());
 }
 
 function getStatusBadge($status) {
