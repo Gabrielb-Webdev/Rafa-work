@@ -954,19 +954,30 @@ scrollToBottom();
 // Función para cargar mensajes sin recargar la página
 async function loadMessages() {
     try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?action=get&order_id=' + orderId);
+        console.log('Admin: Cargando mensajes para order_id:', orderId);
+        const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
+        console.log('Admin: Respuesta recibida:', response.status);
         const data = await response.json();
+        console.log('Admin: Mensajes recibidos:', data);
         
         if (data.success && data.messages) {
+            console.log('Admin: Actualizando chat con', data.messages.length, 'mensajes');
             updateChatMessages(data.messages);
+        } else {
+            console.error('Admin: Error en respuesta:', data);
         }
     } catch (error) {
-        console.error('Error al cargar mensajes:', error);
+        console.error('Admin: Error al cargar mensajes:', error);
     }
 }
 
 function updateChatMessages(messages) {
-    if (!chatMessages) return;
+    if (!chatMessages) {
+        console.error('Admin: chatMessages element not found');
+        return;
+    }
+    
+    console.log('Admin: Renderizando', messages.length, 'mensajes');
     
     const currentScroll = chatMessages.scrollHeight - chatMessages.scrollTop;
     const wasAtBottom = currentScroll <= chatMessages.clientHeight + 50;
@@ -976,7 +987,8 @@ function updateChatMessages(messages) {
     if (messages.length === 0) {
         chatMessages.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay mensajes aún. ¡Inicia la conversación!</p>';
     } else {
-        messages.forEach(msg => {
+        messages.forEach((msg, index) => {
+            console.log('Admin: Renderizando mensaje', index, ':', msg);
             const isAdmin = msg.user_role === 'admin';
             const messageDiv = document.createElement('div');
             messageDiv.className = 'chat-message';
@@ -1006,6 +1018,7 @@ function updateChatMessages(messages) {
             
             chatMessages.appendChild(messageDiv);
         });
+        console.log('Admin: Mensajes renderizados correctamente');
     }
     
     if (wasAtBottom) {
@@ -1052,9 +1065,15 @@ setInterval(updateOrderStatus, 5000);
 if (chatForm) {
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('Admin: Formulario de chat enviado');
         
         const message = messageInput.value.trim();
-        if (!message) return;
+        console.log('Admin: Mensaje a enviar:', message);
+        
+        if (!message) {
+            console.log('Admin: Mensaje vacío, no se envía');
+            return;
+        }
         
         const btn = document.getElementById('sendChatBtn');
         const originalText = btn.innerHTML;
@@ -1062,28 +1081,36 @@ if (chatForm) {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         
         try {
+            console.log('Admin: Enviando mensaje a API...');
             const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `order_id=${orderId}&message=${encodeURIComponent(message)}`
             });
             
+            console.log('Admin: Respuesta recibida:', response.status);
             const data = await response.json();
+            console.log('Admin: Datos:', data);
             
             if (data.success) {
                 messageInput.value = '';
+                console.log('Admin: Mensaje enviado exitosamente');
                 // Cargar mensajes inmediatamente
                 await loadMessages();
             } else {
+                console.error('Admin: Error al enviar:', data);
                 alert('Error al enviar el mensaje: ' + data.message);
             }
         } catch (error) {
-            alert('Error de conexión al enviar el mensaje');
+            console.error('Admin: Error de conexión:', error);
+            alert('Error de conexión al enviar el mensaje: ' + error.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
     });
+} else {
+    console.error('Admin: chatForm element not found');
 }
 
 // Calcular subtotales automáticamente
