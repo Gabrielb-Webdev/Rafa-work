@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     
     if (empty($email) || empty($password)) {
-        $error = 'Por favor completa todos los campos';
+        $error = 'Please fill in all fields';
     } else {
         try {
             $stmt = executeQuery("SELECT * FROM users WHERE email = ?", [$email]);
@@ -93,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     redirect('/index.php');
                 }
             } else {
-                $error = 'Email o contraseña incorrectos';
+                $error = 'Incorrect email or password';
             }
         } catch (Exception $e) {
-            $error = 'Error al procesar el login. Por favor intenta de nuevo.';
+            $error = 'Error processing login. Please try again.';
         }
     }
 }
@@ -112,8 +112,8 @@ include __DIR__ . '/includes/header.php';
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="Forethink Health">
             </div>
             
-            <h2 class="login-title">Bienvenido</h2>
-            <p class="login-subtitle">Ingresa a tu cuenta de Forethink Health</p>
+            <h2 class="login-title">Welcome</h2>
+            <p class="login-subtitle">Log in to your Forethink Health account</p>
             
             <?php if ($error): ?>
                 <div class="alert alert-error">
@@ -131,31 +131,31 @@ include __DIR__ . '/includes/header.php';
             
             <form class="login-form" method="POST">
                 <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
+                    <label for="email">Email</label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope input-icon"></i>
                         <input type="email" id="email" name="email" required 
-                               placeholder="tu@email.com"
+                               placeholder="your@email.com"
                                value="<?php echo htmlspecialchars($email ?? ''); ?>">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
+                    <label for="password">Password</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="password" name="password" required
-                               placeholder="Ingresa tu contraseña">
+                               placeholder="Enter your password">
                         <i class="fas fa-eye toggle-password"></i>
                     </div>
                 </div>
                 
                 <div class="forgot-password">
-                    <a href="#">¿Olvidaste tu contraseña?</a>
+                    <a href="#">Forgot your password?</a>
                 </div>
                 
                 <button type="submit" class="btn-login">
-                    Iniciar Sesión
+                    Login
                 </button>
             </form>
             
@@ -164,13 +164,13 @@ include __DIR__ . '/includes/header.php';
             </div>
             
             <div class="login-footer">
-                <p>¿No tienes cuenta? <a href="<?php echo BASE_URL; ?>/register.php">Regístrate aquí</a></p>
+                <p>Don't have an account? <a href="<?php echo BASE_URL; ?>/register.php">Register here</a></p>
             </div>
         </div>
         
         <div class="back-home-link">
             <a href="<?php echo BASE_URL; ?>">
-                <i class="fas fa-home"></i> Volver al inicio
+                <i class="fas fa-home"></i> Back to home
             </a>
         </div>
     </div>

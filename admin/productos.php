@@ -6,36 +6,36 @@ if (!isLoggedIn() || !isAdmin()) {
     redirect('/login.php');
 }
 
-$pageTitle = 'Gestión de Productos - Admin';
+$pageTitle = 'Product Management - Admin';
 $success = '';
 $error = '';
 
-// Mensajes de éxito desde redirecciones
+// Success messages from redirects
 if (isset($_GET['success'])) {
     if ($_GET['success'] == '1') {
-        $success = 'Producto agregado correctamente';
+        $success = 'Product added successfully';
     } elseif ($_GET['success'] == '2') {
-        $success = 'Producto actualizado correctamente';
+        $success = 'Product updated successfully';
     } elseif ($_GET['success'] == '3') {
-        $success = 'Producto eliminado correctamente';
+        $success = 'Product deleted successfully';
     }
 }
 
-// Mensajes de importación CSV
+// CSV import messages
 if (isset($_GET['csv_imported'])) {
-    $success = 'Se importaron ' . intval($_GET['csv_imported']) . ' productos correctamente';
+    $success = intval($_GET['csv_imported']) . ' products imported successfully';
     if (isset($_SESSION['csv_import_errors']) && !empty($_SESSION['csv_import_errors'])) {
-        $error = 'Algunos productos tuvieron errores: ' . implode(', ', $_SESSION['csv_import_errors']);
+        $error = 'Some products had errors: ' . implode(', ', $_SESSION['csv_import_errors']);
         unset($_SESSION['csv_import_errors']);
     }
 }
 
 if (isset($_GET['csv_error'])) {
-    $error = $_SESSION['csv_import_error'] ?? 'Error al importar el archivo CSV';
+    $error = $_SESSION['csv_import_error'] ?? 'Error importing CSV file';
     unset($_SESSION['csv_import_error']);
 }
 
-// Agregar producto
+// Add product
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -75,18 +75,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                  VALUES (?, ?, ?, 0, ?, NULL, ?, ?, NOW())",
                 [$name, $slug, $description, $stock, $image, $is_active]
             );
-            $success = 'Producto agregado correctamente';
+            $success = 'Product added successfully';
             header('Location: ' . BASE_URL . '/admin/productos.php?success=1');
             exit;
         } catch (Exception $e) {
-            $error = 'Error al agregar el producto: ' . $e->getMessage();
+            $error = 'Error adding product: ' . $e->getMessage();
         }
     } else {
-        $error = 'Por favor completa el nombre del producto';
+        $error = 'Please fill in the product name';
     }
 }
 
-// Actualizar producto
+// Update product
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     $id = intval($_POST['product_id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
@@ -124,30 +124,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         );
     }
     
-    $success = 'Producto actualizado correctamente';
+    $success = 'Product updated successfully';
     header('Location: ' . BASE_URL . '/admin/productos.php?success=2');
     exit;
 }
 
-// Eliminar producto
+// Delete product
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     try {
-        // Primero verificar si el producto está en pedidos
+        // First check if product is in orders
         $stmt = executeQuery("SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", [$id]);
         $check = $stmt->fetch();
         
         if ($check['count'] > 0) {
-            $error = 'No se puede eliminar: el producto está asociado a pedidos existentes. Mejor márcalo como inactivo.';
+            $error = 'Cannot delete: product is associated with existing orders. Better mark it as inactive.';
         } else {
-            // Obtener imagen para eliminarla
+            // Get image to delete it
             $stmt = executeQuery("SELECT image FROM products WHERE id = ?", [$id]);
             $product = $stmt->fetch();
             
-            // Eliminar producto
+            // Delete product
             executeQuery("DELETE FROM products WHERE id = ?", [$id]);
             
-            // Eliminar imagen física si existe
+            // Delete physical image if exists
             if ($product && !empty($product['image'])) {
                 $image_path = __DIR__ . '/../uploads/products/' . $product['image'];
                 if (file_exists($image_path)) {
@@ -208,10 +208,10 @@ try {
     
 } catch (Exception $e) {
     $products = [];
-    $error = 'Error al cargar los productos';
+    $error = 'Error loading products';
 }
 
-$pageTitle = 'Gestión de Productos';
+$pageTitle = 'Product Management';
 include __DIR__ . '/header.php';
 ?>
 

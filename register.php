@@ -17,21 +17,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // Validaciones
+    // Validations
     if (empty($full_name) || empty($email) || empty($password)) {
-        $error = 'Por favor completa todos los campos obligatorios';
+        $error = 'Please fill in all required fields';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Email inválido';
+        $error = 'Invalid email';
     } elseif (strlen($password) < 6) {
-        $error = 'La contraseña debe tener al menos 6 caracteres';
+        $error = 'Password must be at least 6 characters';
     } elseif ($password !== $confirm_password) {
-        $error = 'Las contraseñas no coinciden';
+        $error = 'Passwords do not match';
     } else {
         try {
-            // Verificar si el email ya existe
+            // Check if email already exists
             $stmt = executeQuery("SELECT id FROM users WHERE email = ?", [$email]);
             if ($stmt->fetch()) {
-                $error = 'Este email ya está registrado';
+                $error = 'This email is already registered';
             } else {
                 // Crear usuario
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     [$email, $hashed_password, $full_name, $phone]
                 );
                 
-                $success = 'Registro exitoso. Ya puedes iniciar sesión.';
+                $success = 'Registration successful. You can now log in.';
                 
                 // Auto-login
                 $stmt = executeQuery("SELECT * FROM users WHERE email = ?", [$email]);
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("refresh:2;url=" . BASE_URL . "/index.php");
             }
         } catch (Exception $e) {
-            $error = 'Error al crear la cuenta. Por favor intenta de nuevo.';
+            $error = 'Error creating account. Please try again.';
         }
     }
 }
@@ -282,8 +282,8 @@ header, footer {
         <div class="auth-logo">
             <img src="<?php echo BASE_URL; ?>/assets/images/logo.jpeg" alt="Forethink Health">
         </div>
-        <h2>Crear Cuenta</h2>
-        <p class="auth-subtitle">Únete a Forethink Health hoy</p>
+        <h2>Create Account</h2>
+        <p class="auth-subtitle">Join Forethink Health today</p>
         
         <?php if ($error): ?>
             <div class="alert alert-error"><?php echo $error; ?></div>
@@ -295,27 +295,27 @@ header, footer {
         
         <form class="auth-form" method="POST">
             <div class="form-group">
-                <label for="full_name">Nombre Completo *</label>
+                <label for="full_name">Full Name *</label>
                 <div class="input-icon">
                     <input type="text" id="full_name" name="full_name" required 
-                           placeholder="Juan Pérez"
+                           placeholder="John Doe"
                            value="<?php echo htmlspecialchars($full_name ?? ''); ?>">
                     <i class="fas fa-user"></i>
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="email">Correo Electrónico *</label>
+                <label for="email">Email *</label>
                 <div class="input-icon">
                     <input type="email" id="email" name="email" required 
-                           placeholder="tu@email.com"
+                           placeholder="your@email.com"
                            value="<?php echo htmlspecialchars($email ?? ''); ?>">
                     <i class="fas fa-envelope"></i>
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="phone">Teléfono</label>
+                <label for="phone">Phone</label>
                 <div class="input-icon">
                     <input type="tel" id="phone" name="phone" 
                            placeholder="+1 234 567 8900"
@@ -325,36 +325,36 @@ header, footer {
             </div>
             
             <div class="form-group">
-                <label for="password">Contraseña *</label>
+                <label for="password">Password *</label>
                 <div class="input-icon">
                     <input type="password" id="password" name="password" required 
-                           minlength="6" placeholder="Mínimo 6 caracteres">
+                           minlength="6" placeholder="Minimum 6 characters">
                     <i class="fas fa-lock"></i>
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="confirm_password">Confirmar Contraseña *</label>
+                <label for="confirm_password">Confirm Password *</label>
                 <div class="input-icon">
                     <input type="password" id="confirm_password" name="confirm_password" required
-                           placeholder="Repite tu contraseña">
+                           placeholder="Repeat your password">
                     <i class="fas fa-lock"></i>
                 </div>
             </div>
             
             <button type="submit">
-                <i class="fas fa-user-plus"></i> Crear Cuenta
+                <i class="fas fa-user-plus"></i> Create Account
             </button>
         </form>
         
         <div class="auth-links">
-            <p>¿Ya tienes cuenta? <a href="<?php echo BASE_URL; ?>/login.php">Inicia sesión aquí</a></p>
+            <p>Already have an account? <a href="<?php echo BASE_URL; ?>/login.php">Login here</a></p>
         </div>
     </div>
     
     <div class="back-home">
         <a href="<?php echo BASE_URL; ?>">
-            <i class="fas fa-home"></i> Volver al inicio
+            <i class="fas fa-home"></i> Back to home
         </a>
     </div>
 </div>

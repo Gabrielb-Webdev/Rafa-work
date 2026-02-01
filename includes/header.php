@@ -64,26 +64,26 @@
                     <div class="dropdown">
                         <div class="user-icon">
                             <i class="fas fa-user-circle"></i>
-                            <span><?php echo strtoupper(explode(' ', $_SESSION['user_name'] ?? 'Usuario')[0]); ?></span>
+                            <span><?php echo strtoupper(explode(' ', $_SESSION['user_name'] ?? 'User')[0]); ?></span>
                         </div>
                         <div class="dropdown-content">
                             <?php if (isAdmin()): ?>
                                 <a href="<?php echo BASE_URL; ?>/admin/index.php">
                                     <i class="fas fa-user-shield"></i>
-                                    <span>Panel Admin</span>
+                                    <span>Admin Panel</span>
                                 </a>
                             <?php endif; ?>
                             <a href="<?php echo BASE_URL; ?>/profile.php">
                                 <i class="fas fa-user"></i>
-                                <span>Mi Perfil</span>
+                                <span>My Profile</span>
                             </a>
                             <a href="<?php echo BASE_URL; ?>/orders.php">
                                 <i class="fas fa-shopping-bag"></i>
-                                <span>Mis Pedidos</span>
+                                <span>My Orders</span>
                             </a>
                             <a href="<?php echo BASE_URL; ?>/logout.php">
                                 <i class="fas fa-sign-out-alt"></i>
-                                <span>Cerrar Sesión</span>
+                                <span>Logout</span>
                             </a>
                         </div>
                     </div>

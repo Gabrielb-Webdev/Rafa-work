@@ -452,7 +452,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo">
-                <h2>Panel Admin</h2>
+                <h2>Admin Panel</h2>
             </div>
             
             <ul class="admin-menu">
@@ -460,28 +460,28 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <i class="fas fa-dashboard"></i> <span>Dashboard</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/productos.php" class="<?php echo $current_page === 'productos' ? 'active' : ''; ?>">
-                    <i class="fas fa-pills"></i> <span>Productos</span>
+                    <i class="fas fa-pills"></i> <span>Products</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/categorias.php" class="<?php echo $current_page === 'categorias' ? 'active' : ''; ?>">
-                    <i class="fas fa-tags"></i> <span>Categorías</span>
+                    <i class="fas fa-tags"></i> <span>Categories</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/pedidos.php" class="<?php echo $current_page === 'pedidos' ? 'active' : ''; ?>">
-                    <i class="fas fa-shopping-bag"></i> <span>Pedidos</span>
+                    <i class="fas fa-shopping-bag"></i> <span>Orders</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/index.php" target="_blank">
-                    <i class="fas fa-globe"></i> <span>Ver Sitio</span>
+                    <i class="fas fa-globe"></i> <span>View Site</span>
                 </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/logout.php">
-                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
                 </a></li>
             </ul>
         </aside>
         
         <main class="admin-content">
             <div class="admin-top-bar">
-                <h1><?php echo $pageTitle ?? 'Panel Admin'; ?></h1>
+                <h1><?php echo $pageTitle ?? 'Admin Panel'; ?></h1>
                 <div>
-                    <span style="color: var(--text-light); font-size: 14px;"><?php echo date('d/m/Y'); ?> - <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
+                    <span style="color: var(--text-light); font-size: 14px;"><?php echo date('m/d/Y'); ?> - <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
                 </div>
             </div>
             

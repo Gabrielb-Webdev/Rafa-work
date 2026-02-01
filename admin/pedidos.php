@@ -26,9 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
             "UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?",
             [$new_status, $order_id]
         );
-        $success = 'Estado del pedido actualizado correctamente';
+        $success = 'Order status updated successfully';
     } catch (Exception $e) {
-        $error = 'Error al actualizar el pedido';
+        $error = 'Error updating order';
     }
 }
 
@@ -85,21 +85,21 @@ try {
     
 } catch (Exception $e) {
     $orders = [];
-    $error = 'Error al cargar los pedidos';
+    $error = 'Error loading orders';
 }
 
 function getStatusBadge($status) {
     $badges = [
-        'pending' => '<span style="background: #ff9800; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>',
-        'processing' => '<span style="background: #ffc107; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-clock"></i> EN PROCESO</span>',
-        'shipped' => '<span style="background: #17a2b8; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-truck"></i> ENVIADO</span>',
-        'delivered' => '<span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-check-circle"></i> ENTREGADO</span>',
-        'cancelled' => '<span style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-times-circle"></i> CANCELADO</span>'
+        'pending' => '<span style="background: #ff9800; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-hourglass-half"></i> PENDING</span>',
+        'processing' => '<span style="background: #ffc107; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-clock"></i> PROCESSING</span>',
+        'shipped' => '<span style="background: #17a2b8; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-truck"></i> SHIPPED</span>',
+        'delivered' => '<span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-check-circle"></i> DELIVERED</span>',
+        'cancelled' => '<span style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;"><i class="fas fa-times-circle"></i> CANCELLED</span>'
     ];
     return $badges[$status] ?? $status;
 }
 
-$pageTitle = 'Gestión de Pedidos';
+$pageTitle = 'Order Management';
 include __DIR__ . '/header.php';
 ?>
 
@@ -336,9 +336,9 @@ tr:last-child td {
 <section class="admin-page">
     <div class="admin-container">
         <div class="admin-header">
-            <h1><i class="fas fa-shopping-bag"></i> Gestión de Pedidos</h1>
+            <h1><i class="fas fa-shopping-bag"></i> Order Management</h1>
             <a href="<?php echo BASE_URL; ?>/admin" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Volver al Panel
+                <i class="fas fa-arrow-left"></i> Back to Panel
             </a>
         </div>
         
@@ -360,23 +360,23 @@ tr:last-child td {
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['pending']; ?></div>
-                <div class="stat-label">Pendientes</div>
+                <div class="stat-label">Pending</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['processing']; ?></div>
-                <div class="stat-label">En Proceso</div>
+                <div class="stat-label">Processing</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['shipped']; ?></div>
-                <div class="stat-label">Enviados</div>
+                <div class="stat-label">Shipped</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['delivered']; ?></div>
-                <div class="stat-label">Entregados</div>
+                <div class="stat-label">Delivered</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">$<?php echo number_format($stats['total_revenue'], 2); ?></div>
-                <div class="stat-label">Ingresos Totales (ARS)</div>
+                <div class="stat-value">USD $<?php echo number_format($stats['total_revenue'], 2); ?></div>
+                <div class="stat-label">Total Revenue (USD)</div>
             </div>
         </div>
         
@@ -384,16 +384,16 @@ tr:last-child td {
         <div class="filters-section">
             <div class="filters-row">
                 <div class="filter-group">
-                    <a href="?status=all" class="filter-btn <?php echo $filter_status === 'all' ? 'active' : ''; ?>">Todos</a>
-                    <a href="?status=pending" class="filter-btn <?php echo $filter_status === 'pending' ? 'active' : ''; ?>">Pendientes</a>
-                    <a href="?status=processing" class="filter-btn <?php echo $filter_status === 'processing' ? 'active' : ''; ?>">En Proceso</a>
-                    <a href="?status=shipped" class="filter-btn <?php echo $filter_status === 'shipped' ? 'active' : ''; ?>">Enviados</a>
-                    <a href="?status=delivered" class="filter-btn <?php echo $filter_status === 'delivered' ? 'active' : ''; ?>">Entregados</a>
+                    <a href="?status=all" class="filter-btn <?php echo $filter_status === 'all' ? 'active' : ''; ?>">All</a>
+                    <a href="?status=pending" class="filter-btn <?php echo $filter_status === 'pending' ? 'active' : ''; ?>">Pending</a>
+                    <a href="?status=processing" class="filter-btn <?php echo $filter_status === 'processing' ? 'active' : ''; ?>">Processing</a>
+                    <a href="?status=shipped" class="filter-btn <?php echo $filter_status === 'shipped' ? 'active' : ''; ?>">Shipped</a>
+                    <a href="?status=delivered" class="filter-btn <?php echo $filter_status === 'delivered' ? 'active' : ''; ?>">Delivered</a>
                 </div>
                 
                 <div class="search-box">
                     <form method="GET">
-                        <input type="text" name="search" placeholder="Buscar por número, cliente o email..." 
+                        <input type="text" name="search" placeholder="Search by number, customer or email..." 
                                value="<?php echo htmlspecialchars($search); ?>">
                         <?php if ($filter_status !== 'all'): ?>
                             <input type="hidden" name="status" value="<?php echo $filter_status; ?>">
@@ -408,8 +408,8 @@ tr:last-child td {
             <div class="orders-table">
                 <div class="empty-state">
                     <i class="fas fa-inbox"></i>
-                    <h3>No hay pedidos</h3>
-                    <p>Los pedidos aparecerán aquí cuando los clientes realicen compras</p>
+                    <h3>No orders</h3>
+                    <p>Orders will appear here when customers make purchases</p>
                 </div>
             </div>
         <?php else: ?>
@@ -417,13 +417,13 @@ tr:last-child td {
                 <table>
                     <thead>
                         <tr>
-                            <th>Número de Pedido</th>
-                            <th>Cliente</th>
-                            <th>Fecha</th>
+                            <th>Order Number</th>
+                            <th>Customer</th>
+                            <th>Date</th>
                             <th>Items</th>
                             <th>Total</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -436,25 +436,25 @@ tr:last-child td {
                                         <?php echo htmlspecialchars($order['email']); ?>
                                     </div>
                                 </td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></td>
-                                <td><?php echo $order['total_items']; ?> productos</td>
-                                <td><strong>$<?php echo number_format($order['total'], 2); ?></strong></td>
+                                <td><?php echo date('m/d/Y H:i', strtotime($order['created_at'])); ?></td>
+                                <td><?php echo $order['total_items']; ?> products</td>
+                                <td><strong>USD $<?php echo number_format($order['total'], 2); ?></strong></td>
                                 <td><?php echo getStatusBadge($order['status']); ?></td>
                                 <td>
                                     <div style="display: flex; gap: 10px; align-items: center;">
                                         <a href="ver-pedido-working.php?id=<?php echo $order['id']; ?>" 
                                            class="btn-view" 
-                                           title="Ver detalles del pedido">
+                                           title="View order details">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <form method="POST" style="display: flex; gap: 10px; align-items: center;">
                                             <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
                                             <select name="status" class="status-select">
-                                                <option value="pending" <?php echo $order['status'] === 'pending' ? 'selected' : ''; ?>>Pendiente</option>
-                                                <option value="processing" <?php echo $order['status'] === 'processing' ? 'selected' : ''; ?>>En Proceso</option>
-                                                <option value="shipped" <?php echo $order['status'] === 'shipped' ? 'selected' : ''; ?>>Enviado</option>
-                                                <option value="delivered" <?php echo $order['status'] === 'delivered' ? 'selected' : ''; ?>>Entregado</option>
-                                                <option value="cancelled" <?php echo $order['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelado</option>
+                                                <option value="pending" <?php echo $order['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                                <option value="processing" <?php echo $order['status'] === 'processing' ? 'selected' : ''; ?>>Processing</option>
+                                                <option value="shipped" <?php echo $order['status'] === 'shipped' ? 'selected' : ''; ?>>Shipped</option>
+                                                <option value="delivered" <?php echo $order['status'] === 'delivered' ? 'selected' : ''; ?>>Delivered</option>
+                                                <option value="cancelled" <?php echo $order['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
                                             </select>
                                             <button type="submit" name="update_status" class="btn-update">
                                                 <i class="fas fa-save"></i>
