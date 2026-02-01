@@ -583,10 +583,12 @@ require_once 'includes/header.php';
 
 <script>
 const orderId = <?php echo $order_id; ?>;
-const chatMessages = document.getElementById('chatMessages');
 
 // Función para cargar mensajes
 async function loadMessages() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+    
     try {
         const response = await fetch('<?php echo BASE_URL; ?>/api/order-messages.php?order_id=' + orderId);
         const data = await response.json();
@@ -600,6 +602,7 @@ async function loadMessages() {
 }
 
 function updateChatMessages(messages) {
+    const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
     
     const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 50;
@@ -635,14 +638,27 @@ function updateChatMessages(messages) {
     }
 }
 
-// Actualizar mensajes cada 3 segundos
-setInterval(loadMessages, 3000);
-
-// Auto-scroll inicial
-chatMessages.scrollTop = chatMessages.scrollHeight;
-
-// Enviar mensaje de chat
-document.getElementById('chatForm').addEventListener('submit', async (e) => {
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    
+    if (!chatMessages || !chatForm) {
+        console.error('Elementos de chat no encontrados');
+        return;
+    }
+    
+    // Auto-scroll inicial
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Cargar mensajes iniciales
+    loadMessages();
+    
+    // Actualizar mensajes cada 3 segundos
+    setInterval(loadMessages, 3000);
+    
+    // Enviar mensaje de chat
+    chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const messageInput = document.getElementById('messageInput');
@@ -679,6 +695,7 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
     
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
+    });
 });
 
 // Aceptar propuesta
