@@ -613,10 +613,10 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
             messageInput.value = '';
             location.reload();
         } else {
-            alert('Error: ' + data.message);
+            showNotification('error', 'Error', data.message);
         }
     } catch (error) {
-        alert('Error de conexión. Por favor intenta de nuevo.');
+        showNotification('error', 'Error de Conexión', 'Por favor intenta de nuevo más tarde.');
     }
     
     submitBtn.disabled = false;
@@ -625,9 +625,102 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
 
 // Aceptar propuesta
 async function acceptProposal() {
-    if (!confirm('¿Estás seguro de que deseas aceptar esta propuesta?')) {
-        return;
+    showConfirmModal();
+}
+
+// Auto-scroll del chat
+const chatMessages = document.getElementById('chatMessages');
+chatMessages.scrollTop = chatMessages.scrollHeight;
+</script>
+
+<!-- Modal de Confirmación Moderno -->
+<div id="confirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; backdrop-filter: blur(5px); align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 25px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 80px rgba(0,0,0,0.3); animation: slideUp 0.3s ease;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px;">
+                ⚡
+            </div>
+            <h2 style="font-size: 28px; color: #2c3e50; margin-bottom: 10px; font-weight: 800;">¿Aceptar Propuesta?</h2>
+            <p style="color: #6c757d; font-size: 16px; line-height: 1.6;">
+                Estás a punto de aceptar esta propuesta. Una vez confirmado, procesaremos tu pedido.
+            </p>
+        </div>
+        <div style="display: flex; gap: 15px;">
+            <button onclick="closeConfirmModal()" style="flex: 1; padding: 15px; background: #f0f0f0; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 16px; transition: all 0.3s;">
+                Cancelar
+            </button>
+            <button onclick="confirmAccept()" style="flex: 1; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s;">
+                ✓ Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificación -->
+<div id="notificationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; backdrop-filter: blur(5px); align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 25px; padding: 40px; max-width: 450px; width: 90%; box-shadow: 0 20px 80px rgba(0,0,0,0.3); text-align: center;">
+        <div id="notifIcon" style="width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px;"></div>
+        <h2 id="notifTitle" style="font-size: 24px; margin-bottom: 10px; font-weight: 800;"></h2>
+        <p id="notifMessage" style="color: #6c757d; font-size: 16px; line-height: 1.6; margin-bottom: 30px;"></p>
+        <button onclick="closeNotificationModal()" style="padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+            Entendido
+        </button>
+    </div>
+</div>
+
+<style>
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+</style>
+
+<script>
+function showConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function showNotification(type, title, message, reload = false) {
+    const modal = document.getElementById('notificationModal');
+    const icon = document.getElementById('notifIcon');
+    const titleEl = document.getElementById('notifTitle');
+    const messageEl = document.getElementById('notifMessage');
+    
+    if (type === 'success') {
+        icon.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+        icon.textContent = '✓';
+        titleEl.style.color = '#11998e';
+    } else {
+        icon.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        icon.textContent = '✕';
+        titleEl.style.color = '#f5576c';
+    }
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    modal.style.display = 'flex';
+    
+    if (reload) {
+        setTimeout(() => location.reload(), 2000);
+    }
+}
+
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+
+async function confirmAccept() {
+    closeConfirmModal();
     
     try {
         const response = await fetch('<?php echo BASE_URL; ?>/api/accept-proposal.php', {
@@ -641,19 +734,14 @@ async function acceptProposal() {
         const data = await response.json();
         
         if (data.success) {
-            alert('✅ ¡Propuesta aceptada! Nos pondremos en contacto contigo pronto.');
-            location.reload();
+            showNotification('success', '¡Propuesta Aceptada!', 'Tu pedido está siendo procesado. Nos pondremos en contacto pronto.', true);
         } else {
-            alert('❌ Error: ' + data.message);
+            showNotification('error', 'Error', data.message);
         }
     } catch (error) {
-        alert('Error de conexión. Por favor intenta de nuevo.');
+        showNotification('error', 'Error de Conexión', 'Por favor intenta de nuevo más tarde.');
     }
 }
-
-// Auto-scroll del chat
-const chatMessages = document.getElementById('chatMessages');
-chatMessages.scrollTop = chatMessages.scrollHeight;
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
