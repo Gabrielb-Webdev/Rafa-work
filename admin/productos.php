@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     if (!empty($name) && $price > 0) {
         try {
             executeQuery(
-                "INSERT INTO products (name, description, price, stock, image, is_active, created_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO products (name, description, price, stock, category_id, image, is_active, created_at) 
+                 VALUES (?, ?, ?, ?, NULL, ?, ?, NOW())",
                 [$name, $description, $price, $stock, $image, $is_active]
             );
             $success = 'Producto agregado correctamente';
@@ -64,12 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image);
         
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = NULL, image = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
             [$name, $description, $price, $stock, $image, $is_active, $id]
         );
     } else {
         executeQuery(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = NULL, is_active = ?, updated_at = NOW() WHERE id = ?",
             [$name, $description, $price, $stock, $is_active, $id]
         );
     }
