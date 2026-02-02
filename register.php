@@ -314,6 +314,7 @@ body {
     color: #2d3748;
     font-size: 14px;
     letter-spacing: 0;
+    pointer-events: none;
 }
 
 .auth-form label .required-star {
@@ -356,8 +357,6 @@ body {
 
 .auth-form .input-icon input {
     padding-right: 45px;
-    position: relative;
-    z-index: 1;
 }
 
 .auth-form input {
@@ -371,6 +370,9 @@ body {
     font-weight: 400;
     color: #2d3748;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-form input::placeholder {
