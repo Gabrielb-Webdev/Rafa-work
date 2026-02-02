@@ -347,7 +347,8 @@ body {
     transition: all 0.2s ease;
     font-size: 16px;
     padding: 4px;
-    z-index: 2;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .password-toggle:hover {
@@ -356,6 +357,8 @@ body {
 
 .auth-form .input-icon input {
     padding-right: 45px;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-form input {
