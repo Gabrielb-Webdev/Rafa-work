@@ -163,7 +163,7 @@ body {
     width: 140px;
     height: 140px;
     margin: 0 auto 40px;
-    background: rgba(255, 255, 255, 0.15);
+    background: white;
     backdrop-filter: blur(10px);
     border-radius: 30px;
     display: flex;
@@ -172,6 +172,13 @@ body {
     font-size: 70px;
     animation: logoFloat 3s ease-in-out infinite;
     border: 3px solid rgba(255, 255, 255, 0.3);
+    padding: 20px;
+}
+
+.hero-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 @keyframes logoFloat {
@@ -650,7 +657,7 @@ body {
     <div class="auth-hero">
         <div class="hero-content">
             <div class="hero-icon">
-                <i class="fas fa-heartbeat"></i>
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Forethink Health Logo">
             </div>
             <h1 class="hero-title">Welcome to Forethink Health</h1>
             <p class="hero-description">Join our community and get access to premium health products and services tailored to your needs.</p>
