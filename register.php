@@ -888,6 +888,13 @@ passwordInput.addEventListener('input', function() {
         return;
     }
     
+    // Only show strength indicator if password has at least 3 characters
+    if (value.length < 3) {
+        strengthIndicator.classList.remove('active');
+        this.classList.remove('valid', 'invalid');
+        return;
+    }
+    
     strengthIndicator.classList.add('active');
     
     let strength = 0;
@@ -904,8 +911,13 @@ passwordInput.addEventListener('input', function() {
         strengthFill.classList.add('weak');
         strengthText.classList.add('weak');
         strengthText.textContent = 'Weak password';
-        this.classList.remove('valid');
-        this.classList.add('invalid');
+        if (value.length >= 6) {
+            this.classList.remove('invalid');
+            this.classList.add('valid');
+        } else {
+            this.classList.remove('valid');
+            this.classList.add('invalid');
+        }
     } else if (strength <= 3) {
         strengthFill.classList.add('medium');
         strengthText.classList.add('medium');
