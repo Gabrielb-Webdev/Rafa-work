@@ -293,15 +293,12 @@ body {
 .auth-form .form-group {
     margin-bottom: 24px;
     position: relative;
-    z-index: 1;
 }
 
 .auth-form .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    position: relative;
-    z-index: 1;
 }
 
 @media (max-width: 640px) {
@@ -317,8 +314,6 @@ body {
     color: #2d3748;
     font-size: 14px;
     letter-spacing: 0;
-    position: relative;
-    z-index: auto;
 }
 
 .auth-form label .required-star {
@@ -338,7 +333,6 @@ body {
 
 .auth-form .input-icon {
     position: relative;
-    z-index: 1;
 }
 
 .password-toggle {
@@ -350,9 +344,10 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 16px;
-    padding: 4px;
-    z-index: 5;
+    padding: 8px;
+    z-index: 10;
     pointer-events: auto;
+    user-select: none;
 }
 
 .password-toggle:hover {
@@ -362,7 +357,7 @@ body {
 .auth-form .input-icon input {
     padding-right: 45px;
     position: relative;
-    z-index: 2;
+    z-index: 1;
 }
 
 .auth-form input {
@@ -807,7 +802,9 @@ const togglePassword = document.getElementById('togglePassword');
 const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
 
 if (togglePassword) {
-    togglePassword.addEventListener('click', function() {
+    togglePassword.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         const type = passwordInput.type === 'password' ? 'text' : 'password';
         passwordInput.type = type;
         this.classList.toggle('fa-eye');
@@ -816,7 +813,9 @@ if (togglePassword) {
 }
 
 if (toggleConfirmPassword) {
-    toggleConfirmPassword.addEventListener('click', function() {
+    toggleConfirmPassword.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
         confirmPasswordInput.type = type;
         this.classList.toggle('fa-eye');
