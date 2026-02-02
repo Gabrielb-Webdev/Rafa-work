@@ -422,6 +422,8 @@ body {
     margin-top: 10px;
     display: none;
     animation: slideDown 0.3s ease;
+    width: 100%;
+    text-align: left;
 }
 
 .password-strength.active {
@@ -464,6 +466,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
+    justify-content: flex-start;
 }
 
 .strength-text::before {
