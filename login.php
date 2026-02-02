@@ -328,6 +328,7 @@ body {
 .auth-form .form-group {
     margin-bottom: 24px;
     position: relative;
+    z-index: 1;
 }
 
 .auth-form label {
@@ -347,6 +348,7 @@ body {
 
 .auth-form .input-icon {
     position: relative;
+    z-index: 1;
 }
 
 .password-toggle {
@@ -359,7 +361,7 @@ body {
     transition: all 0.2s ease;
     font-size: 16px;
     padding: 4px;
-    z-index: 10;
+    z-index: 5;
     pointer-events: auto;
 }
 
@@ -370,7 +372,7 @@ body {
 .auth-form .input-icon input {
     padding-right: 45px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 .auth-form input {
