@@ -309,7 +309,7 @@ body {
 
 .auth-form label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 600;
     color: #2d3748;
     font-size: 14px;
