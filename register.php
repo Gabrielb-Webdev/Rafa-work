@@ -1,4 +1,9 @@
 <?php
+/**
+ * Register Page
+ * @version 0.3
+ * @date 2026-02-02
+ */
 require_once __DIR__ . '/config/config.php';
 
 // Si ya está logueado, redirigir
