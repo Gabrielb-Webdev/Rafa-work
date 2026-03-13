@@ -554,7 +554,7 @@ include __DIR__ . '/includes/header.php';
                 </button>
                 
                 <div class="links">
-                    <p>Already have an account? <a href="<?php echo BASE_URL; ?>/login">Sign in</a></p>
+                    <p>Already have an account? <a href="<?php echo BASE_URL; ?>/login.php">Sign in</a></p>
                     <a href="<?php echo BASE_URL; ?>">
                         <i class="fas fa-arrow-left"></i> Back to home
                     </a>

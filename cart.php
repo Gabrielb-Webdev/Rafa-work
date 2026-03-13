@@ -675,7 +675,7 @@ include __DIR__ . '/includes/header.php';
             <i class="fas fa-shopping-cart"></i>
             <h2>Tu carrito está vacío</h2>
             <p>Agrega productos para comenzar tu compra</p>
-            <a href="<?php echo BASE_URL; ?>/products" class="btn-continue">
+            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-continue">
                 <i class="fas fa-arrow-left"></i> Continuar comprando
             </a>
         </div>
@@ -735,16 +735,16 @@ include __DIR__ . '/includes/header.php';
                 </div>
                 
                 <?php if (isLoggedIn()): ?>
-                    <a href="<?php echo BASE_URL; ?>/checkout" class="btn-checkout">
+                    <a href="<?php echo BASE_URL; ?>/checkout.php" class="btn-checkout">
                         <i class="fas fa-shopping-bag"></i> Complete Order
                     </a>
                 <?php else: ?>
-                    <a href="<?php echo BASE_URL; ?>/login?redirect=checkout" class="btn-checkout">
+                    <a href="<?php echo BASE_URL; ?>/login.php?redirect=checkout" class="btn-checkout">
                         <i class="fas fa-sign-in-alt"></i> Login to Continue
                     </a>
                 <?php endif; ?>
                 
-                <a href="<?php echo BASE_URL; ?>/products" class="continue-shopping">
+                <a href="<?php echo BASE_URL; ?>/products.php" class="continue-shopping">
                     <i class="fas fa-arrow-left"></i> Continue shopping
                 </a>
             </div>

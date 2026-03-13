@@ -43,7 +43,7 @@ include __DIR__ . '/includes/header.php';
                 <div class="hero-text">
                     <h1 class="hero-title">Welcome to Our<br><span class="highlight">Online Medicine</span></h1>
                     <p class="hero-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec odio vitae mauris sagittis aliquet. Nam viverra pharetra est, ut vehicula tortor tincidunt vel.</p>
-                    <a href="<?php echo BASE_URL; ?>/products" class="btn-shop">Shop Now</a>
+                    <a href="<?php echo BASE_URL; ?>/products.php" class="btn-shop">Shop Now</a>
                 </div>
                 <div class="hero-image">
                     <div class="hero-placeholder">
@@ -92,7 +92,7 @@ include __DIR__ . '/includes/header.php';
             <div class="discount-text">
                 <h2>YOU GET<br>ANY MEDICINE<br>ON <span class="discount-highlight">10% DISCOUNT</span></h2>
                 <p>It is a long established fact that a reader will be distracted by the readable content of a page.</p>
-                <a href="<?php echo BASE_URL; ?>/products" class="btn-get-now">Get Now</a>
+                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-get-now">Get Now</a>
             </div>
             <div class="discount-image">
                 <div class="discount-placeholder">
@@ -168,7 +168,7 @@ include __DIR__ . '/includes/header.php';
             <?php endforeach; ?>
         </div>
         <div class="view-all-center">
-            <a href="<?php echo BASE_URL; ?>/products" class="btn-view-all">View All</a>
+            <a href="<?php echo BASE_URL; ?>/products.php" class="btn-view-all">View All</a>
         </div>
     </div>
 </section>
@@ -238,7 +238,7 @@ $vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($f
             <?php endforeach; ?>
         </div>
         <div class="view-all-center">
-            <a href="<?php echo BASE_URL; ?>/products?category=vitamins-supplements" class="btn-view-all">View All</a>
+            <a href="<?php echo BASE_URL; ?>/products.php?category=vitamins-supplements" class="btn-view-all">View All</a>
         </div>
     </div>
 </section>
@@ -258,7 +258,7 @@ $vitaminsToShow = !empty($vitaminsProducts) ? $vitaminsProducts : array_slice($f
             </div>
             <div class="about-text">
                 <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
-                <a href="<?php echo BASE_URL; ?>/about" class="btn-read-more">Read More</a>
+                <a href="<?php echo BASE_URL; ?>/about.php" class="btn-read-more">Read More</a>
             </div>
         </div>
     </div>

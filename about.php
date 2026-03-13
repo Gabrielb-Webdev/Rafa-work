@@ -23,7 +23,7 @@ include __DIR__ . '/includes/header.php';
             </div>
             
             <div class="about-page-button animate-fade-in-delay-2">
-                <a href="<?php echo BASE_URL; ?>/products" class="btn-read-more">Read More</a>
+                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-read-more">Read More</a>
             </div>
         </div>
     </div>
