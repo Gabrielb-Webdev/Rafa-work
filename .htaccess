@@ -1,12 +1,8 @@
 RewriteEngine On
 RewriteBase /
 
-# Eliminar extensión .php - redirigir URLs con .php a URLs limpias
-RewriteCond %{THE_REQUEST} \s/+([^.?]+)\.php[\s?] [NC]
-RewriteRule ^ /%1 [R=301,L]
-
 # Servir archivos .php desde URLs sin extensión
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.+?)/?$ $1.php [L]
+RewriteRule ^(.+?)/?$ $1.php [L,QSA]
