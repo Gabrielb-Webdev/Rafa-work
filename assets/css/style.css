@@ -216,14 +216,43 @@ header nav {
 }
 
 .search-suggestion-item {
-    padding: 10px 16px;
+    padding: 8px 12px;
     font-size: 0.88rem;
     color: #2c3e50;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     transition: background 0.15s;
+}
+
+.search-suggestion-item img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+
+.suggestion-img-fallback {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #f0fafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #00d4d4;
+    font-size: 0.9rem;
+}
+
+.search-suggestion-item span:last-child {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .search-suggestion-item:hover,

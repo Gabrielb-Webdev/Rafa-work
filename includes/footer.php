@@ -32,6 +32,6 @@
         </div>
     </footer>
 
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=6.1"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js?v=6.2"></script>
 </body>
 </html>

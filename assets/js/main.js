@@ -60,10 +60,17 @@ function initializeSearch() {
     function renderSuggestions(items) {
         dropdown.innerHTML = '';
         if (!items.length) { hideSuggestions(); return; }
-        items.forEach((name, idx) => {
+        const BASE = document.querySelector('meta[name="base-url"]').content;
+        items.forEach((product) => {
+            const name  = product.name  || product;
+            const image = product.image || null;
             const item = document.createElement('div');
             item.className = 'search-suggestion-item';
-            item.innerHTML = `<i class="fas fa-search"></i> ${name}`;
+            const imgHtml = image
+                ? `<img src="${BASE}/uploads/products/${image}" alt="${name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                   <span class="suggestion-img-fallback" style="display:none"><i class="fas fa-pills"></i></span>`
+                : `<span class="suggestion-img-fallback"><i class="fas fa-pills"></i></span>`;
+            item.innerHTML = `${imgHtml}<span>${name}</span>`;
             item.addEventListener('mousedown', function(e) {
                 e.preventDefault();
                 searchInput.value = name;
@@ -94,12 +101,12 @@ function initializeSearch() {
             e.preventDefault();
             highlighted = Math.min(highlighted + 1, items.length - 1);
             items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
-            if (items[highlighted]) searchInput.value = items[highlighted].textContent.trim();
+            if (items[highlighted]) searchInput.value = items[highlighted].querySelector('span:last-child').textContent.trim();
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             highlighted = Math.max(highlighted - 1, -1);
             items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
-            if (highlighted >= 0 && items[highlighted]) searchInput.value = items[highlighted].textContent.trim();
+            if (highlighted >= 0 && items[highlighted]) searchInput.value = items[highlighted].querySelector('span:last-child').textContent.trim();
         } else if (e.key === 'Enter') {
             hideSuggestions();
             performSearch();
