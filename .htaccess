@@ -3,6 +3,16 @@
 # Habilitar RewriteEngine
 RewriteEngine On
 
+# Eliminar extensión .php - redirigir URLs con .php a URLs limpias
+RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
+RewriteRule ^ /%1 [R=301,L,QSA]
+
+# Servir archivos .php desde URLs sin extensión
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L,QSA]
+
 # Redirigir www a no-www (opcional)
 # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 # RewriteRule ^(.*)$ https://%1/$1 [R=301,L]

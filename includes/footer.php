@@ -10,9 +10,9 @@
             <div class="footer-section">
                 <h3>MENU</h3>
                 <ul>
-                    <li><a href="<?php echo BASE_URL; ?>/index.php">Home</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>/about.php">About</a></li>
-                    <li><a href="<?php echo BASE_URL; ?>/products.php">Online Buy</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/">Home</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/about">About</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/products">Online Buy</a></li>
                 </ul>
             </div>
 

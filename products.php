@@ -527,7 +527,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                     <div style="margin-bottom: 20px;">
                         <p style="color: #6c757d; font-size: 16px;">
                             Searching for: <strong>"<?php echo htmlspecialchars($searchTerm); ?>"</strong>
-                            <a href="<?php echo BASE_URL; ?>/products.php" style="color: #00d4d4; text-decoration: none; margin-left: 15px;">
+                            <a href="<?php echo BASE_URL; ?>/products" style="color: #00d4d4; text-decoration: none; margin-left: 15px;">
                                 <i class="fas fa-times-circle"></i> Clear search
                             </a>
                         </p>
@@ -551,7 +551,7 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                             <?php endif; ?>
                         </p>
                         <?php if ($searchTerm): ?>
-                            <a href="<?php echo BASE_URL; ?>/products.php" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: 700;">
+                            <a href="<?php echo BASE_URL; ?>/products" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #00d4d4 0%, #00a0a0 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: 700;">
                                 <i class="fas fa-arrow-left"></i> View all products
                             </a>
                         <?php endif; ?>

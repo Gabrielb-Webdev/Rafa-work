@@ -464,7 +464,7 @@ include __DIR__ . '/includes/header.php';
                 <i class="fas fa-shopping-cart"></i>
                 <h3>No tienes pedidos aún</h3>
                 <p>Explora nuestro catálogo y realiza tu primera compra</p>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn btn-primary">
+                <a href="<?php echo BASE_URL; ?>/products" class="btn btn-primary">
                     <i class="fas fa-shopping-bag"></i> Ver Productos
                 </a>
             </div>
@@ -507,7 +507,7 @@ include __DIR__ . '/includes/header.php';
                                 <?php endif; ?>
                             </div>
                             <div class="order-actions">
-                                <a href="order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-primary">
+                                <a href="order-detail?id=<?php echo $order['id']; ?>" class="btn btn-primary">
                                     <i class="fas fa-eye"></i> Ver Detalles
                                 </a>
                             </div>

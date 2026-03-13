@@ -81,15 +81,7 @@ include __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h4>Schedule</h4>
-                            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>

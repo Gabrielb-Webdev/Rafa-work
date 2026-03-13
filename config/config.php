@@ -7,7 +7,7 @@ define('BASE_URL', 'https://mediumvioletred-lobster-199641.hostingersite.com');
 
 // Configuración del sitio
 define('SITE_NAME', 'Forethink Health');
-define('SITE_EMAIL', 'demo@gmail.com');
+define('SITE_EMAIL', 'info@forethinkhealth.com');
 define('SITE_PHONE', '+01 123456789');
 
 // Rutas del proyecto
