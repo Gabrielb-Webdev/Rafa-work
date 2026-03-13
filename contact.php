@@ -88,7 +88,6 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-
 <script>
 document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
