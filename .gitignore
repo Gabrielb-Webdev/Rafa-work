@@ -1,7 +1,6 @@
 # Forethink Health - Ignorar archivos
 
-# Archivos de configuración sensibles
-config/database.php
+# Archivos de entorno
 .env
 
 # Archivos subidos por usuarios (pero mantener la estructura de carpetas)
