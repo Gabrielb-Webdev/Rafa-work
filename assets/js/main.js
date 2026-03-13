@@ -28,24 +28,92 @@ function updateCartCount() {
 function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
-    
-    function performSearch() {
-        const searchTerm = searchInput.value.trim();
+    const searchBox = searchInput ? searchInput.closest('.search-box') : null;
+
+    const BASE = document.querySelector('meta[name="base-url"]')
+        ? document.querySelector('meta[name="base-url"]').content
+        : window.location.origin;
+
+    function performSearch(term) {
+        const searchTerm = (term || searchInput.value).trim();
         if (searchTerm) {
-            window.location.href = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/products.php?search=${encodeURIComponent(searchTerm)}`;
+            window.location.href = BASE + '/products?search=' + encodeURIComponent(searchTerm);
         }
     }
-    
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
+
+    if (!searchInput || !searchBox) return;
+
+    // Create suggestion dropdown
+    const dropdown = document.createElement('div');
+    dropdown.className = 'search-suggestions';
+    searchBox.appendChild(dropdown);
+
+    let debounceTimer = null;
+    let highlighted = -1;
+
+    function hideSuggestions() {
+        dropdown.classList.remove('active');
+        dropdown.innerHTML = '';
+        highlighted = -1;
     }
-    
+
+    function renderSuggestions(items) {
+        dropdown.innerHTML = '';
+        if (!items.length) { hideSuggestions(); return; }
+        items.forEach((name, idx) => {
+            const item = document.createElement('div');
+            item.className = 'search-suggestion-item';
+            item.innerHTML = `<i class="fas fa-search"></i> ${name}`;
+            item.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                searchInput.value = name;
+                hideSuggestions();
+                performSearch(name);
+            });
+            dropdown.appendChild(item);
+        });
+        dropdown.classList.add('active');
+        highlighted = -1;
+    }
+
+    searchInput.addEventListener('input', function() {
+        const q = this.value.trim();
+        clearTimeout(debounceTimer);
+        if (q.length < 2) { hideSuggestions(); return; }
+        debounceTimer = setTimeout(() => {
+            fetch(BASE + '/api/search-suggestions.php?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(renderSuggestions)
+                .catch(() => hideSuggestions());
+        }, 200);
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.search-suggestion-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlighted = Math.min(highlighted + 1, items.length - 1);
+            items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
+            if (items[highlighted]) searchInput.value = items[highlighted].textContent.trim();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlighted = Math.max(highlighted - 1, -1);
+            items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
+            if (highlighted >= 0 && items[highlighted]) searchInput.value = items[highlighted].textContent.trim();
+        } else if (e.key === 'Enter') {
+            hideSuggestions();
+            performSearch();
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
+
+    searchInput.addEventListener('blur', function() {
+        setTimeout(hideSuggestions, 150);
+    });
+
     if (searchButton) {
-        searchButton.addEventListener('click', performSearch);
+        searchButton.addEventListener('click', () => { hideSuggestions(); performSearch(); });
     }
 }
 
