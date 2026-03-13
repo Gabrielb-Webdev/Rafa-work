@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 $_SESSION['cart_loaded'] = true;
-                header("refresh:2;url=" . BASE_URL . "/");
+                redirect('/');
             }
         } catch (Exception $e) {
             $error = 'Error creating account. Please try again.';
