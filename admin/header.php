@@ -468,10 +468,10 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <li><a href="<?php echo BASE_URL; ?>/admin/pedidos.php" class="<?php echo $current_page === 'pedidos' ? 'active' : ''; ?>">
                     <i class="fas fa-shopping-bag"></i> <span>Orders</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/index.php" target="_blank">
+                <li><a href="<?php echo BASE_URL; ?>/" target="_blank">
                     <i class="fas fa-globe"></i> <span>View Site</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/logout.php">
+                <li><a href="<?php echo BASE_URL; ?>/logout">
                     <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
                 </a></li>
             </ul>

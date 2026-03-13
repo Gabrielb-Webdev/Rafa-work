@@ -2,14 +2,14 @@
 require_once __DIR__ . '/config/config.php';
 
 if (!isLoggedIn()) {
-    redirect('/login.php');
+    redirect('/login');
 }
 
 $pageTitle = 'Pedido Confirmado - Forethink Health';
 $order_number = $_GET['order'] ?? '';
 
 if (empty($order_number)) {
-    redirect('/orders.php');
+    redirect('/orders');
 }
 
 // Obtener detalles del pedido
@@ -25,10 +25,10 @@ try {
     $order = $stmt->fetch();
     
     if (!$order) {
-        redirect('/orders.php');
+        redirect('/orders');
     }
 } catch (Exception $e) {
-    redirect('/orders.php');
+    redirect('/orders');
 }
 
 include __DIR__ . '/includes/header.php';
@@ -234,10 +234,10 @@ include __DIR__ . '/includes/header.php';
             </div>
             
             <div class="action-buttons">
-                <a href="<?php echo BASE_URL; ?>/orders.php" class="btn btn-primary">
+                <a href="<?php echo BASE_URL; ?>/orders" class="btn btn-primary">
                     <i class="fas fa-shopping-bag"></i> Ver Mis Pedidos
                 </a>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn btn-outline">
+                <a href="<?php echo BASE_URL; ?>/products" class="btn btn-outline">
                     <i class="fas fa-shopping-cart"></i> Seguir Comprando
                 </a>
             </div>

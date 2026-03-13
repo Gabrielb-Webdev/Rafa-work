@@ -234,7 +234,7 @@ try {
                     <p style='margin-top: 30px;'>To see more details or ask questions about this proposal, you can access the order chat in your account.</p>
                     
                     <center>
-                        <a href='" . BASE_URL . "/order-detail.php?id=" . $order_id . "' class='button'>View Order and Chat</a>
+                        <a href='" . BASE_URL . "/order-detail?id=" . $order_id . "' class='button'>View Order and Chat</a>
                     </center>
                 </div>
                 <div class='footer'>

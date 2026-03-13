@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/config.php';
 
 // Check if logged in
 if (!isLoggedIn()) {
-    redirect('/login.php');
+    redirect('/login');
 }
 
 $pageTitle = 'My Profile - Forethink Health';
@@ -16,7 +16,7 @@ try {
     $user = $stmt->fetch();
     
     if (!$user) {
-        redirect('/logout.php');
+        redirect('/logout');
     }
 } catch (Exception $e) {
     $error = 'Error loading profile data.';

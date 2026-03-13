@@ -9,7 +9,7 @@ require_once __DIR__ . '/config/config.php';
 
 // Check if logged in
 if (!isLoggedIn()) {
-    redirect('/login.php');
+    redirect('/login');
 }
 
 $pageTitle = 'My Orders - Forethink Health';
@@ -464,7 +464,7 @@ include __DIR__ . '/includes/header.php';
                 <i class="fas fa-shopping-cart"></i>
                 <h3>No tienes pedidos aún</h3>
                 <p>Explora nuestro catálogo y realiza tu primera compra</p>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn btn-primary">
+                <a href="<?php echo BASE_URL; ?>/products" class="btn btn-primary">
                     <i class="fas fa-shopping-bag"></i> Ver Productos
                 </a>
             </div>

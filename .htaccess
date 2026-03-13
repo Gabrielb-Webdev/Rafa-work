@@ -1,6 +1,25 @@
 # Forethink Health - Configuración Apache
 
-# Proteger archivos sensibles
+RewriteEngine On
+
+# === URLs limpias ===
+
+# Redirigir /index.php a /
+RewriteCond %{THE_REQUEST} \s/index\.php[\s?] [NC]
+RewriteRule ^index\.php$ / [R=301,L]
+
+# Redirigir /pagina.php a /pagina (solo archivos raíz, no admin/ ni api/)
+RewriteCond %{THE_REQUEST} \s/[^/]+\.php[\s?] [NC]
+RewriteRule ^([^/]+)\.php$ /$1 [R=301,L]
+
+# Servir /pagina internamente como /pagina.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/\.]+)/?$ $1.php [L]
+
+# === Seguridad ===
+
+# Proteger archivos ocultos
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>

@@ -135,7 +135,7 @@ include __DIR__ . '/includes/header.php';
                     No te pierdas nuestras increíbles ofertas en productos seleccionados. 
                     ¡Hasta 30% de descuento!
                 </p>
-                <a href="<?php echo BASE_URL; ?>/products.php" class="btn-read-more">
+                <a href="<?php echo BASE_URL; ?>/products" class="btn-read-more">
                     Ver productos <i class="fas fa-arrow-right"></i>
                 </a>
             </div>

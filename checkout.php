@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/config.php';
 
 // Check if logged in
 if (!isLoggedIn()) {
-    redirect('/login.php');
+    redirect('/login');
 }
 
 $pageTitle = 'Complete Order - Forethink Health';
@@ -23,7 +23,7 @@ $cartItems = $_SESSION['cart'] ?? [];
 
 // If cart is empty, redirect
 if (empty($cartItems)) {
-    redirect('/cart.php');
+    redirect('/cart');
 }
 
 // Process order
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     }
                     
                     // Redirigir
-                    redirect('/order-confirmation.php?order=' . $order_number);
+                    redirect('/order-confirmation?order=' . $order_number);
                     
                 } catch (Exception $e) {
                     $conn->rollBack();

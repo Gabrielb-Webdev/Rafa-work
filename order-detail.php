@@ -2,12 +2,12 @@
 require_once __DIR__ . '/config/config.php';
 
 if (!isLoggedIn()) {
-    redirect('/login.php');
+    redirect('/login');
 }
 
 $order_id = $_GET['id'] ?? 0;
 if (!$order_id) {
-    redirect('/orders.php');
+    redirect('/orders');
 }
 
 // Load order and verify it belongs to user

@@ -30,15 +30,15 @@
     <!-- Main Navigation -->
     <header>
         <nav>
-            <a href="<?php echo BASE_URL; ?>/index.php" class="logo">
+            <a href="<?php echo BASE_URL; ?>/" class="logo">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?>" />
             </a>
 
             <ul class="nav-links">
-                <li><a href="<?php echo BASE_URL; ?>/index.php">HOME</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/about.php">ABOUT</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/products.php">ONLINE BUY</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/contact.php">CONTACT US</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/">HOME</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/about">ABOUT</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/products">ONLINE BUY</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/contact">CONTACT US</a></li>
             </ul>
 
             <div class="nav-right">
@@ -47,7 +47,7 @@
                     <button type="button" id="searchButton"><i class="fas fa-search"></i></button>
                 </div>
 
-                <a href="<?php echo BASE_URL; ?>/cart.php" class="cart-icon">
+                <a href="<?php echo BASE_URL; ?>/cart" class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
                     <?php 
                     $cartCount = 0;
@@ -73,22 +73,22 @@
                                     <span>Admin Panel</span>
                                 </a>
                             <?php endif; ?>
-                            <a href="<?php echo BASE_URL; ?>/profile.php">
+                            <a href="<?php echo BASE_URL; ?>/profile">
                                 <i class="fas fa-user"></i>
                                 <span>My Profile</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/orders.php">
+                            <a href="<?php echo BASE_URL; ?>/orders">
                                 <i class="fas fa-shopping-bag"></i>
                                 <span>My Orders</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/logout.php">
+                            <a href="<?php echo BASE_URL; ?>/logout">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Logout</span>
                             </a>
                         </div>
                     </div>
                 <?php else: ?>
-                    <a href="<?php echo BASE_URL; ?>/login.php" class="user-icon">
+                    <a href="<?php echo BASE_URL; ?>/login" class="user-icon">
                         <i class="fas fa-user"></i> LOGIN
                     </a>
                 <?php endif; ?>
