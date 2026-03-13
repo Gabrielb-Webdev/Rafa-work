@@ -566,7 +566,11 @@ $productsToDisplay = array_slice($allProducts, $offset, $productsPerPage);
                         <?php endif; ?>
                         <div class="product-image-wrapper-page" onclick='showProductModal(<?php echo json_encode($product); ?>)'>
                             <?php if (!empty($product['image'])): ?>
-                                <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width: 100%; height: 200px; object-fit: cover;">
+                                <img src="<?php echo BASE_URL; ?>/uploads/products/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                <div class="product-placeholder-page" style="display:none">
+                                    <i class="fas fa-pills"></i>
+                                    <span>No Image</span>
+                                </div>
                             <?php else: ?>
                                 <div class="product-placeholder-page">
                                     <i class="fas fa-pills"></i>
@@ -730,7 +734,7 @@ function showProductModal(product) {
     // Imagen
     const imgDiv = document.getElementById('modalImage');
     if (product.image) {
-        imgDiv.innerHTML = `<img src="<?php echo BASE_URL; ?>/uploads/products/${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+        imgDiv.innerHTML = `<img src="<?php echo BASE_URL; ?>/uploads/products/${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="this.replaceWith(Object.assign(document.createElement('i'),{className:'fas fa-pills',style:'font-size:80px;color:#00d4d4'}))">` ;
     } else {
         imgDiv.innerHTML = '<i class="fas fa-pills" style="font-size: 80px; color: #00d4d4;"></i>';
     }
