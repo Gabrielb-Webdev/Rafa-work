@@ -44,7 +44,7 @@
 
             <div class="nav-right">
                 <div class="search-box">
-                    <input type="text" placeholder="SEARCH" id="searchInput">
+                    <input type="text" placeholder="SEARCH" id="searchInput" autocomplete="off">
                     <button type="button" id="searchButton"><i class="fas fa-search"></i></button>
                 </div>
 
