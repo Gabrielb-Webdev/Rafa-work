@@ -18,7 +18,7 @@ define('UPLOAD_PATH', ROOT_PATH . '/uploads');
 date_default_timezone_set('America/Mexico_City');
 
 // Manejo de errores (cambiar a false en producción)
-define('DEBUG_MODE', false);
+define('DEBUG_MODE', true);
 
 if (DEBUG_MODE) {
     error_reporting(E_ALL);
