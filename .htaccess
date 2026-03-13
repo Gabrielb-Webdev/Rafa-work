@@ -1,24 +1,18 @@
 # Forethink Health - Configuración Apache
 
-# Habilitar RewriteEngine
-RewriteEngine On
-
 # Proteger archivos sensibles
 <FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # Proteger archivos de configuración
 <FilesMatch "\.(env|ini|log|sql|bak|backup)$">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # Proteger config/database.php
 <Files "database.php">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </Files>
 
 # Prevenir directory listing

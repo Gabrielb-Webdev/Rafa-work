@@ -3,7 +3,7 @@
 session_start();
 
 // URL base del sitio
-define('BASE_URL', 'https://mediumvioletred-lobster-199641.hostingersite.com');
+define('BASE_URL', 'https://forethinkhealth.com');
 
 // Configuración del sitio
 define('SITE_NAME', 'Forethink Health');
