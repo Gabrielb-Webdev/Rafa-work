@@ -1,6 +1,7 @@
 # Forethink Health - Configuración Apache
 
 RewriteEngine On
+RewriteBase /
 
 # === URLs limpias ===
 
@@ -19,11 +20,6 @@ RewriteRule ^([^/\.]+)/?$ $1.php [L]
 
 # === Seguridad ===
 
-# Proteger archivos ocultos
-<FilesMatch "^\.">
-    Require all denied
-</FilesMatch>
-
 # Proteger archivos de configuración
 <FilesMatch "\.(env|ini|log|sql|bak|backup)$">
     Require all denied
@@ -33,6 +29,3 @@ RewriteRule ^([^/\.]+)/?$ $1.php [L]
 <Files "database.php">
     Require all denied
 </Files>
-
-# Prevenir directory listing
-Options -Indexes
