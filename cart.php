@@ -247,6 +247,13 @@ include __DIR__ . '/includes/header.php';
     font-weight: 700;
     color: #2c3e50;
     transition: all 0.3s ease;
+    -moz-appearance: textfield;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .qty-input:focus {
