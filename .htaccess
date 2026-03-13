@@ -3,6 +3,10 @@
 RewriteEngine On
 RewriteBase /
 
+# === No tocar archivos estáticos ni uploads ===
+RewriteRule ^uploads/ - [L]
+RewriteRule ^assets/ - [L]
+
 # === URLs limpias ===
 
 # Redirigir /index.php a /
