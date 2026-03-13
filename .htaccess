@@ -1,6 +1,3 @@
-# Forethink Health - Configuración Apache/LiteSpeed
-
-# Habilitar RewriteEngine
 RewriteEngine On
 RewriteBase /
 
@@ -11,20 +8,5 @@ RewriteRule ^ /%1 [R=301,L]
 # Servir archivos .php desde URLs sin extensión
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI}.php -f
+RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.+?)/?$ $1.php [L]
-
-# Proteger archivos sensibles
-<FilesMatch "\.(env|ini|log|sql|bak|backup)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Proteger config/database.php
-<Files "database.php">
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Prevenir directory listing
-Options -Indexes
