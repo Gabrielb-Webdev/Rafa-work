@@ -462,9 +462,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <li><a href="<?php echo BASE_URL; ?>/admin/productos.php" class="<?php echo $current_page === 'productos' ? 'active' : ''; ?>">
                     <i class="fas fa-pills"></i> <span>Products</span>
                 </a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/categorias.php" class="<?php echo $current_page === 'categorias' ? 'active' : ''; ?>">
-                    <i class="fas fa-tags"></i> <span>Categories</span>
-                </a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/pedidos.php" class="<?php echo $current_page === 'pedidos' ? 'active' : ''; ?>">
                     <i class="fas fa-shopping-bag"></i> <span>Orders</span>
                 </a></li>

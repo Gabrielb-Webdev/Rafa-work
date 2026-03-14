@@ -6,21 +6,19 @@ $pageTitle = 'Home - Online Medicine Store';
 // Get featured products
 try {
     $stmt = executeQuery("
-        SELECT p.*, c.name as category_name, c.slug as category_slug
+        SELECT p.*
         FROM products p
-        JOIN categories c ON p.category_id = c.id
         WHERE p.is_active = 1 AND p.is_featured = 1
         ORDER BY p.created_at DESC
         LIMIT 8
     ");
     $featuredProducts = $stmt->fetchAll();
 
-    // Get vitamins products
+    // Get vitamins products (fallback: usar featured si no hay vitamins)
     $stmtVitamins = executeQuery("
-        SELECT p.*, c.name as category_name
+        SELECT p.*
         FROM products p
-        JOIN categories c ON p.category_id = c.id
-        WHERE p.is_active = 1 AND c.slug = 'vitamins-supplements'
+        WHERE p.is_active = 1
         ORDER BY p.created_at DESC
         LIMIT 4
     ");

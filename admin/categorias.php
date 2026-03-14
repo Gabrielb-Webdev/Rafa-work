@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
-
-// Verify admin access
-if (!isLoggedIn() || !isAdmin()) {
-    redirect('/login.php');
-}
+redirect('/admin/index.php');
 
 $pageTitle = 'Category Management - Admin';
 $success = '';
