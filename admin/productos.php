@@ -173,9 +173,8 @@ try {
     $params = [];
     
     if (!empty($search)) {
-        $sql .= " AND (name LIKE ? OR category LIKE ?)";
+        $sql .= " AND name LIKE ?";
         $search_param = '%' . $search . '%';
-        $params[] = $search_param;
         $params[] = $search_param;
     }
     
@@ -795,7 +794,7 @@ tr:last-child td {
                 
                 <div class="search-box">
                     <form method="GET">
-                        <input type="text" name="search" placeholder="Search by name or category..." 
+                        <input type="text" name="search" placeholder="Search by name..." 
                                value="<?php echo htmlspecialchars($search); ?>">
                         <?php if ($filter_active !== 'all'): ?>
                             <input type="hidden" name="active" value="<?php echo $filter_active; ?>">
@@ -821,7 +820,6 @@ tr:last-child td {
                         <tr>
                             <th>Image</th>
                             <th>Name</th>
-                            <th>Category</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -845,7 +843,6 @@ tr:last-child td {
                                         <?php echo substr(htmlspecialchars($product['description']), 0, 50); ?>...
                                     </div>
                                 </td>
-                                <td><?php echo htmlspecialchars($product['category'] ?? 'No category'); ?></td>
                                 <td>
                                     <span class="status-badge status-<?php echo $product['is_active'] ? 'active' : 'inactive'; ?>">
                                         <?php echo $product['is_active'] ? 'Active' : 'Inactive'; ?>
